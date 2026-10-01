@@ -1,0 +1,5354 @@
+{
+  "schema_version": 1,
+  "source_archives": [
+    "往年代码.zip",
+    "往年代码2.zip"
+  ],
+  "modules": [
+    {
+      "path": "legacy/tongyong_25/base_controller.py",
+      "original_sha256": "a23ce37fb78e685fabcd7c6ff194cfd3c19eba763d22310875745c864623835c",
+      "declarations": {
+        "Base.__init__": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "Base.now_pose": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "pose",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "Base.get_pose": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "Base.get_angle": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "Base.turn": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "angle",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "kp",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "kd",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": [
+              {
+                "_type": "Constant",
+                "value": 1.5,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 0.5,
+                "kind": null
+              }
+            ]
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "Base.rotate": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "speed",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "Base.stop": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "Base.quad2euler": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "x",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "y",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "z",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "w",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        }
+      },
+      "patched_methods": [],
+      "unchanged_ast_sha256": "54380d969703b9bf9122ab8117dc21e47df9a8b2f70ca0b1fd9980aebdfa23e4",
+      "protected_assignments": {},
+      "all_function_shapes": [
+        "6c193bd8b8fda7bfe6683b9ad200fd93c9470a23c9d390c6cfdfe5c2a23a32bb:quad2euler",
+        "86b8635c8cdb9db02e1afe84e847f2b9f87c59eaa685a772350ffd41b0e51d01:turn",
+        "d00e3c4adb11ae8dbeb06bab701b0825e9f30ad9b5fd58d2713830a50b4a0523:rotate",
+        "d451238abd8e7e6a2b767f510961b6bca0309c2ae97817f0827ce853dfc2395c:now_pose",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:__init__",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:get_angle",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:get_pose",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:stop"
+      ]
+    },
+    {
+      "path": "legacy/tongyong_25/catch_ground/src/catch.py",
+      "original_sha256": "61d1b66c11fe73ceb98b29453f1660471f5a5627981da7e265cf4b0ea6e80b17",
+      "declarations": {
+        "KinovaRobot.__init__": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "kinova_robotType",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": {
+            "_type": "Constant",
+            "value": null,
+            "kind": null
+          },
+          "decorators": []
+        },
+        "KinovaRobot.quaternion_to_rotation_matrix": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "qw",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "qx",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "qy",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "qz",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinovaRobot.arm_run": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "unit",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "pose_target",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "relative",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": [
+              {
+                "_type": "Constant",
+                "value": "mdeg",
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": null,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": false,
+                "kind": null
+              }
+            ]
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinovaRobot.finger_run": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "unit",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "finger_target",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "relative",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": [
+              {
+                "_type": "Constant",
+                "value": "percent",
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": null,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": false,
+                "kind": null
+              }
+            ]
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinovaRobot.cartesian_pose_client": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "position",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "orientation",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinovaRobot.gripper_client": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "finger_positions",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinovaRobot.unitParser_arm": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "unit_",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "pose_value_",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "relative_",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinovaRobot.QuaternionNorm": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "Q_raw",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinovaRobot.Quaternion2EulerXYZ": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "Q_raw",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinovaRobot.EulerXYZ2Quaternion": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "EulerXYZ_",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinovaRobot.unitParser_finger": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "unit_",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "finger_value_",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "relative_",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinovaRobot.getcurrentCartesianCommand": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinovaRobot.setcurrentCartesianCommand": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "feedback",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinovaRobot.getCurrentFingerPosition": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinovaRobot.setCurrentFingerPosition": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "feedback",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinovaRobot.transform": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "position",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinovaRobot.image_to_arm": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "camera_x",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "camera_y",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "camera_z",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinovaRobot.verboseParser": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "verbose",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": [
+              {
+                "_type": "Constant",
+                "value": false,
+                "kind": null
+              }
+            ]
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinovaRobot.goto_detect": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinovaRobot.goto_home": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinovaRobot.catch_ground": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "result",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": [
+              {
+                "_type": "Constant",
+                "value": null,
+                "kind": null
+              }
+            ]
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinovaRobot.open_finger": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinovaRobot.help": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinovaRobot.no_close_finger": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinovaRobot.close_finger": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinovaRobot.catch_table": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "target",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": [
+              {
+                "_type": "List",
+                "elts": [
+                  {
+                    "_type": "Constant",
+                    "value": "bottle",
+                    "kind": null
+                  }
+                ],
+                "ctx": {
+                  "_type": "Load"
+                }
+              }
+            ]
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinovaRobot.catch_table_short": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "target",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": [
+              {
+                "_type": "List",
+                "elts": [
+                  {
+                    "_type": "Constant",
+                    "value": "bottle",
+                    "kind": null
+                  }
+                ],
+                "ctx": {
+                  "_type": "Load"
+                }
+              }
+            ]
+          },
+          "returns": null,
+          "decorators": []
+        }
+      },
+      "patched_methods": [
+        "KinovaRobot.__init__",
+        "KinovaRobot.getcurrentCartesianCommand",
+        "KinovaRobot.getCurrentFingerPosition",
+        "KinovaRobot.catch_table",
+        "KinovaRobot.catch_table_short"
+      ],
+      "unchanged_ast_sha256": "08ee6f6f1ad66acf47a6e169d5ec3f6a455edc25bbfcadb8e82754a623782a09",
+      "protected_assignments": {
+        "KinovaRobot.__init__:self.finger_maxDist": [
+          {
+            "_type": "BinOp",
+            "left": {
+              "_type": "BinOp",
+              "left": {
+                "_type": "Constant",
+                "value": 18.9,
+                "kind": null
+              },
+              "op": {
+                "_type": "Div"
+              },
+              "right": {
+                "_type": "Constant",
+                "value": 2,
+                "kind": null
+              }
+            },
+            "op": {
+              "_type": "Div"
+            },
+            "right": {
+              "_type": "Constant",
+              "value": 1000,
+              "kind": null
+            }
+          }
+        ],
+        "KinovaRobot.__init__:self.finger_maxTurn": [
+          {
+            "_type": "Constant",
+            "value": 6800,
+            "kind": null
+          }
+        ],
+        "KinovaRobot.__init__:self.homePositionMdeg": [
+          {
+            "_type": "List",
+            "elts": [
+              {
+                "_type": "Constant",
+                "value": 0.2104809731245041,
+                "kind": null
+              },
+              {
+                "_type": "UnaryOp",
+                "op": {
+                  "_type": "USub"
+                },
+                "operand": {
+                  "_type": "Constant",
+                  "value": 0.25873029232025146,
+                  "kind": null
+                }
+              },
+              {
+                "_type": "Constant",
+                "value": 0.5095799565315247,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 81.04,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 83.972,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 11.606,
+                "kind": null
+              }
+            ],
+            "ctx": {
+              "_type": "Load"
+            }
+          }
+        ],
+        "KinovaRobot.__init__:home_position": [
+          {
+            "_type": "List",
+            "elts": [
+              {
+                "_type": "Constant",
+                "value": 0.2104809731245041,
+                "kind": null
+              },
+              {
+                "_type": "UnaryOp",
+                "op": {
+                  "_type": "USub"
+                },
+                "operand": {
+                  "_type": "Constant",
+                  "value": 0.25873029232025146,
+                  "kind": null
+                }
+              },
+              {
+                "_type": "Constant",
+                "value": 0.5095799565315247,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 81.04,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 83.972,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 11.606,
+                "kind": null
+              }
+            ],
+            "ctx": {
+              "_type": "Load"
+            }
+          }
+        ],
+        "KinovaRobot.__init__:self.kinectA2kinova_matrix": [
+          {
+            "_type": "Call",
+            "func": {
+              "_type": "Attribute",
+              "value": {
+                "_type": "Name",
+                "id": "np",
+                "ctx": {
+                  "_type": "Load"
+                }
+              },
+              "attr": "eye",
+              "ctx": {
+                "_type": "Load"
+              }
+            },
+            "args": [
+              {
+                "_type": "Constant",
+                "value": 4,
+                "kind": null
+              }
+            ],
+            "keywords": []
+          },
+          {
+            "_type": "Call",
+            "func": {
+              "_type": "Attribute",
+              "value": {
+                "_type": "Name",
+                "id": "np",
+                "ctx": {
+                  "_type": "Load"
+                }
+              },
+              "attr": "array",
+              "ctx": {
+                "_type": "Load"
+              }
+            },
+            "args": [
+              {
+                "_type": "List",
+                "elts": [
+                  {
+                    "_type": "List",
+                    "elts": [
+                      {
+                        "_type": "UnaryOp",
+                        "op": {
+                          "_type": "USub"
+                        },
+                        "operand": {
+                          "_type": "Constant",
+                          "value": 0.09811982,
+                          "kind": null
+                        }
+                      },
+                      {
+                        "_type": "UnaryOp",
+                        "op": {
+                          "_type": "USub"
+                        },
+                        "operand": {
+                          "_type": "Constant",
+                          "value": 0.50830614,
+                          "kind": null
+                        }
+                      },
+                      {
+                        "_type": "Constant",
+                        "value": 0.85556845,
+                        "kind": null
+                      },
+                      {
+                        "_type": "UnaryOp",
+                        "op": {
+                          "_type": "USub"
+                        },
+                        "operand": {
+                          "_type": "Constant",
+                          "value": 0.11490607,
+                          "kind": null
+                        }
+                      }
+                    ],
+                    "ctx": {
+                      "_type": "Load"
+                    }
+                  },
+                  {
+                    "_type": "List",
+                    "elts": [
+                      {
+                        "_type": "UnaryOp",
+                        "op": {
+                          "_type": "USub"
+                        },
+                        "operand": {
+                          "_type": "Constant",
+                          "value": 0.98824356,
+                          "kind": null
+                        }
+                      },
+                      {
+                        "_type": "UnaryOp",
+                        "op": {
+                          "_type": "USub"
+                        },
+                        "operand": {
+                          "_type": "Constant",
+                          "value": 0.05152143,
+                          "kind": null
+                        }
+                      },
+                      {
+                        "_type": "UnaryOp",
+                        "op": {
+                          "_type": "USub"
+                        },
+                        "operand": {
+                          "_type": "Constant",
+                          "value": 0.14394517,
+                          "kind": null
+                        }
+                      },
+                      {
+                        "_type": "UnaryOp",
+                        "op": {
+                          "_type": "USub"
+                        },
+                        "operand": {
+                          "_type": "Constant",
+                          "value": 0.00222445,
+                          "kind": null
+                        }
+                      }
+                    ],
+                    "ctx": {
+                      "_type": "Load"
+                    }
+                  },
+                  {
+                    "_type": "List",
+                    "elts": [
+                      {
+                        "_type": "Constant",
+                        "value": 0.11724832,
+                        "kind": null
+                      },
+                      {
+                        "_type": "UnaryOp",
+                        "op": {
+                          "_type": "USub"
+                        },
+                        "operand": {
+                          "_type": "Constant",
+                          "value": 0.85963388,
+                          "kind": null
+                        }
+                      },
+                      {
+                        "_type": "UnaryOp",
+                        "op": {
+                          "_type": "USub"
+                        },
+                        "operand": {
+                          "_type": "Constant",
+                          "value": 0.49727499,
+                          "kind": null
+                        }
+                      },
+                      {
+                        "_type": "Constant",
+                        "value": 1.07570852,
+                        "kind": null
+                      }
+                    ],
+                    "ctx": {
+                      "_type": "Load"
+                    }
+                  },
+                  {
+                    "_type": "List",
+                    "elts": [
+                      {
+                        "_type": "Constant",
+                        "value": 0.0,
+                        "kind": null
+                      },
+                      {
+                        "_type": "Constant",
+                        "value": 0.0,
+                        "kind": null
+                      },
+                      {
+                        "_type": "Constant",
+                        "value": 0.0,
+                        "kind": null
+                      },
+                      {
+                        "_type": "Constant",
+                        "value": 1.0,
+                        "kind": null
+                      }
+                    ],
+                    "ctx": {
+                      "_type": "Load"
+                    }
+                  }
+                ],
+                "ctx": {
+                  "_type": "Load"
+                }
+              }
+            ],
+            "keywords": []
+          }
+        ],
+        "KinovaRobot.__init__:self.realsense2kinova_matrix": [
+          {
+            "_type": "Call",
+            "func": {
+              "_type": "Attribute",
+              "value": {
+                "_type": "Name",
+                "id": "np",
+                "ctx": {
+                  "_type": "Load"
+                }
+              },
+              "attr": "array",
+              "ctx": {
+                "_type": "Load"
+              }
+            },
+            "args": [
+              {
+                "_type": "List",
+                "elts": [
+                  {
+                    "_type": "List",
+                    "elts": [
+                      {
+                        "_type": "UnaryOp",
+                        "op": {
+                          "_type": "USub"
+                        },
+                        "operand": {
+                          "_type": "Constant",
+                          "value": 0.81552114,
+                          "kind": null
+                        }
+                      },
+                      {
+                        "_type": "UnaryOp",
+                        "op": {
+                          "_type": "USub"
+                        },
+                        "operand": {
+                          "_type": "Constant",
+                          "value": 0.02233797,
+                          "kind": null
+                        }
+                      },
+                      {
+                        "_type": "UnaryOp",
+                        "op": {
+                          "_type": "USub"
+                        },
+                        "operand": {
+                          "_type": "Constant",
+                          "value": 0.57829602,
+                          "kind": null
+                        }
+                      },
+                      {
+                        "_type": "Constant",
+                        "value": 1.37482036,
+                        "kind": null
+                      }
+                    ],
+                    "ctx": {
+                      "_type": "Load"
+                    }
+                  },
+                  {
+                    "_type": "List",
+                    "elts": [
+                      {
+                        "_type": "Constant",
+                        "value": 0.06292209,
+                        "kind": null
+                      },
+                      {
+                        "_type": "UnaryOp",
+                        "op": {
+                          "_type": "USub"
+                        },
+                        "operand": {
+                          "_type": "Constant",
+                          "value": 0.99675352,
+                          "kind": null
+                        }
+                      },
+                      {
+                        "_type": "UnaryOp",
+                        "op": {
+                          "_type": "USub"
+                        },
+                        "operand": {
+                          "_type": "Constant",
+                          "value": 0.05023179,
+                          "kind": null
+                        }
+                      },
+                      {
+                        "_type": "UnaryOp",
+                        "op": {
+                          "_type": "USub"
+                        },
+                        "operand": {
+                          "_type": "Constant",
+                          "value": 0.04230057,
+                          "kind": null
+                        }
+                      }
+                    ],
+                    "ctx": {
+                      "_type": "Load"
+                    }
+                  },
+                  {
+                    "_type": "List",
+                    "elts": [
+                      {
+                        "_type": "UnaryOp",
+                        "op": {
+                          "_type": "USub"
+                        },
+                        "operand": {
+                          "_type": "Constant",
+                          "value": 0.57529651,
+                          "kind": null
+                        }
+                      },
+                      {
+                        "_type": "UnaryOp",
+                        "op": {
+                          "_type": "USub"
+                        },
+                        "operand": {
+                          "_type": "Constant",
+                          "value": 0.07735268,
+                          "kind": null
+                        }
+                      },
+                      {
+                        "_type": "Constant",
+                        "value": 0.81427912,
+                        "kind": null
+                      },
+                      {
+                        "_type": "Constant",
+                        "value": 0.84682352,
+                        "kind": null
+                      }
+                    ],
+                    "ctx": {
+                      "_type": "Load"
+                    }
+                  },
+                  {
+                    "_type": "List",
+                    "elts": [
+                      {
+                        "_type": "Constant",
+                        "value": 0.0,
+                        "kind": null
+                      },
+                      {
+                        "_type": "Constant",
+                        "value": 0.0,
+                        "kind": null
+                      },
+                      {
+                        "_type": "Constant",
+                        "value": 0.0,
+                        "kind": null
+                      },
+                      {
+                        "_type": "Constant",
+                        "value": 1.0,
+                        "kind": null
+                      }
+                    ],
+                    "ctx": {
+                      "_type": "Load"
+                    }
+                  }
+                ],
+                "ctx": {
+                  "_type": "Load"
+                }
+              }
+            ],
+            "keywords": []
+          }
+        ],
+        "KinovaRobot.goto_detect:home_position": [
+          {
+            "_type": "List",
+            "elts": [
+              {
+                "_type": "Constant",
+                "value": 0.2104809731245041,
+                "kind": null
+              },
+              {
+                "_type": "UnaryOp",
+                "op": {
+                  "_type": "USub"
+                },
+                "operand": {
+                  "_type": "Constant",
+                  "value": 0.25873029232025146,
+                  "kind": null
+                }
+              },
+              {
+                "_type": "Constant",
+                "value": 0.5095799565315247,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 81.04,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 83.972,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 11.606,
+                "kind": null
+              }
+            ],
+            "ctx": {
+              "_type": "Load"
+            }
+          }
+        ],
+        "KinovaRobot.goto_detect:position_down": [
+          {
+            "_type": "List",
+            "elts": [
+              {
+                "_type": "Constant",
+                "value": 0.513305,
+                "kind": null
+              },
+              {
+                "_type": "UnaryOp",
+                "op": {
+                  "_type": "USub"
+                },
+                "operand": {
+                  "_type": "Constant",
+                  "value": 0.15027,
+                  "kind": null
+                }
+              },
+              {
+                "_type": "Constant",
+                "value": 0.257235,
+                "kind": null
+              },
+              {
+                "_type": "UnaryOp",
+                "op": {
+                  "_type": "USub"
+                },
+                "operand": {
+                  "_type": "Constant",
+                  "value": 173.0,
+                  "kind": null
+                }
+              },
+              {
+                "_type": "UnaryOp",
+                "op": {
+                  "_type": "USub"
+                },
+                "operand": {
+                  "_type": "Constant",
+                  "value": 3.4,
+                  "kind": null
+                }
+              },
+              {
+                "_type": "UnaryOp",
+                "op": {
+                  "_type": "USub"
+                },
+                "operand": {
+                  "_type": "Constant",
+                  "value": 89.4,
+                  "kind": null
+                }
+              }
+            ],
+            "ctx": {
+              "_type": "Load"
+            }
+          }
+        ],
+        "KinovaRobot.goto_home:home_position": [
+          {
+            "_type": "List",
+            "elts": [
+              {
+                "_type": "Constant",
+                "value": 0.2104809731245041,
+                "kind": null
+              },
+              {
+                "_type": "UnaryOp",
+                "op": {
+                  "_type": "USub"
+                },
+                "operand": {
+                  "_type": "Constant",
+                  "value": 0.25873029232025146,
+                  "kind": null
+                }
+              },
+              {
+                "_type": "Constant",
+                "value": 0.5095799565315247,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 81.04,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 83.972,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 11.606,
+                "kind": null
+              }
+            ],
+            "ctx": {
+              "_type": "Load"
+            }
+          }
+        ],
+        "KinovaRobot.goto_home:position_down": [
+          {
+            "_type": "List",
+            "elts": [
+              {
+                "_type": "Constant",
+                "value": 0.513305,
+                "kind": null
+              },
+              {
+                "_type": "UnaryOp",
+                "op": {
+                  "_type": "USub"
+                },
+                "operand": {
+                  "_type": "Constant",
+                  "value": 0.15027,
+                  "kind": null
+                }
+              },
+              {
+                "_type": "Constant",
+                "value": 0.257235,
+                "kind": null
+              },
+              {
+                "_type": "UnaryOp",
+                "op": {
+                  "_type": "USub"
+                },
+                "operand": {
+                  "_type": "Constant",
+                  "value": 173.0,
+                  "kind": null
+                }
+              },
+              {
+                "_type": "UnaryOp",
+                "op": {
+                  "_type": "USub"
+                },
+                "operand": {
+                  "_type": "Constant",
+                  "value": 3.4,
+                  "kind": null
+                }
+              },
+              {
+                "_type": "UnaryOp",
+                "op": {
+                  "_type": "USub"
+                },
+                "operand": {
+                  "_type": "Constant",
+                  "value": 89.4,
+                  "kind": null
+                }
+              }
+            ],
+            "ctx": {
+              "_type": "Load"
+            }
+          }
+        ],
+        "KinovaRobot.catch_ground:x_down": [
+          {
+            "_type": "Constant",
+            "value": 0.513305,
+            "kind": null
+          }
+        ],
+        "KinovaRobot.catch_ground:y_down": [
+          {
+            "_type": "UnaryOp",
+            "op": {
+              "_type": "USub"
+            },
+            "operand": {
+              "_type": "Constant",
+              "value": 0.15027,
+              "kind": null
+            }
+          }
+        ],
+        "KinovaRobot.catch_ground:z_down": [
+          {
+            "_type": "Constant",
+            "value": 0.257235,
+            "kind": null
+          }
+        ],
+        "KinovaRobot.catch_ground:home_position": [
+          {
+            "_type": "List",
+            "elts": [
+              {
+                "_type": "Constant",
+                "value": 0.2104809731245041,
+                "kind": null
+              },
+              {
+                "_type": "UnaryOp",
+                "op": {
+                  "_type": "USub"
+                },
+                "operand": {
+                  "_type": "Constant",
+                  "value": 0.25873029232025146,
+                  "kind": null
+                }
+              },
+              {
+                "_type": "Constant",
+                "value": 0.5095799565315247,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 81.04,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 83.972,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 11.606,
+                "kind": null
+              }
+            ],
+            "ctx": {
+              "_type": "Load"
+            }
+          }
+        ],
+        "KinovaRobot.catch_ground:position_down": [
+          {
+            "_type": "List",
+            "elts": [
+              {
+                "_type": "Constant",
+                "value": 0.513305,
+                "kind": null
+              },
+              {
+                "_type": "UnaryOp",
+                "op": {
+                  "_type": "USub"
+                },
+                "operand": {
+                  "_type": "Constant",
+                  "value": 0.15027,
+                  "kind": null
+                }
+              },
+              {
+                "_type": "Constant",
+                "value": 0.257235,
+                "kind": null
+              },
+              {
+                "_type": "UnaryOp",
+                "op": {
+                  "_type": "USub"
+                },
+                "operand": {
+                  "_type": "Constant",
+                  "value": 173.0,
+                  "kind": null
+                }
+              },
+              {
+                "_type": "UnaryOp",
+                "op": {
+                  "_type": "USub"
+                },
+                "operand": {
+                  "_type": "Constant",
+                  "value": 3.4,
+                  "kind": null
+                }
+              },
+              {
+                "_type": "UnaryOp",
+                "op": {
+                  "_type": "USub"
+                },
+                "operand": {
+                  "_type": "Constant",
+                  "value": 89.4,
+                  "kind": null
+                }
+              }
+            ],
+            "ctx": {
+              "_type": "Load"
+            }
+          }
+        ],
+        "KinovaRobot.catch_ground:position2": [
+          {
+            "_type": "List",
+            "elts": [
+              {
+                "_type": "BinOp",
+                "left": {
+                  "_type": "BinOp",
+                  "left": {
+                    "_type": "UnaryOp",
+                    "op": {
+                      "_type": "USub"
+                    },
+                    "operand": {
+                      "_type": "Subscript",
+                      "value": {
+                        "_type": "Name",
+                        "id": "camera_coordinate",
+                        "ctx": {
+                          "_type": "Load"
+                        }
+                      },
+                      "slice": {
+                        "_type": "Constant",
+                        "value": 1,
+                        "kind": null
+                      },
+                      "ctx": {
+                        "_type": "Load"
+                      }
+                    }
+                  },
+                  "op": {
+                    "_type": "Add"
+                  },
+                  "right": {
+                    "_type": "Constant",
+                    "value": 0.1,
+                    "kind": null
+                  }
+                },
+                "op": {
+                  "_type": "Add"
+                },
+                "right": {
+                  "_type": "Name",
+                  "id": "x_down",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                }
+              },
+              {
+                "_type": "BinOp",
+                "left": {
+                  "_type": "UnaryOp",
+                  "op": {
+                    "_type": "USub"
+                  },
+                  "operand": {
+                    "_type": "BinOp",
+                    "left": {
+                      "_type": "Subscript",
+                      "value": {
+                        "_type": "Name",
+                        "id": "camera_coordinate",
+                        "ctx": {
+                          "_type": "Load"
+                        }
+                      },
+                      "slice": {
+                        "_type": "Constant",
+                        "value": 2,
+                        "kind": null
+                      },
+                      "ctx": {
+                        "_type": "Load"
+                      }
+                    },
+                    "op": {
+                      "_type": "Sub"
+                    },
+                    "right": {
+                      "_type": "Constant",
+                      "value": 0.1,
+                      "kind": null
+                    }
+                  }
+                },
+                "op": {
+                  "_type": "Add"
+                },
+                "right": {
+                  "_type": "Name",
+                  "id": "y_down",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                }
+              },
+              {
+                "_type": "Name",
+                "id": "z_down",
+                "ctx": {
+                  "_type": "Load"
+                }
+              },
+              {
+                "_type": "UnaryOp",
+                "op": {
+                  "_type": "USub"
+                },
+                "operand": {
+                  "_type": "Constant",
+                  "value": 173.0,
+                  "kind": null
+                }
+              },
+              {
+                "_type": "UnaryOp",
+                "op": {
+                  "_type": "USub"
+                },
+                "operand": {
+                  "_type": "Constant",
+                  "value": 3.4,
+                  "kind": null
+                }
+              },
+              {
+                "_type": "Name",
+                "id": "turn_angle",
+                "ctx": {
+                  "_type": "Load"
+                }
+              }
+            ],
+            "ctx": {
+              "_type": "Load"
+            }
+          }
+        ],
+        "KinovaRobot.catch_ground:position3": [
+          {
+            "_type": "List",
+            "elts": [
+              {
+                "_type": "BinOp",
+                "left": {
+                  "_type": "BinOp",
+                  "left": {
+                    "_type": "UnaryOp",
+                    "op": {
+                      "_type": "USub"
+                    },
+                    "operand": {
+                      "_type": "Subscript",
+                      "value": {
+                        "_type": "Name",
+                        "id": "camera_coordinate",
+                        "ctx": {
+                          "_type": "Load"
+                        }
+                      },
+                      "slice": {
+                        "_type": "Constant",
+                        "value": 1,
+                        "kind": null
+                      },
+                      "ctx": {
+                        "_type": "Load"
+                      }
+                    }
+                  },
+                  "op": {
+                    "_type": "Add"
+                  },
+                  "right": {
+                    "_type": "Constant",
+                    "value": 0.1,
+                    "kind": null
+                  }
+                },
+                "op": {
+                  "_type": "Add"
+                },
+                "right": {
+                  "_type": "Name",
+                  "id": "x_down",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                }
+              },
+              {
+                "_type": "BinOp",
+                "left": {
+                  "_type": "UnaryOp",
+                  "op": {
+                    "_type": "USub"
+                  },
+                  "operand": {
+                    "_type": "BinOp",
+                    "left": {
+                      "_type": "Subscript",
+                      "value": {
+                        "_type": "Name",
+                        "id": "camera_coordinate",
+                        "ctx": {
+                          "_type": "Load"
+                        }
+                      },
+                      "slice": {
+                        "_type": "Constant",
+                        "value": 2,
+                        "kind": null
+                      },
+                      "ctx": {
+                        "_type": "Load"
+                      }
+                    },
+                    "op": {
+                      "_type": "Sub"
+                    },
+                    "right": {
+                      "_type": "Constant",
+                      "value": 0.1,
+                      "kind": null
+                    }
+                  }
+                },
+                "op": {
+                  "_type": "Add"
+                },
+                "right": {
+                  "_type": "Name",
+                  "id": "y_down",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                }
+              },
+              {
+                "_type": "UnaryOp",
+                "op": {
+                  "_type": "USub"
+                },
+                "operand": {
+                  "_type": "Constant",
+                  "value": 0.21,
+                  "kind": null
+                }
+              },
+              {
+                "_type": "UnaryOp",
+                "op": {
+                  "_type": "USub"
+                },
+                "operand": {
+                  "_type": "Constant",
+                  "value": 173.0,
+                  "kind": null
+                }
+              },
+              {
+                "_type": "UnaryOp",
+                "op": {
+                  "_type": "USub"
+                },
+                "operand": {
+                  "_type": "Constant",
+                  "value": 3.4,
+                  "kind": null
+                }
+              },
+              {
+                "_type": "Name",
+                "id": "turn_angle",
+                "ctx": {
+                  "_type": "Load"
+                }
+              }
+            ],
+            "ctx": {
+              "_type": "Load"
+            }
+          }
+        ],
+        "KinovaRobot.open_finger:home_position": [
+          {
+            "_type": "List",
+            "elts": [
+              {
+                "_type": "Constant",
+                "value": 0.2104809731245041,
+                "kind": null
+              },
+              {
+                "_type": "UnaryOp",
+                "op": {
+                  "_type": "USub"
+                },
+                "operand": {
+                  "_type": "Constant",
+                  "value": 0.25873029232025146,
+                  "kind": null
+                }
+              },
+              {
+                "_type": "Constant",
+                "value": 0.5095799565315247,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 81.04,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 83.972,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 11.606,
+                "kind": null
+              }
+            ],
+            "ctx": {
+              "_type": "Load"
+            }
+          }
+        ],
+        "KinovaRobot.catch_table:x_down": [
+          {
+            "_type": "Constant",
+            "value": 0.52,
+            "kind": null
+          }
+        ],
+        "KinovaRobot.catch_table:y_down": [
+          {
+            "_type": "Constant",
+            "value": 0.1,
+            "kind": null
+          }
+        ],
+        "KinovaRobot.catch_table:z_down": [
+          {
+            "_type": "Constant",
+            "value": 0.63,
+            "kind": null
+          }
+        ],
+        "KinovaRobot.catch_table:home_position": [
+          {
+            "_type": "List",
+            "elts": [
+              {
+                "_type": "Constant",
+                "value": 0.2104809731245041,
+                "kind": null
+              },
+              {
+                "_type": "UnaryOp",
+                "op": {
+                  "_type": "USub"
+                },
+                "operand": {
+                  "_type": "Constant",
+                  "value": 0.25873029232025146,
+                  "kind": null
+                }
+              },
+              {
+                "_type": "Constant",
+                "value": 0.5095799565315247,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 81.04,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 83.972,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 11.606,
+                "kind": null
+              }
+            ],
+            "ctx": {
+              "_type": "Load"
+            }
+          }
+        ],
+        "KinovaRobot.catch_table:position_down": [
+          {
+            "_type": "List",
+            "elts": [
+              {
+                "_type": "Constant",
+                "value": 0.32235899567604065,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 0.005918905138969421,
+                "kind": null
+              },
+              {
+                "_type": "BinOp",
+                "left": {
+                  "_type": "Constant",
+                  "value": 0.5368188333511353,
+                  "kind": null
+                },
+                "op": {
+                  "_type": "Sub"
+                },
+                "right": {
+                  "_type": "Constant",
+                  "value": 0.01,
+                  "kind": null
+                }
+              },
+              {
+                "_type": "Constant",
+                "value": 81.04,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 83.972,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 5.606,
+                "kind": null
+              }
+            ],
+            "ctx": {
+              "_type": "Load"
+            }
+          }
+        ],
+        "KinovaRobot.catch_table:position2": [
+          {
+            "_type": "List",
+            "elts": [
+              {
+                "_type": "Constant",
+                "value": 0.535,
+                "kind": null
+              },
+              {
+                "_type": "BinOp",
+                "left": {
+                  "_type": "UnaryOp",
+                  "op": {
+                    "_type": "USub"
+                  },
+                  "operand": {
+                    "_type": "BinOp",
+                    "left": {
+                      "_type": "Subscript",
+                      "value": {
+                        "_type": "Name",
+                        "id": "camera_coordinate",
+                        "ctx": {
+                          "_type": "Load"
+                        }
+                      },
+                      "slice": {
+                        "_type": "Constant",
+                        "value": 2,
+                        "kind": null
+                      },
+                      "ctx": {
+                        "_type": "Load"
+                      }
+                    },
+                    "op": {
+                      "_type": "Add"
+                    },
+                    "right": {
+                      "_type": "Constant",
+                      "value": 0.09,
+                      "kind": null
+                    }
+                  }
+                },
+                "op": {
+                  "_type": "Add"
+                },
+                "right": {
+                  "_type": "Name",
+                  "id": "y_down",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                }
+              },
+              {
+                "_type": "Name",
+                "id": "z_down",
+                "ctx": {
+                  "_type": "Load"
+                }
+              },
+              {
+                "_type": "Constant",
+                "value": 81.04,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 83.972,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 11.606,
+                "kind": null
+              }
+            ],
+            "ctx": {
+              "_type": "Load"
+            }
+          }
+        ],
+        "KinovaRobot.catch_table:position3": [
+          {
+            "_type": "List",
+            "elts": [
+              {
+                "_type": "BinOp",
+                "left": {
+                  "_type": "BinOp",
+                  "left": {
+                    "_type": "UnaryOp",
+                    "op": {
+                      "_type": "USub"
+                    },
+                    "operand": {
+                      "_type": "Subscript",
+                      "value": {
+                        "_type": "Name",
+                        "id": "camera_coordinate",
+                        "ctx": {
+                          "_type": "Load"
+                        }
+                      },
+                      "slice": {
+                        "_type": "Constant",
+                        "value": 1,
+                        "kind": null
+                      },
+                      "ctx": {
+                        "_type": "Load"
+                      }
+                    }
+                  },
+                  "op": {
+                    "_type": "Add"
+                  },
+                  "right": {
+                    "_type": "Constant",
+                    "value": 0.1,
+                    "kind": null
+                  }
+                },
+                "op": {
+                  "_type": "Add"
+                },
+                "right": {
+                  "_type": "Name",
+                  "id": "x_down",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                }
+              },
+              {
+                "_type": "BinOp",
+                "left": {
+                  "_type": "UnaryOp",
+                  "op": {
+                    "_type": "USub"
+                  },
+                  "operand": {
+                    "_type": "BinOp",
+                    "left": {
+                      "_type": "Subscript",
+                      "value": {
+                        "_type": "Name",
+                        "id": "camera_coordinate",
+                        "ctx": {
+                          "_type": "Load"
+                        }
+                      },
+                      "slice": {
+                        "_type": "Constant",
+                        "value": 2,
+                        "kind": null
+                      },
+                      "ctx": {
+                        "_type": "Load"
+                      }
+                    },
+                    "op": {
+                      "_type": "Add"
+                    },
+                    "right": {
+                      "_type": "Constant",
+                      "value": 0.15,
+                      "kind": null
+                    }
+                  }
+                },
+                "op": {
+                  "_type": "Add"
+                },
+                "right": {
+                  "_type": "Name",
+                  "id": "y_down",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                }
+              },
+              {
+                "_type": "BinOp",
+                "left": {
+                  "_type": "Name",
+                  "id": "z_down",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "op": {
+                  "_type": "Add"
+                },
+                "right": {
+                  "_type": "Constant",
+                  "value": 0.12,
+                  "kind": null
+                }
+              },
+              {
+                "_type": "Constant",
+                "value": 81.04,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 83.972,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 11.606,
+                "kind": null
+              }
+            ],
+            "ctx": {
+              "_type": "Load"
+            }
+          }
+        ],
+        "KinovaRobot.catch_table_short:x_down": [
+          {
+            "_type": "Constant",
+            "value": 0.52,
+            "kind": null
+          }
+        ],
+        "KinovaRobot.catch_table_short:y_down": [
+          {
+            "_type": "Constant",
+            "value": 0.1,
+            "kind": null
+          }
+        ],
+        "KinovaRobot.catch_table_short:z_down": [
+          {
+            "_type": "Constant",
+            "value": 0.43,
+            "kind": null
+          }
+        ],
+        "KinovaRobot.catch_table_short:home_position": [
+          {
+            "_type": "List",
+            "elts": [
+              {
+                "_type": "Constant",
+                "value": 0.2104809731245041,
+                "kind": null
+              },
+              {
+                "_type": "UnaryOp",
+                "op": {
+                  "_type": "USub"
+                },
+                "operand": {
+                  "_type": "Constant",
+                  "value": 0.25873029232025146,
+                  "kind": null
+                }
+              },
+              {
+                "_type": "Constant",
+                "value": 0.5095799565315247,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 81.04,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 83.972,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 11.606,
+                "kind": null
+              }
+            ],
+            "ctx": {
+              "_type": "Load"
+            }
+          }
+        ],
+        "KinovaRobot.catch_table_short:position_down": [
+          {
+            "_type": "List",
+            "elts": [
+              {
+                "_type": "Constant",
+                "value": 0.32235899567604065,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 0.005918905138969421,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 0.4368188333511353,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 81.04,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 83.972,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 5.606,
+                "kind": null
+              }
+            ],
+            "ctx": {
+              "_type": "Load"
+            }
+          }
+        ],
+        "KinovaRobot.catch_table_short:position2": [
+          {
+            "_type": "List",
+            "elts": [
+              {
+                "_type": "Constant",
+                "value": 0.535,
+                "kind": null
+              },
+              {
+                "_type": "BinOp",
+                "left": {
+                  "_type": "UnaryOp",
+                  "op": {
+                    "_type": "USub"
+                  },
+                  "operand": {
+                    "_type": "BinOp",
+                    "left": {
+                      "_type": "Subscript",
+                      "value": {
+                        "_type": "Name",
+                        "id": "camera_coordinate",
+                        "ctx": {
+                          "_type": "Load"
+                        }
+                      },
+                      "slice": {
+                        "_type": "Constant",
+                        "value": 2,
+                        "kind": null
+                      },
+                      "ctx": {
+                        "_type": "Load"
+                      }
+                    },
+                    "op": {
+                      "_type": "Add"
+                    },
+                    "right": {
+                      "_type": "Constant",
+                      "value": 0.09,
+                      "kind": null
+                    }
+                  }
+                },
+                "op": {
+                  "_type": "Add"
+                },
+                "right": {
+                  "_type": "Name",
+                  "id": "y_down",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                }
+              },
+              {
+                "_type": "Name",
+                "id": "z_down",
+                "ctx": {
+                  "_type": "Load"
+                }
+              },
+              {
+                "_type": "Constant",
+                "value": 81.04,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 83.972,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 11.606,
+                "kind": null
+              }
+            ],
+            "ctx": {
+              "_type": "Load"
+            }
+          }
+        ],
+        "KinovaRobot.catch_table_short:position3": [
+          {
+            "_type": "List",
+            "elts": [
+              {
+                "_type": "BinOp",
+                "left": {
+                  "_type": "BinOp",
+                  "left": {
+                    "_type": "UnaryOp",
+                    "op": {
+                      "_type": "USub"
+                    },
+                    "operand": {
+                      "_type": "Subscript",
+                      "value": {
+                        "_type": "Name",
+                        "id": "camera_coordinate",
+                        "ctx": {
+                          "_type": "Load"
+                        }
+                      },
+                      "slice": {
+                        "_type": "Constant",
+                        "value": 1,
+                        "kind": null
+                      },
+                      "ctx": {
+                        "_type": "Load"
+                      }
+                    }
+                  },
+                  "op": {
+                    "_type": "Add"
+                  },
+                  "right": {
+                    "_type": "Constant",
+                    "value": 0.1,
+                    "kind": null
+                  }
+                },
+                "op": {
+                  "_type": "Add"
+                },
+                "right": {
+                  "_type": "Name",
+                  "id": "x_down",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                }
+              },
+              {
+                "_type": "BinOp",
+                "left": {
+                  "_type": "UnaryOp",
+                  "op": {
+                    "_type": "USub"
+                  },
+                  "operand": {
+                    "_type": "BinOp",
+                    "left": {
+                      "_type": "Subscript",
+                      "value": {
+                        "_type": "Name",
+                        "id": "camera_coordinate",
+                        "ctx": {
+                          "_type": "Load"
+                        }
+                      },
+                      "slice": {
+                        "_type": "Constant",
+                        "value": 2,
+                        "kind": null
+                      },
+                      "ctx": {
+                        "_type": "Load"
+                      }
+                    },
+                    "op": {
+                      "_type": "Add"
+                    },
+                    "right": {
+                      "_type": "Constant",
+                      "value": 0.15,
+                      "kind": null
+                    }
+                  }
+                },
+                "op": {
+                  "_type": "Add"
+                },
+                "right": {
+                  "_type": "Name",
+                  "id": "y_down",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                }
+              },
+              {
+                "_type": "BinOp",
+                "left": {
+                  "_type": "Name",
+                  "id": "z_down",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "op": {
+                  "_type": "Add"
+                },
+                "right": {
+                  "_type": "Constant",
+                  "value": 0.12,
+                  "kind": null
+                }
+              },
+              {
+                "_type": "Constant",
+                "value": 81.04,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 83.972,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 11.606,
+                "kind": null
+              }
+            ],
+            "ctx": {
+              "_type": "Load"
+            }
+          }
+        ]
+      },
+      "all_function_shapes": [
+        "08bf75eb9215437358cb545bbe08ede2b80f2521ec00a95b35034e0f2b8f31b4:verboseParser",
+        "18b84bb5886f5601ef02b9ca90446c269d054f66095622d55964fd906ef3a2cf:__init__",
+        "21fbd1d01b4c4669d2f60b2e29c462dbf7bc8a3c916171f3da12841ed5d6d6cf:arm_run",
+        "23eb5ea07af36d4c76e9a035997ddda3dbff512fa7dd99b488fe14395d6dd31c:quaternion_to_rotation_matrix",
+        "26d52b22cad768071135dd5b19ac3c04f65c9e1902520ceca3dd63768d82085c:gripper_client",
+        "3ffcf96618c15ef7e0a519708846595687a1c66b55be025c9183e2220f8cffe2:unitParser_arm",
+        "45847814bc9e2a6c746c4bd557276931f30ba967b6b34ef2c1f9c10cb258f6a8:Quaternion2EulerXYZ",
+        "45847814bc9e2a6c746c4bd557276931f30ba967b6b34ef2c1f9c10cb258f6a8:QuaternionNorm",
+        "4bdaa5adfefc22f47ca4110d4ab6aacc247e9f374a151ab563167ce0cd3fe8b1:EulerXYZ2Quaternion",
+        "55903a526e173dc7044ba762ed3f634fb46eceb7c25a226bc230de2984334317:transform",
+        "67890b414bd3e606ad675f545337f201b60bc50e409059f464e0eeb712180dfa:unitParser_finger",
+        "78dbd357bf7ed86e4b1d06d5e060d4d49f6eb42ff90ce3258374a53111d7e9dc:image_to_arm",
+        "88cb49f8bd66b9f977935c77504653183eacb5c9ad7e58cc60e2de98a9a4852d:setCurrentFingerPosition",
+        "88cb49f8bd66b9f977935c77504653183eacb5c9ad7e58cc60e2de98a9a4852d:setcurrentCartesianCommand",
+        "8b7e98a89077c8c3fd291e3be5ff0cfc07eb9d131523482795ebd66991dcb541:cartesian_pose_client",
+        "8ff694a38d7c538aa17af3aeb68f4052bb7d3b65d0faa844aa1dfd823cf9b552:finger_run",
+        "b70a9a9df3ab67cbc9f54c25d316a436beb7f70c0d0a7ce3e9114758ea7bbd52:catch_ground",
+        "f4df70e711e34024f9507ae0de2eed7e6339884eca6d29f56e101fd7018d7177:catch_table",
+        "f4df70e711e34024f9507ae0de2eed7e6339884eca6d29f56e101fd7018d7177:catch_table_short",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:close_finger",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:getCurrentFingerPosition",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:getcurrentCartesianCommand",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:goto_detect",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:goto_home",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:help",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:no_close_finger",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:open_finger"
+      ]
+    },
+    {
+      "path": "legacy/tongyong_25/catch_ground/src/detector_items_c.py",
+      "original_sha256": "2371cff9bb501f086670738eddfc986073287c1fd0b0ce129f9b7e4f66821950",
+      "declarations": {
+        "YoloResult.__init__": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "name",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "box",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "x",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "y",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "conf",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": {
+            "_type": "Constant",
+            "value": null,
+            "kind": null
+          },
+          "decorators": []
+        },
+        "YoloResult.__str__": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "Camera.get_frame": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": [
+            {
+              "_type": "Name",
+              "id": "abstractmethod",
+              "ctx": {
+                "_type": "Load"
+              }
+            }
+          ]
+        },
+        "Camera.get_depth": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": [
+            {
+              "_type": "Name",
+              "id": "abstractmethod",
+              "ctx": {
+                "_type": "Load"
+              }
+            }
+          ]
+        },
+        "Camera.get_calibration": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": [
+            {
+              "_type": "Name",
+              "id": "abstractmethod",
+              "ctx": {
+                "_type": "Load"
+              }
+            }
+          ]
+        },
+        "Camera.release": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": [
+            {
+              "_type": "Name",
+              "id": "abstractmethod",
+              "ctx": {
+                "_type": "Load"
+              }
+            }
+          ]
+        },
+        "KinectCamera.__init__": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinectCamera.open_camera": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinectCamera.get_frame": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinectCamera.get_depth": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinectCamera.get_calibration": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "KinectCamera.release": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "RealSenseCamera.__init__": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "RealSenseCamera.open_camera": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "RealSenseCamera.get_frame": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "RealSenseCamera.get_depth": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "RealSenseCamera.get_calibration": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "RealSenseCamera.release": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "WebCamera.__init__": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "WebCamera.get_frame": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "WebCamera.get_depth": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "WebCamera.get_calibration": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "WebCamera.release": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "ItemsDetector.__init__": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "model_path",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": [
+              {
+                "_type": "Constant",
+                "value": "/home/zq/catkin_ws/src/cmoon/src/shijiazhuang_2025/tongyong_25/model/allbest.pt",
+                "kind": null
+              }
+            ]
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "ItemsDetector.get_target_distance": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "depth_image",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "x",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "y",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "ItemsDetector.detect": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "camera",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "target",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "max_distance",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "depth",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": [
+              {
+                "_type": "Constant",
+                "value": "person",
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": null,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": true,
+                "kind": null
+              }
+            ]
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "ItemsDetector.get_object_classes_sorted": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "camera",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "range",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "visualize",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": [
+              {
+                "_type": "Constant",
+                "value": 0.8,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": true,
+                "kind": null
+              }
+            ]
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "ItemsDetector.visualize_sorted_objects": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "frame",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "objects",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "width",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "range",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "ItemsDetector.pred": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "ItemsDetector.show": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "frame",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "width",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "range",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "ItemsDetector.judge": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "pattern",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "yolors",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "target",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "resolution",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "range",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": [
+              {
+                "_type": "Constant",
+                "value": null,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 640,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 0.8,
+                "kind": null
+              }
+            ]
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "ItemsDetector.judge_range": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "x",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "resolution",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "range",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "ItemsDetector.world": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "camera",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "depth_image",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "yolors",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        }
+      },
+      "patched_methods": [],
+      "unchanged_ast_sha256": "eeefc272a553562c6132e8cb3a3f06e446682365db274a8f9be7b5fe03402657",
+      "protected_assignments": {},
+      "all_function_shapes": [
+        "02c815fa6a18c2ea48b000ab525e0185622e622ef00cc6dc7d1e2668e37a1400:__init__",
+        "1f5073d4739b3513df2cd2d0c8dc66fbdc1101a4db067f059d01daedf0dbf9f2:get_object_classes_sorted",
+        "31ca116a9c74ee687c79949ae9cee3a6014c5d8c8978f560b66ba86c58403023:visualize_sorted_objects",
+        "5719360a6b8f70d01359eb61b0906811c27a6934735c6b599904ef724f51d537:judge",
+        "589a0a636056f74602a0ab25a160b25be8f5d36293310e7236336417bec3d491:__init__",
+        "8c28660af0adafe658ac6d8463e68ba9a788ea313f338eb16839966bd6722896:detect",
+        "965c06b0a0f5efea55e978c612e086c2ca6d225b8b3f0af65788c39293d9f85f:world",
+        "99c13c1f7294a10dcbe1cad021be91f64277be97535fa89cfeabae43fb0650a9:show",
+        "c75e1f9324ac4ce6e8429d11c6b3e05821cc0a29922bc3b66309a671cc71f37d:judge_range",
+        "ca594f1c34f922220b10af44f3a1e9e419092485d36dbb53868e6e8320473598:get_target_distance",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:__init__",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:__init__",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:__init__",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:__str__",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:get_calibration",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:get_calibration",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:get_calibration",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:get_calibration",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:get_depth",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:get_depth",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:get_depth",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:get_depth",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:get_frame",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:get_frame",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:get_frame",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:get_frame",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:open_camera",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:open_camera",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:pred",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:release",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:release",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:release",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:release"
+      ]
+    },
+    {
+      "path": "legacy/tongyong_25/catch_ground/src/realsense_yolo11.py",
+      "original_sha256": "b4ce049efde7593fc873ab79084bf9cd149b5a350f91e06abd1e6dffba1a0350",
+      "declarations": {
+        "YoloResult.__init__": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "name",
+                "annotation": {
+                  "_type": "Name",
+                  "id": "str",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "x",
+                "annotation": {
+                  "_type": "Name",
+                  "id": "float",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "y",
+                "annotation": {
+                  "_type": "Name",
+                  "id": "float",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "z",
+                "annotation": {
+                  "_type": "Name",
+                  "id": "float",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "angle",
+                "annotation": {
+                  "_type": "Name",
+                  "id": "float",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "YoloResult.__str__": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "RealSenseYolo11Detector.__init__": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "weights",
+                "annotation": {
+                  "_type": "Name",
+                  "id": "Path",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "imgsz",
+                "annotation": {
+                  "_type": "Name",
+                  "id": "int",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "conf_thres",
+                "annotation": {
+                  "_type": "Name",
+                  "id": "float",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "iou_thres",
+                "annotation": {
+                  "_type": "Name",
+                  "id": "float",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": [
+              {
+                "_type": "Call",
+                "func": {
+                  "_type": "Name",
+                  "id": "Path",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "args": [
+                  {
+                    "_type": "Constant",
+                    "value": "weights",
+                    "kind": null
+                  }
+                ],
+                "keywords": []
+              },
+              {
+                "_type": "Constant",
+                "value": 640,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 0.2,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 0.45,
+                "kind": null
+              }
+            ]
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "RealSenseYolo11Detector._calc_item_angle": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "item_img",
+                "annotation": {
+                  "_type": "Attribute",
+                  "value": {
+                    "_type": "Name",
+                    "id": "np",
+                    "ctx": {
+                      "_type": "Load"
+                    }
+                  },
+                  "attr": "ndarray",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": {
+            "_type": "Name",
+            "id": "float",
+            "ctx": {
+              "_type": "Load"
+            }
+          },
+          "decorators": []
+        },
+        "RealSenseYolo11Detector._get_realsense_data": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": {
+            "_type": "Name",
+            "id": "tuple",
+            "ctx": {
+              "_type": "Load"
+            }
+          },
+          "decorators": []
+        },
+        "RealSenseYolo11Detector.detect_targets": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "target_items",
+                "annotation": {
+                  "_type": "Name",
+                  "id": "list",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "max_retry",
+                "annotation": {
+                  "_type": "Name",
+                  "id": "int",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "show_window",
+                "annotation": {
+                  "_type": "Name",
+                  "id": "bool",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": [
+              {
+                "_type": "Constant",
+                "value": 5,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": true,
+                "kind": null
+              }
+            ]
+          },
+          "returns": {
+            "_type": "Subscript",
+            "value": {
+              "_type": "Name",
+              "id": "Union",
+              "ctx": {
+                "_type": "Load"
+              }
+            },
+            "slice": {
+              "_type": "Tuple",
+              "elts": [
+                {
+                  "_type": "Name",
+                  "id": "YoloResult",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                {
+                  "_type": "Constant",
+                  "value": null,
+                  "kind": null
+                }
+              ],
+              "ctx": {
+                "_type": "Load"
+              }
+            },
+            "ctx": {
+              "_type": "Load"
+            }
+          },
+          "decorators": []
+        }
+      },
+      "patched_methods": [
+        "RealSenseYolo11Detector.detect_targets"
+      ],
+      "unchanged_ast_sha256": "710a889213a02e36e2e58f3539d1cda0c961b2805f436eda6e9c9ba580e568a8",
+      "protected_assignments": {},
+      "all_function_shapes": [
+        "78b473656331939bebc3e53f7830b726b6aeb449e345ff070a9e629537cfeab0:__init__",
+        "a9cc3b82d128c12d6a811e7245b6c87053c3e51f7e3fc5bc6e816b0939679a83:_calc_item_angle",
+        "ba37caeb53eddc1b19960d48c49287e1b0e586abdf69262d71fd253ebad2eda3:detect_targets",
+        "c215d65d0a3d84c4affbf3e7abe228eebfaedf8830885dab9b7724878627d35c:__init__",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:__str__",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:_get_realsense_data"
+      ]
+    },
+    {
+      "path": "legacy/tongyong_25/catch_ground/src/realsense_yolo11_desk.py",
+      "original_sha256": "ee23e7c49c02faaf0bc96b0f41fe2e2d694f56150fa238b36086c934f60d2462",
+      "declarations": {
+        "YoloResult.__init__": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "name",
+                "annotation": {
+                  "_type": "Name",
+                  "id": "str",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "x",
+                "annotation": {
+                  "_type": "Name",
+                  "id": "float",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "y",
+                "annotation": {
+                  "_type": "Name",
+                  "id": "float",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "z",
+                "annotation": {
+                  "_type": "Name",
+                  "id": "float",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "YoloResult.__str__": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "RealSenseYolo11DetectorDesk.__init__": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "weights",
+                "annotation": {
+                  "_type": "Name",
+                  "id": "Path",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "imgsz",
+                "annotation": {
+                  "_type": "Name",
+                  "id": "int",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "conf_thres",
+                "annotation": {
+                  "_type": "Name",
+                  "id": "float",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "iou_thres",
+                "annotation": {
+                  "_type": "Name",
+                  "id": "float",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": [
+              {
+                "_type": "Call",
+                "func": {
+                  "_type": "Name",
+                  "id": "Path",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "args": [
+                  {
+                    "_type": "Constant",
+                    "value": "weights",
+                    "kind": null
+                  }
+                ],
+                "keywords": []
+              },
+              {
+                "_type": "Constant",
+                "value": 1280,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 0.2,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": 0.45,
+                "kind": null
+              }
+            ]
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "RealSenseYolo11DetectorDesk._calc_item_angle": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "item_img",
+                "annotation": {
+                  "_type": "Attribute",
+                  "value": {
+                    "_type": "Name",
+                    "id": "np",
+                    "ctx": {
+                      "_type": "Load"
+                    }
+                  },
+                  "attr": "ndarray",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": {
+            "_type": "Name",
+            "id": "float",
+            "ctx": {
+              "_type": "Load"
+            }
+          },
+          "decorators": []
+        },
+        "RealSenseYolo11DetectorDesk._get_realsense_data": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": {
+            "_type": "Name",
+            "id": "tuple",
+            "ctx": {
+              "_type": "Load"
+            }
+          },
+          "decorators": []
+        },
+        "RealSenseYolo11DetectorDesk.detect_targets": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "target_items",
+                "annotation": {
+                  "_type": "Name",
+                  "id": "list",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "max_retry",
+                "annotation": {
+                  "_type": "Name",
+                  "id": "int",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "show_window",
+                "annotation": {
+                  "_type": "Name",
+                  "id": "bool",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": [
+              {
+                "_type": "Constant",
+                "value": 5,
+                "kind": null
+              },
+              {
+                "_type": "Constant",
+                "value": true,
+                "kind": null
+              }
+            ]
+          },
+          "returns": {
+            "_type": "Subscript",
+            "value": {
+              "_type": "Name",
+              "id": "Union",
+              "ctx": {
+                "_type": "Load"
+              }
+            },
+            "slice": {
+              "_type": "Tuple",
+              "elts": [
+                {
+                  "_type": "Name",
+                  "id": "YoloResult",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                {
+                  "_type": "Constant",
+                  "value": null,
+                  "kind": null
+                }
+              ],
+              "ctx": {
+                "_type": "Load"
+              }
+            },
+            "ctx": {
+              "_type": "Load"
+            }
+          },
+          "decorators": []
+        }
+      },
+      "patched_methods": [
+        "RealSenseYolo11DetectorDesk.detect_targets"
+      ],
+      "unchanged_ast_sha256": "eafbdd2337b6e9504e83237f27380f0a9bd9b62070effd2f206f55695bee48b5",
+      "protected_assignments": {},
+      "all_function_shapes": [
+        "160cd886db19caf6a4636669b148d5607537a7492d5af3868c5b27ad9fdd41ec:__init__",
+        "a9cc3b82d128c12d6a811e7245b6c87053c3e51f7e3fc5bc6e816b0939679a83:_calc_item_angle",
+        "ba37caeb53eddc1b19960d48c49287e1b0e586abdf69262d71fd253ebad2eda3:detect_targets",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:__str__",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:_get_realsense_data",
+        "febf7cd99eb7ac9d46cd6499756d32bd2881fc2631bf950030c38b7f7ec24b1f:__init__"
+      ]
+    },
+    {
+      "path": "legacy/common/navigator2.py",
+      "original_sha256": "5c047ba6a6040cd0630ad62ca50be5170c55f05bd01a20a2824f3145014e00f9",
+      "declarations": {
+        "Navigator.__init__": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "location",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "Navigator.goto": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "place",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "Navigator.set_goal": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "frame_id",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "position",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "orientation",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "Navigator.go_to_location": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "location_goal",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "Navigator.stop": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        }
+      },
+      "patched_methods": [
+        "Navigator.__init__"
+      ],
+      "unchanged_ast_sha256": "47e190ee646f6b32c2d8f5faf92cb775e25d49c50d76349abc7f905dc9e14fd2",
+      "protected_assignments": {},
+      "all_function_shapes": [
+        "73d1fc20184eb06175bf704e7eacb40140cf5063344b9611631f89c960066d3c:go_to_location",
+        "8dc9ce0a19247d44a62037d4d0808c56c11e6c3a11013ae0c2ddc4e30332a760:__init__",
+        "ddaf67360877fa5145b4656bacae13c7fd6e64191eb5548e3c593204435778ba:goto",
+        "e3981f753769eacb5c7bff03419044f45153cbb19648ab07eb6c29832f288312:set_goal",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:stop"
+      ]
+    },
+    {
+      "path": "legacy/common/position_last_second.py",
+      "original_sha256": "5c12a66cd10e16825aee7f77a9873bd1f1e5f63247571c2935b345879555700c",
+      "declarations": {
+        "SmartGoalFinder.__init__": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "SmartGoalFinder.get_robot_pose": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "SmartGoalFinder.validate_goal": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "start_pose",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "goal_pose",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "SmartGoalFinder.find_best_goal": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "person_pose_stamped",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        }
+      },
+      "patched_methods": [],
+      "unchanged_ast_sha256": "e4a3d78245b40e84b40ef65c93bfcbb75379e70b3af4e7fea6ab43ce3c791af8",
+      "protected_assignments": {},
+      "all_function_shapes": [
+        "3c502c7c2b0fb3c444d7b43480239c86eb71bc0c75c32c2a4396ddbc33845437:validate_goal",
+        "b5200e5acff7845e144db7c0442a3feab003f32f50e1ae5022510cb35c0e3e0b:find_best_goal",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:__init__",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:get_robot_pose"
+      ]
+    },
+    {
+      "path": "legacy/common/camera_to_map.py",
+      "original_sha256": "e449a043e4b251ad1755ce54e42aaf6df6dfd138968225985177e042d4e16b94",
+      "declarations": {
+        "CoordinateConverter.__init__": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "CoordinateConverter.get_map_coords": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "camera_point",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        }
+      },
+      "patched_methods": [],
+      "unchanged_ast_sha256": "5720d3fb010041844f1e4cdc12d8b5ae30f039e23dc707d124db19586ab9dbdf",
+      "protected_assignments": {},
+      "all_function_shapes": [
+        "8291e202d9ab52c16d7756edc989de59a6a372ff99dee3584b4689fa31f093bc:get_map_coords",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:__init__"
+      ]
+    },
+    {
+      "path": "legacy/common/goal_calculator.py",
+      "original_sha256": "7bcecb5538ddd00f6ed669cfcff9d5135d3356073f405d2d2421e4defd38c5f9",
+      "declarations": {
+        "calculate_facing_goal": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "robot_pose",
+                "annotation": {
+                  "_type": "Name",
+                  "id": "Pose",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "target_point_map",
+                "annotation": {
+                  "_type": "Name",
+                  "id": "list",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "distance",
+                "annotation": {
+                  "_type": "Name",
+                  "id": "float",
+                  "ctx": {
+                    "_type": "Load"
+                  }
+                },
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": [
+              {
+                "_type": "Constant",
+                "value": 0.3,
+                "kind": null
+              }
+            ]
+          },
+          "returns": {
+            "_type": "Name",
+            "id": "Pose",
+            "ctx": {
+              "_type": "Load"
+            }
+          },
+          "decorators": []
+        }
+      },
+      "patched_methods": [],
+      "unchanged_ast_sha256": "c98fe5e45430d5aa89f23706ff2f83a67e7009b0586de9d465e3d62d493c3d12",
+      "protected_assignments": {},
+      "all_function_shapes": [
+        "f1fe3dc427c065015be843816471018a14fba13cf3f2bb58c71bedb7a7a94529:calculate_facing_goal"
+      ]
+    },
+    {
+      "path": "legacy/common/summer_tts_speaker.py",
+      "original_sha256": "fdd38a41c883f5e61d0331ad63c64958691704d90e8a8d51393fa189e4ee1541",
+      "declarations": {
+        "SummerTTSSpeaker.__init__": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "SummerTTSSpeaker._wait_for_subscribers": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        },
+        "SummerTTSSpeaker.speak": {
+          "args": {
+            "_type": "arguments",
+            "posonlyargs": [],
+            "args": [
+              {
+                "_type": "arg",
+                "arg": "self",
+                "annotation": null,
+                "type_comment": null
+              },
+              {
+                "_type": "arg",
+                "arg": "text",
+                "annotation": null,
+                "type_comment": null
+              }
+            ],
+            "vararg": null,
+            "kwonlyargs": [],
+            "kw_defaults": [],
+            "kwarg": null,
+            "defaults": []
+          },
+          "returns": null,
+          "decorators": []
+        }
+      },
+      "patched_methods": [],
+      "unchanged_ast_sha256": "2881ecf2f81ff7fe3829706ff6b8a29f84bca189041e3f09afce4f57131de9e4",
+      "protected_assignments": {},
+      "all_function_shapes": [
+        "99396f9a9327a2db67a1fecd3661eccc8ff9ba1695cafeb59f35240f8a0adf56:speak",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:__init__",
+        "f71d8e3db55208f6dd07812c0fb8527ac644f6616e201ce663252c781f84ead3:_wait_for_subscribers"
+      ]
+    }
+  ],
+  "fingerprint_format": "canonical-ast-v1"
+}

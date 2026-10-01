@@ -1,0 +1,35 @@
+配置未完成，未连接机器人：
+- camera.intrinsics 需要现场相机的 3×3 内参矩阵，按行展开为 9 个数
+- 待填写有效位姿：locations.entry
+- 待填写有效位姿：locations.exit
+- 待填写有效位姿：locations.score_view
+- 待填写有效位姿：area living_table
+- 待填写有效位姿：area kitchen_table
+- 待填写有效位姿：slot slot_01
+- 待填写有效位姿：slot slot_02
+- 待填写 [xmin,xmax,ymin,ymax]：field_bounds
+- 待填写 [xmin,xmax,ymin,ymax]：score_bounds
+- 待填写 [xmin,xmax,ymin,ymax]：area living_table
+- 待填写 [xmin,xmax,ymin,ymax]：area kitchen_table
+- 待填写 [xmin,xmax,ymin,ymax]：slot slot_01
+- 待填写 [xmin,xmax,ymin,ymax]：slot slot_02
+- 待填写有限正数：estimates.nav_s
+- 待填写有限正数：estimates.scan_s
+- 待填写有限正数：estimates.place_s
+- 待填写有限正数：estimates.grip_s
+- 待填写有限正数：estimates.exit_s
+- 待填写有限正数：gripper.open_max
+- 待填写有限正数：gripper.stability_turn
+- 待填写有限正数：target.pickup_estimate_s
+- 待填写有限正数：target.hold_min
+- 待填写有限正数：target.hold_max
+- 待填写有限正数：target.object_radius_m
+- 待填写有限正数：target.pickup_estimate_s
+- 待填写有限正数：target.hold_min
+- 待填写有限正数：target.hold_max
+- 待填写有限正数：target.object_radius_m
+- 放置位需要至少一个现场标定的 mdeg drop_poses
+- 放置位需要至少一个现场标定的 mdeg drop_poses
+- 需要实际模型权重路径；不能把通用 YOLO 当作比赛模型
+- 需要实际模型权重路径；不能把通用 YOLO 当作比赛模型
+- 需要实际模型权重路径；不能把通用 YOLO 当作比赛模型

@@ -1,0 +1,1045 @@
+{
+  "mode": "STATIC_ONLY",
+  "hardware_accessed": false,
+  "simulation_executed": false,
+  "checks": [
+    {
+      "check": "syntax:app/__init__.py",
+      "status": "PASS",
+      "detail": "Python 3.8 语法及当前解释器编译通过"
+    },
+    {
+      "check": "syntax:app/configuration.py",
+      "status": "PASS",
+      "detail": "Python 3.8 语法及当前解释器编译通过"
+    },
+    {
+      "check": "syntax:app/context.py",
+      "status": "PASS",
+      "detail": "Python 3.8 语法及当前解释器编译通过"
+    },
+    {
+      "check": "syntax:app/evidence.py",
+      "status": "PASS",
+      "detail": "Python 3.8 语法及当前解释器编译通过"
+    },
+    {
+      "check": "syntax:app/session.py",
+      "status": "PASS",
+      "detail": "Python 3.8 语法及当前解释器编译通过"
+    },
+    {
+      "check": "syntax:app/vision.py",
+      "status": "PASS",
+      "detail": "Python 3.8 语法及当前解释器编译通过"
+    },
+    {
+      "check": "syntax:app/workflow.py",
+      "status": "PASS",
+      "detail": "Python 3.8 语法及当前解释器编译通过"
+    },
+    {
+      "check": "syntax:legacy/common/camera_to_map.py",
+      "status": "PASS",
+      "detail": "Python 3.8 语法及当前解释器编译通过"
+    },
+    {
+      "check": "syntax:legacy/common/goal_calculator.py",
+      "status": "PASS",
+      "detail": "Python 3.8 语法及当前解释器编译通过"
+    },
+    {
+      "check": "syntax:legacy/common/navigator2.py",
+      "status": "PASS",
+      "detail": "Python 3.8 语法及当前解释器编译通过"
+    },
+    {
+      "check": "syntax:legacy/common/position_last_second.py",
+      "status": "PASS",
+      "detail": "Python 3.8 语法及当前解释器编译通过"
+    },
+    {
+      "check": "syntax:legacy/common/summer_tts_speaker.py",
+      "status": "PASS",
+      "detail": "Python 3.8 语法及当前解释器编译通过"
+    },
+    {
+      "check": "syntax:legacy/tongyong_25/base_controller.py",
+      "status": "PASS",
+      "detail": "Python 3.8 语法及当前解释器编译通过"
+    },
+    {
+      "check": "syntax:legacy/tongyong_25/catch_ground/src/catch.py",
+      "status": "PASS",
+      "detail": "Python 3.8 语法及当前解释器编译通过"
+    },
+    {
+      "check": "syntax:legacy/tongyong_25/catch_ground/src/detector_items_c.py",
+      "status": "PASS",
+      "detail": "Python 3.8 语法及当前解释器编译通过"
+    },
+    {
+      "check": "syntax:legacy/tongyong_25/catch_ground/src/realsense_yolo11.py",
+      "status": "PASS",
+      "detail": "Python 3.8 语法及当前解释器编译通过"
+    },
+    {
+      "check": "syntax:legacy/tongyong_25/catch_ground/src/realsense_yolo11_desk.py",
+      "status": "PASS",
+      "detail": "Python 3.8 语法及当前解释器编译通过"
+    },
+    {
+      "check": "syntax:main_2026.py",
+      "status": "PASS",
+      "detail": "Python 3.8 语法及当前解释器编译通过"
+    },
+    {
+      "check": "syntax:support/safety.py",
+      "status": "PASS",
+      "detail": "Python 3.8 语法及当前解释器编译通过"
+    },
+    {
+      "check": "syntax:tools/refactor_audit.py",
+      "status": "PASS",
+      "detail": "Python 3.8 语法及当前解释器编译通过"
+    },
+    {
+      "check": "syntax:tools/static_check.py",
+      "status": "PASS",
+      "detail": "Python 3.8 语法及当前解释器编译通过"
+    },
+    {
+      "check": "syntax:tools/test_navigation.py",
+      "status": "PASS",
+      "detail": "Python 3.8 语法及当前解释器编译通过"
+    },
+    {
+      "check": "signature:legacy/tongyong_25/base_controller.py",
+      "status": "PASS",
+      "detail": "8 个原函数/方法签名"
+    },
+    {
+      "check": "patch_scope:legacy/tongyong_25/base_controller.py",
+      "status": "PASS",
+      "detail": "仅允许列表中的已有方法体改变"
+    },
+    {
+      "check": "geometry:legacy/tongyong_25/base_controller.py",
+      "status": "PASS",
+      "detail": "保留原位姿、运动学及手眼数值"
+    },
+    {
+      "check": "hash:legacy/tongyong_25/base_controller.py",
+      "status": "PASS",
+      "detail": "当前文件与交付清单一致"
+    },
+    {
+      "check": "original_ast:legacy/tongyong_25/base_controller.py",
+      "status": "PASS",
+      "detail": "中文注释维护，原始可执行AST保持"
+    },
+    {
+      "check": "function_inventory:legacy/tongyong_25/base_controller.py",
+      "status": "PASS",
+      "detail": "没有新增/删除或修改函数签名，包括嵌套函数"
+    },
+    {
+      "check": "signature:legacy/tongyong_25/catch_ground/src/catch.py",
+      "status": "PASS",
+      "detail": "27 个原函数/方法签名"
+    },
+    {
+      "check": "patch_scope:legacy/tongyong_25/catch_ground/src/catch.py",
+      "status": "PASS",
+      "detail": "仅允许列表中的已有方法体改变"
+    },
+    {
+      "check": "geometry:legacy/tongyong_25/catch_ground/src/catch.py",
+      "status": "PASS",
+      "detail": "保留原位姿、运动学及手眼数值"
+    },
+    {
+      "check": "hash:legacy/tongyong_25/catch_ground/src/catch.py",
+      "status": "PASS",
+      "detail": "当前文件与交付清单一致"
+    },
+    {
+      "check": "function_inventory:legacy/tongyong_25/catch_ground/src/catch.py",
+      "status": "PASS",
+      "detail": "没有新增/删除或修改函数签名，包括嵌套函数"
+    },
+    {
+      "check": "signature:legacy/tongyong_25/catch_ground/src/detector_items_c.py",
+      "status": "PASS",
+      "detail": "33 个原函数/方法签名"
+    },
+    {
+      "check": "patch_scope:legacy/tongyong_25/catch_ground/src/detector_items_c.py",
+      "status": "PASS",
+      "detail": "仅允许列表中的已有方法体改变"
+    },
+    {
+      "check": "geometry:legacy/tongyong_25/catch_ground/src/detector_items_c.py",
+      "status": "PASS",
+      "detail": "保留原位姿、运动学及手眼数值"
+    },
+    {
+      "check": "hash:legacy/tongyong_25/catch_ground/src/detector_items_c.py",
+      "status": "PASS",
+      "detail": "当前文件与交付清单一致"
+    },
+    {
+      "check": "original_ast:legacy/tongyong_25/catch_ground/src/detector_items_c.py",
+      "status": "PASS",
+      "detail": "中文注释维护，原始可执行AST保持"
+    },
+    {
+      "check": "function_inventory:legacy/tongyong_25/catch_ground/src/detector_items_c.py",
+      "status": "PASS",
+      "detail": "没有新增/删除或修改函数签名，包括嵌套函数"
+    },
+    {
+      "check": "signature:legacy/tongyong_25/catch_ground/src/realsense_yolo11.py",
+      "status": "PASS",
+      "detail": "6 个原函数/方法签名"
+    },
+    {
+      "check": "patch_scope:legacy/tongyong_25/catch_ground/src/realsense_yolo11.py",
+      "status": "PASS",
+      "detail": "仅允许列表中的已有方法体改变"
+    },
+    {
+      "check": "geometry:legacy/tongyong_25/catch_ground/src/realsense_yolo11.py",
+      "status": "PASS",
+      "detail": "保留原位姿、运动学及手眼数值"
+    },
+    {
+      "check": "hash:legacy/tongyong_25/catch_ground/src/realsense_yolo11.py",
+      "status": "PASS",
+      "detail": "当前文件与交付清单一致"
+    },
+    {
+      "check": "function_inventory:legacy/tongyong_25/catch_ground/src/realsense_yolo11.py",
+      "status": "PASS",
+      "detail": "没有新增/删除或修改函数签名，包括嵌套函数"
+    },
+    {
+      "check": "signature:legacy/tongyong_25/catch_ground/src/realsense_yolo11_desk.py",
+      "status": "PASS",
+      "detail": "6 个原函数/方法签名"
+    },
+    {
+      "check": "patch_scope:legacy/tongyong_25/catch_ground/src/realsense_yolo11_desk.py",
+      "status": "PASS",
+      "detail": "仅允许列表中的已有方法体改变"
+    },
+    {
+      "check": "geometry:legacy/tongyong_25/catch_ground/src/realsense_yolo11_desk.py",
+      "status": "PASS",
+      "detail": "保留原位姿、运动学及手眼数值"
+    },
+    {
+      "check": "hash:legacy/tongyong_25/catch_ground/src/realsense_yolo11_desk.py",
+      "status": "PASS",
+      "detail": "当前文件与交付清单一致"
+    },
+    {
+      "check": "function_inventory:legacy/tongyong_25/catch_ground/src/realsense_yolo11_desk.py",
+      "status": "PASS",
+      "detail": "没有新增/删除或修改函数签名，包括嵌套函数"
+    },
+    {
+      "check": "signature:legacy/common/navigator2.py",
+      "status": "PASS",
+      "detail": "5 个原函数/方法签名"
+    },
+    {
+      "check": "patch_scope:legacy/common/navigator2.py",
+      "status": "PASS",
+      "detail": "仅允许列表中的已有方法体改变"
+    },
+    {
+      "check": "geometry:legacy/common/navigator2.py",
+      "status": "PASS",
+      "detail": "保留原位姿、运动学及手眼数值"
+    },
+    {
+      "check": "hash:legacy/common/navigator2.py",
+      "status": "PASS",
+      "detail": "当前文件与交付清单一致"
+    },
+    {
+      "check": "function_inventory:legacy/common/navigator2.py",
+      "status": "PASS",
+      "detail": "没有新增/删除或修改函数签名，包括嵌套函数"
+    },
+    {
+      "check": "signature:legacy/common/position_last_second.py",
+      "status": "PASS",
+      "detail": "4 个原函数/方法签名"
+    },
+    {
+      "check": "patch_scope:legacy/common/position_last_second.py",
+      "status": "PASS",
+      "detail": "仅允许列表中的已有方法体改变"
+    },
+    {
+      "check": "geometry:legacy/common/position_last_second.py",
+      "status": "PASS",
+      "detail": "保留原位姿、运动学及手眼数值"
+    },
+    {
+      "check": "hash:legacy/common/position_last_second.py",
+      "status": "PASS",
+      "detail": "当前文件与交付清单一致"
+    },
+    {
+      "check": "original_ast:legacy/common/position_last_second.py",
+      "status": "PASS",
+      "detail": "中文注释维护，原始可执行AST保持"
+    },
+    {
+      "check": "function_inventory:legacy/common/position_last_second.py",
+      "status": "PASS",
+      "detail": "没有新增/删除或修改函数签名，包括嵌套函数"
+    },
+    {
+      "check": "signature:legacy/common/camera_to_map.py",
+      "status": "PASS",
+      "detail": "2 个原函数/方法签名"
+    },
+    {
+      "check": "patch_scope:legacy/common/camera_to_map.py",
+      "status": "PASS",
+      "detail": "仅允许列表中的已有方法体改变"
+    },
+    {
+      "check": "geometry:legacy/common/camera_to_map.py",
+      "status": "PASS",
+      "detail": "保留原位姿、运动学及手眼数值"
+    },
+    {
+      "check": "hash:legacy/common/camera_to_map.py",
+      "status": "PASS",
+      "detail": "当前文件与交付清单一致"
+    },
+    {
+      "check": "original_ast:legacy/common/camera_to_map.py",
+      "status": "PASS",
+      "detail": "中文注释维护，原始可执行AST保持"
+    },
+    {
+      "check": "function_inventory:legacy/common/camera_to_map.py",
+      "status": "PASS",
+      "detail": "没有新增/删除或修改函数签名，包括嵌套函数"
+    },
+    {
+      "check": "signature:legacy/common/goal_calculator.py",
+      "status": "PASS",
+      "detail": "1 个原函数/方法签名"
+    },
+    {
+      "check": "patch_scope:legacy/common/goal_calculator.py",
+      "status": "PASS",
+      "detail": "仅允许列表中的已有方法体改变"
+    },
+    {
+      "check": "geometry:legacy/common/goal_calculator.py",
+      "status": "PASS",
+      "detail": "保留原位姿、运动学及手眼数值"
+    },
+    {
+      "check": "hash:legacy/common/goal_calculator.py",
+      "status": "PASS",
+      "detail": "当前文件与交付清单一致"
+    },
+    {
+      "check": "original_ast:legacy/common/goal_calculator.py",
+      "status": "PASS",
+      "detail": "中文注释维护，原始可执行AST保持"
+    },
+    {
+      "check": "function_inventory:legacy/common/goal_calculator.py",
+      "status": "PASS",
+      "detail": "没有新增/删除或修改函数签名，包括嵌套函数"
+    },
+    {
+      "check": "signature:legacy/common/summer_tts_speaker.py",
+      "status": "PASS",
+      "detail": "3 个原函数/方法签名"
+    },
+    {
+      "check": "patch_scope:legacy/common/summer_tts_speaker.py",
+      "status": "PASS",
+      "detail": "仅允许列表中的已有方法体改变"
+    },
+    {
+      "check": "geometry:legacy/common/summer_tts_speaker.py",
+      "status": "PASS",
+      "detail": "保留原位姿、运动学及手眼数值"
+    },
+    {
+      "check": "hash:legacy/common/summer_tts_speaker.py",
+      "status": "PASS",
+      "detail": "当前文件与交付清单一致"
+    },
+    {
+      "check": "original_ast:legacy/common/summer_tts_speaker.py",
+      "status": "PASS",
+      "detail": "中文注释维护，原始可执行AST保持"
+    },
+    {
+      "check": "function_inventory:legacy/common/summer_tts_speaker.py",
+      "status": "PASS",
+      "detail": "没有新增/删除或修改函数签名，包括嵌套函数"
+    },
+    {
+      "check": "local_import:app/configuration.py:L11",
+      "status": "PASS",
+      "detail": "app.context -> MATCH_SECONDS"
+    },
+    {
+      "check": "local_import:app/session.py:L11",
+      "status": "PASS",
+      "detail": "app.context -> MATCH_SECONDS, RunContext"
+    },
+    {
+      "check": "local_import:app/session.py:L12",
+      "status": "PASS",
+      "detail": "app.evidence -> EvidenceWriter"
+    },
+    {
+      "check": "local_import:app/session.py:L139",
+      "status": "PASS",
+      "detail": "support.safety -> DeadlineGate, GuardedClient"
+    },
+    {
+      "check": "local_import:app/session.py:L181",
+      "status": "PASS",
+      "detail": "navigator2 -> Navigator"
+    },
+    {
+      "check": "local_import:app/session.py:L182",
+      "status": "PASS",
+      "detail": "base_controller -> Base"
+    },
+    {
+      "check": "local_import:app/session.py:L183",
+      "status": "PASS",
+      "detail": "position_last_second -> SmartGoalFinder"
+    },
+    {
+      "check": "local_import:app/session.py:L184",
+      "status": "PASS",
+      "detail": "camera_to_map -> CoordinateConverter"
+    },
+    {
+      "check": "local_import:app/session.py:L185",
+      "status": "PASS",
+      "detail": "goal_calculator -> calculate_facing_goal"
+    },
+    {
+      "check": "local_import:app/session.py:L187",
+      "status": "PASS",
+      "detail": "summer_tts_speaker -> SummerTTSSpeaker"
+    },
+    {
+      "check": "local_import:app/session.py:L188",
+      "status": "PASS",
+      "detail": "catch_ground.src.catch -> KinovaRobot"
+    },
+    {
+      "check": "local_import:app/session.py:L189",
+      "status": "PASS",
+      "detail": "catch_ground.src.detector_items_c -> KinectCamera, ItemsDetector"
+    },
+    {
+      "check": "local_import:app/session.py:L190",
+      "status": "PASS",
+      "detail": "catch_ground.src.realsense_yolo11 -> RealSenseYolo11Detector"
+    },
+    {
+      "check": "local_import:app/session.py:L191",
+      "status": "PASS",
+      "detail": "catch_ground.src.realsense_yolo11_desk -> RealSenseYolo11DetectorDesk"
+    },
+    {
+      "check": "local_import:app/workflow.py:L6",
+      "status": "PASS",
+      "detail": "app.vision -> VisionStage"
+    },
+    {
+      "check": "local_import:legacy/tongyong_25/catch_ground/src/catch.py:L28",
+      "status": "PASS",
+      "detail": "summer_tts_speaker -> SummerTTSSpeaker"
+    },
+    {
+      "check": "local_import:legacy/tongyong_25/catch_ground/src/catch.py:L30",
+      "status": "PASS",
+      "detail": "catch_ground.src.realsense_yolo11 -> RealSenseYolo11Detector"
+    },
+    {
+      "check": "local_import:legacy/tongyong_25/catch_ground/src/catch.py:L31",
+      "status": "PASS",
+      "detail": "catch_ground.src.realsense_yolo11_desk -> RealSenseYolo11DetectorDesk"
+    },
+    {
+      "check": "local_import:legacy/tongyong_25/catch_ground/src/catch.py:L74",
+      "status": "PASS",
+      "detail": "support.safety -> GuardedClient"
+    },
+    {
+      "check": "local_import:legacy/tongyong_25/catch_ground/src/detector_items_c.py:L28",
+      "status": "PASS",
+      "detail": "base_controller -> Base"
+    },
+    {
+      "check": "local_import:main_2026.py:L10",
+      "status": "PASS",
+      "detail": "app.configuration -> ConfigurationLoader, ConfigurationRejected"
+    },
+    {
+      "check": "local_import:main_2026.py:L37",
+      "status": "PASS",
+      "detail": "app.session -> RobotSession, SessionRejected, SessionAborted"
+    },
+    {
+      "check": "local_import:main_2026.py:L38",
+      "status": "PASS",
+      "detail": "app.workflow -> Workflow"
+    },
+    {
+      "check": "local_import:tools/static_check.py:L19",
+      "status": "PASS",
+      "detail": "refactor_audit -> audit"
+    },
+    {
+      "check": "local_import:tools/test_navigation.py:L68",
+      "status": "PASS",
+      "detail": "navigator2 -> Navigator"
+    },
+    {
+      "check": "local_import:tools/test_navigation.py:L69",
+      "status": "PASS",
+      "detail": "position_last_second -> SmartGoalFinder"
+    },
+    {
+      "check": "local_import:tools/test_navigation.py:L70",
+      "status": "PASS",
+      "detail": "support.safety -> DeadlineGate, GuardedClient, interruptible"
+    },
+    {
+      "check": "support_source",
+      "status": "PASS",
+      "detail": "复用门控模块与记录版本一致"
+    },
+    {
+      "check": "main_function_boundary",
+      "status": "PASS",
+      "detail": "入口仅 main()；辅助逻辑移入 app，机器人技能继续复用旧接口"
+    },
+    {
+      "check": "main_size",
+      "status": "PASS",
+      "detail": "主入口不超过 100 行"
+    },
+    {
+      "check": "kinova_constructor_guards",
+      "status": "PASS",
+      "detail": "两类 action client 在原构造器首次运动前包装"
+    },
+    {
+      "check": "kinova_gate_injection",
+      "status": "PASS",
+      "detail": "调用原签名构造器前注入同一门控对象"
+    },
+    {
+      "check": "call:app/session.py:L213",
+      "status": "PASS",
+      "detail": "Base.__init__"
+    },
+    {
+      "check": "call:app/session.py:L216",
+      "status": "PASS",
+      "detail": "ItemsDetector.__init__"
+    },
+    {
+      "check": "call:app/session.py:L241",
+      "status": "PASS",
+      "detail": "SummerTTSSpeaker.__init__"
+    },
+    {
+      "check": "call:app/session.py:L248",
+      "status": "PASS",
+      "detail": "Navigator.__init__"
+    },
+    {
+      "check": "call:app/session.py:L256",
+      "status": "PASS",
+      "detail": "KinovaRobot.__init__"
+    },
+    {
+      "check": "call:app/session.py:L264",
+      "status": "PASS",
+      "detail": "KinectCamera.__init__"
+    },
+    {
+      "check": "call:app/session.py:L266",
+      "status": "PASS",
+      "detail": "KinectCamera.open_camera"
+    },
+    {
+      "check": "call:app/session.py:L281",
+      "status": "PASS",
+      "detail": "SummerTTSSpeaker.speak"
+    },
+    {
+      "check": "call:app/session.py:L236",
+      "status": "PASS",
+      "detail": "RealSenseYolo11Detector.__init__"
+    },
+    {
+      "check": "call:app/session.py:L249",
+      "status": "PASS",
+      "detail": "SmartGoalFinder.__init__"
+    },
+    {
+      "check": "call:app/session.py:L249",
+      "status": "PASS",
+      "detail": "CoordinateConverter.__init__"
+    },
+    {
+      "check": "call:app/session.py:L227",
+      "status": "PASS",
+      "detail": "RealSenseYolo11DetectorDesk.__init__"
+    },
+    {
+      "check": "call:app/session.py:L250",
+      "status": "PASS",
+      "detail": "SmartGoalFinder.get_robot_pose"
+    },
+    {
+      "check": "call:app/session.py:L335",
+      "status": "PASS",
+      "detail": "KinectCamera.release"
+    },
+    {
+      "check": "call:app/vision.py:L41",
+      "status": "PASS",
+      "detail": "Base.stop"
+    },
+    {
+      "check": "call:app/vision.py:L232",
+      "status": "PASS",
+      "detail": "SummerTTSSpeaker.speak"
+    },
+    {
+      "check": "call:app/vision.py:L386",
+      "status": "PASS",
+      "detail": "SummerTTSSpeaker.speak"
+    },
+    {
+      "check": "call:app/vision.py:L70",
+      "status": "PASS",
+      "detail": "ItemsDetector.pred"
+    },
+    {
+      "check": "call:app/vision.py:L88",
+      "status": "PASS",
+      "detail": "ItemsDetector.world"
+    },
+    {
+      "check": "call:app/vision.py:L92",
+      "status": "PASS",
+      "detail": "CoordinateConverter.get_map_coords"
+    },
+    {
+      "check": "call:app/workflow.py:L162",
+      "status": "PASS",
+      "detail": "Navigator.set_goal"
+    },
+    {
+      "check": "call:app/workflow.py:L164",
+      "status": "PASS",
+      "detail": "SmartGoalFinder.get_robot_pose"
+    },
+    {
+      "check": "call:app/workflow.py:L231",
+      "status": "PASS",
+      "detail": "SmartGoalFinder.get_robot_pose"
+    },
+    {
+      "check": "call:app/workflow.py:L262",
+      "status": "PASS",
+      "detail": "Base.stop"
+    },
+    {
+      "check": "call:app/workflow.py:L374",
+      "status": "PASS",
+      "detail": "KinovaRobot.goto_home"
+    },
+    {
+      "check": "call:app/workflow.py:L413",
+      "status": "PASS",
+      "detail": "KinovaRobot.finger_run"
+    },
+    {
+      "check": "call:app/workflow.py:L441",
+      "status": "PASS",
+      "detail": "KinovaRobot.goto_home"
+    },
+    {
+      "check": "call:app/workflow.py:L169",
+      "status": "PASS",
+      "detail": "SmartGoalFinder.validate_goal"
+    },
+    {
+      "check": "call:app/workflow.py:L200",
+      "status": "PASS",
+      "detail": "Navigator.stop"
+    },
+    {
+      "check": "call:app/workflow.py:L201",
+      "status": "PASS",
+      "detail": "Base.stop"
+    },
+    {
+      "check": "call:app/workflow.py:L211",
+      "status": "PASS",
+      "detail": "Base.stop"
+    },
+    {
+      "check": "call:app/workflow.py:L232",
+      "status": "PASS",
+      "detail": "calculate_facing_goal"
+    },
+    {
+      "check": "call:app/workflow.py:L264",
+      "status": "PASS",
+      "detail": "KinovaRobot.goto_detect"
+    },
+    {
+      "check": "call:app/workflow.py:L270",
+      "status": "PASS",
+      "detail": "RealSenseYolo11Detector.detect_targets"
+    },
+    {
+      "check": "call:app/workflow.py:L296",
+      "status": "PASS",
+      "detail": "KinovaRobot.close_finger"
+    },
+    {
+      "check": "call:app/workflow.py:L342",
+      "status": "PASS",
+      "detail": "KinovaRobot.setCurrentFingerPosition"
+    },
+    {
+      "check": "call:app/workflow.py:L402",
+      "status": "PASS",
+      "detail": "KinovaRobot.arm_run"
+    },
+    {
+      "check": "call:app/workflow.py:L428",
+      "status": "PASS",
+      "detail": "KinovaRobot.setCurrentFingerPosition"
+    },
+    {
+      "check": "call:app/workflow.py:L285",
+      "status": "PASS",
+      "detail": "KinovaRobot.catch_ground"
+    },
+    {
+      "check": "call:app/workflow.py:L287",
+      "status": "PASS",
+      "detail": "KinovaRobot.catch_table"
+    },
+    {
+      "check": "call:app/workflow.py:L289",
+      "status": "PASS",
+      "detail": "KinovaRobot.catch_table_short"
+    },
+    {
+      "check": "cleanup_no_motion",
+      "status": "PASS",
+      "detail": "清理路径没有回 home、松爪或发送新目标"
+    },
+    {
+      "check": "static_cli_boundary",
+      "status": "PASS",
+      "detail": "当前交付不通过模拟替身生成完成结论"
+    },
+    {
+      "check": "hardware_import_boundary:app/__init__.py",
+      "status": "PASS",
+      "detail": "模块顶层仅标准库/流程模块，不导入 ROS、模型或设备驱动"
+    },
+    {
+      "check": "name_bindings:app/__init__.py",
+      "status": "PASS",
+      "detail": "名称绑定检查：[]"
+    },
+    {
+      "check": "hardware_import_boundary:app/configuration.py",
+      "status": "PASS",
+      "detail": "模块顶层仅标准库/流程模块，不导入 ROS、模型或设备驱动"
+    },
+    {
+      "check": "name_bindings:app/configuration.py",
+      "status": "PASS",
+      "detail": "名称绑定检查：[]"
+    },
+    {
+      "check": "hardware_import_boundary:app/context.py",
+      "status": "PASS",
+      "detail": "模块顶层仅标准库/流程模块，不导入 ROS、模型或设备驱动"
+    },
+    {
+      "check": "name_bindings:app/context.py",
+      "status": "PASS",
+      "detail": "名称绑定检查：[]"
+    },
+    {
+      "check": "hardware_import_boundary:app/evidence.py",
+      "status": "PASS",
+      "detail": "模块顶层仅标准库/流程模块，不导入 ROS、模型或设备驱动"
+    },
+    {
+      "check": "name_bindings:app/evidence.py",
+      "status": "PASS",
+      "detail": "名称绑定检查：[]"
+    },
+    {
+      "check": "hardware_import_boundary:app/session.py",
+      "status": "PASS",
+      "detail": "模块顶层仅标准库/流程模块，不导入 ROS、模型或设备驱动"
+    },
+    {
+      "check": "name_bindings:app/session.py",
+      "status": "PASS",
+      "detail": "名称绑定检查：[]"
+    },
+    {
+      "check": "hardware_import_boundary:app/vision.py",
+      "status": "PASS",
+      "detail": "模块顶层仅标准库/流程模块，不导入 ROS、模型或设备驱动"
+    },
+    {
+      "check": "name_bindings:app/vision.py",
+      "status": "PASS",
+      "detail": "名称绑定检查：[]"
+    },
+    {
+      "check": "hardware_import_boundary:app/workflow.py",
+      "status": "PASS",
+      "detail": "模块顶层仅标准库/流程模块，不导入 ROS、模型或设备驱动"
+    },
+    {
+      "check": "name_bindings:app/workflow.py",
+      "status": "PASS",
+      "detail": "名称绑定检查：[]"
+    },
+    {
+      "check": "hardware_import_boundary:main_2026.py",
+      "status": "PASS",
+      "detail": "模块顶层仅标准库/流程模块，不导入 ROS、模型或设备驱动"
+    },
+    {
+      "check": "name_bindings:main_2026.py",
+      "status": "PASS",
+      "detail": "名称绑定检查：[]"
+    },
+    {
+      "check": "context_fields",
+      "status": "PASS",
+      "detail": "运行上下文读写字段均有定义：[]"
+    },
+    {
+      "check": "refactor:baseline",
+      "status": "PASS",
+      "detail": "保留中文注释版入口源码及其 SHA256，作为本轮迁移依据"
+    },
+    {
+      "check": "refactor:app/configuration.py:_read",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/configuration.py:_check_catalog",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/configuration.py:_check_structure",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/configuration.py:_collect_areas",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/configuration.py:_check_shapes",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/configuration.py:_check_parameters",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/configuration.py:_check_relations",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/configuration.py:_check_files",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/evidence.py:checkpoint",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/evidence.py:finalize",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/vision.py:_collect_observation",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/vision.py:_check_frames",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/vision.py:_search",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/vision.py:_recheck",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/vision.py:_before_delivery",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/vision.py:_after_delivery",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/workflow.py:_begin",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/workflow.py:handle_select",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/workflow.py:handle_navigate",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/workflow.py:handle_approach",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/workflow.py:handle_grasp",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/workflow.py:handle_grip",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/workflow.py:handle_stow",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/workflow.py:handle_place",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/session.py:_initialize_record",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/session.py:_open_record_directory",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/session.py:_setup_gate",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/session.py:prepare",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/session.py:wait_start",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:app/session.py:_stop_resources",
+      "status": "PASS",
+      "detail": "变量改为上下文属性、明确出口改为方法返回后，业务 AST 与迁移前一致"
+    },
+    {
+      "check": "refactor:stage_budget",
+      "status": "PASS",
+      "detail": "整场截止、阶段截止、SIGALRM 设置和阶段事件顺序保持"
+    },
+    {
+      "check": "refactor:stage_tail",
+      "status": "PASS",
+      "detail": "正常阶段完成后的停止/超时检查保持；原 continue 路径由 False 返回保留"
+    },
+    {
+      "check": "config_schema",
+      "status": "PASS",
+      "detail": "保留 schema 3"
+    },
+    {
+      "check": "catalog_template",
+      "status": "PASS",
+      "detail": "18 条模板，三级能力未启用"
+    }
+  ],
+  "limitations": [
+    "未验证 ROS/SDK 可用性、模型推理、标定、运动可达性或物理抓取。",
+    "接口检查覆盖明确的源码调用与 commands 列表；不证明第三方库运行行为。"
+  ],
+  "legacy_modules_checked": 10,
+  "legacy_declarations_checked": 95,
+  "local_import_statements_checked": 27,
+  "explicit_legacy_call_sites_checked": 41,
+  "production_modules_checked": 8,
+  "deployment_configuration_complete": false,
+  "status": "PASS",
+  "checks_passed": 205,
+  "checks_failed": 0
+}

@@ -1,0 +1,98 @@
+{
+  "mode": "READ_ONLY_CLI",
+  "hardware_accessed": false,
+  "simulation_executed": false,
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "-S",
+        "main_2026.py",
+        "--help"
+      ],
+      "return_code": 0,
+      "expected": 0,
+      "baseline_output_equal": true,
+      "passed": true,
+      "stdout": "usage: main_2026.py [-h] [--config CONFIG]\n                    [--check-config | --list-tasks | --real]\n                    [--match-id MATCH_ID]\n\n2026 机器人项目入口：解析参数 → 校验配置 → 实机会话 → 状态流程。 详细配置见 app/configuration.py；阶段流程见\napp/workflow.py。 不加 --real 时只读文件。--real 的准备阶段会执行原开爪/回 home。\n\noptions:\n  -h, --help           show this help message and exit\n  --config CONFIG\n  --check-config       静态校验，不导入 ROS\n  --list-tasks         显示目标清单与能力，不连接硬件\n  --real               启动实机流程，原构造器会开爪和回 home\n  --match-id MATCH_ID  实机运行必填；同一局不得更换 ID 重置 600 秒\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python3",
+        "-S",
+        "main_2026.py",
+        "--list-tasks"
+      ],
+      "return_code": 0,
+      "expected": 0,
+      "baseline_output_equal": true,
+      "passed": true,
+      "stdout": "{\n  \"task_catalog\": [\n    {\n      \"id\": \"L1_01\",\n      \"level\": 1,\n      \"name_cn\": \"洗发水\",\n      \"search_label\": \"Shampoo\",\n      \"grasp_label\": \"shampoo\",\n      \"surface\": \"table_short\",\n      \"expected_count\": 1,\n      \"status\": \"uncalibrated\",\n      \"object_radius_m\": null\n    },\n    {\n      \"id\": \"L1_02\",\n      \"level\": 1,\n      \"name_cn\": \"洗手液\",\n      \"search_label\": \"Handwash\",\n      \"grasp_label\": \"handwash\",\n      \"surface\": \"table\",\n      \"expected_count\": 1,\n      \"status\": \"uncalibrated\",\n      \"object_radius_m\": null\n    },\n    {\n      \"id\": \"L1_03\",\n      \"level\": 1,\n      \"name_cn\": null,\n      \"search_label\": null,\n      \"grasp_label\": null,\n      \"surface\": \"table\",\n      \"expected_count\": 1,\n      \"status\": \"uncalibrated\",\n      \"object_radius_m\": null\n    },\n    {\n      \"id\": \"L1_04\",\n      \"level\": 1,\n      \"name_cn\": null,\n      \"search_label\": null,\n      \"grasp_label\": null,\n      \"surface\": \"table\",\n      \"expected_count\": 1,\n      \"status\": \"uncalibrated\",\n      \"object_radius_m\": null\n    },\n    {\n      \"id\": \"L1_05\",\n      \"level\": 1,\n      \"name_cn\": null,\n      \"search_label\": null,\n      \"grasp_label\": null,\n      \"surface\": \"table\",\n      \"expected_count\": 1,\n      \"status\": \"uncalibrated\",\n      \"object_radius_m\": null\n    },\n    {\n      \"id\": \"L1_06\",\n      \"level\": 1,\n      \"name_cn\": null,\n      \"search_label\": null,\n      \"grasp_label\": null,\n      \"surface\": \"table\",\n      \"expected_count\": 1,\n      \"status\": \"uncalibrated\",\n      \"object_radius_m\": null\n    },\n    {\n      \"id\": \"L1_07\",\n      \"level\": 1,\n      \"name_cn\": null,\n      \"search_label\": null,\n      \"grasp_label\": null,\n      \"surface\": \"table\",\n      \"expected_count\": 1,\n      \"status\": \"uncalibrated\",\n      \"object_radius_m\": null\n    },\n    {\n      \"id\": \"L1_08\",\n      \"level\": 1,\n      \"name_cn\": null,\n      \"search_label\": null,\n      \"grasp_label\": null,\n      \"surface\": \"table\",\n      \"expected_count\": 1,\n      \"status\": \"uncalibrated\",\n      \"object_radius_m\": null\n    },\n    {\n      \"id\": \"L2_01\",\n      \"level\": 2,\n      \"name_cn\": \"指定品牌零食\",\n      \"search_label\": \"Chip\",\n      \"grasp_label\": \"Chip\",\n      \"surface\": \"ground\",\n      \"expected_count\": 1,\n      \"status\": \"uncalibrated\",\n      \"object_radius_m\": null\n    },\n    {\n      \"id\": \"L2_02\",\n      \"level\": 2,\n      \"name_cn\": null,\n      \"search_label\": null,\n      \"grasp_label\": null,\n      \"surface\": \"ground\",\n      \"expected_count\": 1,\n      \"status\": \"uncalibrated\",\n      \"object_radius_m\": null\n    },\n    {\n      \"id\": \"L2_03\",\n      \"level\": 2,\n      \"name_cn\": null,\n      \"search_label\": null,\n      \"grasp_label\": null,\n      \"surface\": \"ground\",\n      \"expected_count\": 1,\n      \"status\": \"uncalibrated\",\n      \"object_radius_m\": null\n    },\n    {\n      \"id\": \"L2_04\",\n      \"level\": 2,\n      \"name_cn\": null,\n      \"search_label\": null,\n      \"grasp_label\": null,\n      \"surface\": \"ground\",\n      \"expected_count\": 1,\n      \"status\": \"uncalibrated\",\n      \"object_radius_m\": null\n    },\n    {\n      \"id\": \"L2_05\",\n      \"level\": 2,\n      \"name_cn\": null,\n      \"search_label\": null,\n      \"grasp_label\": null,\n      \"surface\": \"ground\",\n      \"expected_count\": 1,\n      \"status\": \"uncalibrated\",\n      \"object_radius_m\": null\n    },\n    {\n      \"id\": \"L2_06\",\n      \"level\": 2,\n      \"name_cn\": null,\n      \"search_label\": null,\n      \"grasp_label\": null,\n      \"surface\": \"ground\",\n      \"expected_count\": 1,\n      \"status\": \"uncalibrated\",\n      \"object_radius_m\": null\n    },\n    {\n      \"id\": \"L3_01\",\n      \"level\": 3,\n      \"name_cn\": null,\n      \"search_label\": null,\n      \"grasp_label\": null,\n      \"surface\": \"container\",\n      \"expected_count\": 1,\n      \"status\": \"unsupported\",\n      \"object_radius_m\": null\n    },\n    {\n      \"id\": \"L3_02\",\n      \"level\": 3,\n      \"name_cn\": null,\n      \"search_label\": null,\n      \"grasp_label\": null,\n      \"surface\": \"container\",\n      \"expected_count\": 1,\n      \"status\": \"unsupported\",\n      \"object_radius_m\": null\n    },\n    {\n      \"id\": \"L3_03\",\n      \"level\": 3,\n      \"name_cn\": null,\n      \"search_label\": null,\n      \"grasp_label\": null,\n      \"surface\": \"container\",\n      \"expected_count\": 1,\n      \"status\": \"unsupported\",\n      \"object_radius_m\": null\n    },\n    {\n      \"id\": \"L3_04\",\n      \"level\": 3,\n      \"name_cn\": null,\n      \"search_label\": null,\n      \"grasp_label\": null,\n      \"surface\": \"container\",\n      \"expected_count\": 1,\n      \"status\": \"unsupported\",\n      \"object_radius_m\": null\n    }\n  ],\n  \"capabilities\": {\n    \"table\": {\n      \"status\": \"uncalibrated\",\n      \"legacy_method\": \"catch_table\"\n    },\n    \"table_short\": {\n      \"status\": \"uncalibrated\",\n      \"legacy_method\": \"catch_table_short\"\n    },\n    \"ground\": {\n      \"status\": \"uncalibrated\",\n      \"legacy_method\": \"catch_ground\"\n    },\n    \"container\": {\n      \"status\": \"unsupported\",\n      \"legacy_method\": null\n    }\n  },\n  \"note\": \"清单是任务配额；ready 仍需模型、坐标及标定校验，不代表实机验证通过。\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python3",
+        "-S",
+        "main_2026.py",
+        "--check-config"
+      ],
+      "return_code": 2,
+      "expected": 2,
+      "baseline_output_equal": true,
+      "passed": true,
+      "stdout": "",
+      "stderr": "配置未完成，未连接机器人：\n- camera.intrinsics 需要现场相机的 3×3 内参矩阵，按行展开为 9 个数\n- 待填写有效位姿：locations.entry\n- 待填写有效位姿：locations.exit\n- 待填写有效位姿：locations.score_view\n- 待填写有效位姿：area living_table\n- 待填写有效位姿：area kitchen_table\n- 待填写有效位姿：slot slot_01\n- 待填写有效位姿：slot slot_02\n- 待填写 [xmin,xmax,ymin,ymax]：field_bounds\n- 待填写 [xmin,xmax,ymin,ymax]：score_bounds\n- 待填写 [xmin,xmax,ymin,ymax]：area living_table\n- 待填写 [xmin,xmax,ymin,ymax]：area kitchen_table\n- 待填写 [xmin,xmax,ymin,ymax]：slot slot_01\n- 待填写 [xmin,xmax,ymin,ymax]：slot slot_02\n- 待填写有限正数：estimates.nav_s\n- 待填写有限正数：estimates.scan_s\n- 待填写有限正数：estimates.place_s\n- 待填写有限正数：estimates.grip_s\n- 待填写有限正数：estimates.exit_s\n- 待填写有限正数：gripper.open_max\n- 待填写有限正数：gripper.stability_turn\n- 待填写有限正数：target.pickup_estimate_s\n- 待填写有限正数：target.hold_min\n- 待填写有限正数：target.hold_max\n- 待填写有限正数：target.object_radius_m\n- 待填写有限正数：target.pickup_estimate_s\n- 待填写有限正数：target.hold_min\n- 待填写有限正数：target.hold_max\n- 待填写有限正数：target.object_radius_m\n- 放置位需要至少一个现场标定的 mdeg drop_poses\n- 放置位需要至少一个现场标定的 mdeg drop_poses\n- 需要实际模型权重路径；不能把通用 YOLO 当作比赛模型\n- 需要实际模型权重路径；不能把通用 YOLO 当作比赛模型\n- 需要实际模型权重路径；不能把通用 YOLO 当作比赛模型\n"
+    },
+    {
+      "command": [
+        "python3",
+        "-S",
+        "main_2026.py"
+      ],
+      "return_code": 2,
+      "expected": 2,
+      "baseline_output_equal": true,
+      "passed": true,
+      "stdout": "",
+      "stderr": "配置未完成，未连接机器人：\n- camera.intrinsics 需要现场相机的 3×3 内参矩阵，按行展开为 9 个数\n- 待填写有效位姿：locations.entry\n- 待填写有效位姿：locations.exit\n- 待填写有效位姿：locations.score_view\n- 待填写有效位姿：area living_table\n- 待填写有效位姿：area kitchen_table\n- 待填写有效位姿：slot slot_01\n- 待填写有效位姿：slot slot_02\n- 待填写 [xmin,xmax,ymin,ymax]：field_bounds\n- 待填写 [xmin,xmax,ymin,ymax]：score_bounds\n- 待填写 [xmin,xmax,ymin,ymax]：area living_table\n- 待填写 [xmin,xmax,ymin,ymax]：area kitchen_table\n- 待填写 [xmin,xmax,ymin,ymax]：slot slot_01\n- 待填写 [xmin,xmax,ymin,ymax]：slot slot_02\n- 待填写有限正数：estimates.nav_s\n- 待填写有限正数：estimates.scan_s\n- 待填写有限正数：estimates.place_s\n- 待填写有限正数：estimates.grip_s\n- 待填写有限正数：estimates.exit_s\n- 待填写有限正数：gripper.open_max\n- 待填写有限正数：gripper.stability_turn\n- 待填写有限正数：target.pickup_estimate_s\n- 待填写有限正数：target.hold_min\n- 待填写有限正数：target.hold_max\n- 待填写有限正数：target.object_radius_m\n- 待填写有限正数：target.pickup_estimate_s\n- 待填写有限正数：target.hold_min\n- 待填写有限正数：target.hold_max\n- 待填写有限正数：target.object_radius_m\n- 放置位需要至少一个现场标定的 mdeg drop_poses\n- 放置位需要至少一个现场标定的 mdeg drop_poses\n- 需要实际模型权重路径；不能把通用 YOLO 当作比赛模型\n- 需要实际模型权重路径；不能把通用 YOLO 当作比赛模型\n- 需要实际模型权重路径；不能把通用 YOLO 当作比赛模型\n"
+    },
+    {
+      "case": "bad_json",
+      "return_code": 2,
+      "expected": 2,
+      "baseline_output_equal": true,
+      "passed": true,
+      "stdout": "",
+      "stderr": "配置读取失败：Expecting property name enclosed in double quotes: line 1 column 2 (char 1)\n"
+    },
+    {
+      "case": "wrong_schema",
+      "return_code": 2,
+      "expected": 2,
+      "baseline_output_equal": true,
+      "passed": true,
+      "stdout": "",
+      "stderr": "需要 schema_version=3 的任务清单配置；迁移说明见 MERGE_NOTES.md\n"
+    },
+    {
+      "case": "all_app_modules_import_without_hardware",
+      "return_code": 0,
+      "expected": 0,
+      "passed": true,
+      "stdout": "{\"hardware_modules_loaded\": [], \"passed\": true}\n",
+      "stderr": ""
+    },
+    {
+      "case": "navigation_help_only",
+      "return_code": 0,
+      "expected": 0,
+      "passed": true,
+      "stdout": "usage: test_navigation.py [-h] [--project PROJECT]\n                          [--check | --plan | --execute] [--goal X Y]\n                          [--yaw-deg YAW_DEG] [--timeout TIMEOUT]\n                          [--connect-timeout CONNECT_TIMEOUT]\n                          [--stop-topic STOP_TOPIC] [--report REPORT]\n\nROS1单点导航检查：复用工程原Navigator与SmartGoalFinder，不初始化机械臂。 --check：只连接导航服务、读取定位，默认模式。\n--plan：检查到指定map坐标的规划路径，不发送移动目标。 --execute：检查路径，再发送一次导航目标；超时/停止时取消导航。\n请在机器人已启动底盘、雷达、地图、定位和move_base之后使用。\n\noptions:\n  -h, --help            show this help message and exit\n  --project PROJECT     完整工程目录；脚本放在该工程tools目录时无需填写\n  --check               检查连接和定位，不发移动目标\n  --plan                检查规划路径，不发移动目标\n  --execute             发送一次实际导航目标\n  --goal X Y            目标的map坐标，单位米；由现场地图确定\n  --yaw-deg YAW_DEG     目标朝向，单位度；省略时保持检查时的底盘朝向\n  --timeout TIMEOUT     单次导航限时秒数，默认30\n  --connect-timeout CONNECT_TIMEOUT\n                        连接/定位及规划阶段各自的限时秒数，默认20\n  --stop-topic STOP_TOPIC\n                        Bool停止话题\n  --report REPORT       可选JSON记录路径\n",
+      "stderr": ""
+    }
+  ],
+  "status": "PASS"
+}

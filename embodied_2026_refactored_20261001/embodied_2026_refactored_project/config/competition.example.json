@@ -1,0 +1,374 @@
+{
+  "schema_version": 3,
+  "locations": {
+    "entry": null,
+    "exit": null,
+    "score_view": null
+  },
+  "field_bounds": null,
+  "score_bounds": null,
+  "score_margin_m": 0.08,
+  "slots": [
+    {
+      "id": "slot_01",
+      "bounds": null,
+      "drop_location": null,
+      "drop_poses": null,
+      "calibrated": false
+    },
+    {
+      "id": "slot_02",
+      "bounds": null,
+      "drop_location": null,
+      "drop_poses": null,
+      "calibrated": false
+    }
+  ],
+  "search_weights": null,
+  "ground_weights": null,
+  "areas": [
+    {
+      "id": "living_table",
+      "enabled": true,
+      "search_location": null,
+      "source_bounds": null,
+      "visit_limit": 6,
+      "targets": [
+        {
+          "name_cn": "洗发水",
+          "search_label": "Shampoo",
+          "grasp_label": "shampoo",
+          "level": 1,
+          "surface": "table_short",
+          "standoff_m": 0.65,
+          "success_prior": 0.85,
+          "pickup_estimate_s": null,
+          "hold_min": null,
+          "hold_max": null,
+          "calibrated": false,
+          "catalog_id": "L1_01",
+          "object_radius_m": null
+        }
+      ]
+    },
+    {
+      "id": "kitchen_table",
+      "enabled": true,
+      "search_location": null,
+      "source_bounds": null,
+      "visit_limit": 6,
+      "targets": [
+        {
+          "name_cn": "洗手液",
+          "search_label": "Handwash",
+          "grasp_label": "handwash",
+          "level": 1,
+          "surface": "table",
+          "standoff_m": 0.65,
+          "success_prior": 0.85,
+          "pickup_estimate_s": null,
+          "hold_min": null,
+          "hold_max": null,
+          "calibrated": false,
+          "catalog_id": "L1_02",
+          "object_radius_m": null
+        }
+      ]
+    },
+    {
+      "id": "dining_ground",
+      "enabled": false,
+      "search_location": null,
+      "source_bounds": null,
+      "visit_limit": 6,
+      "targets": [
+        {
+          "name_cn": "指定品牌零食",
+          "search_label": "Chip",
+          "grasp_label": "Chip",
+          "level": 2,
+          "surface": "ground",
+          "standoff_m": 0.65,
+          "success_prior": 0.65,
+          "pickup_estimate_s": null,
+          "hold_min": null,
+          "hold_max": null,
+          "calibrated": false,
+          "catalog_id": "L2_01",
+          "object_radius_m": null
+        }
+      ]
+    }
+  ],
+  "start": {
+    "topic": "/start_signal",
+    "type": "String",
+    "value": "start"
+  },
+  "limits": {
+    "prepare_s": 60.0,
+    "nav_s": 35.0,
+    "scan_s": 15.0,
+    "grasp_s": 95.0,
+    "arm_s": 40.0,
+    "grip_s": 5.0,
+    "local_s": 8.0
+  },
+  "estimates": {
+    "nav_s": null,
+    "scan_s": null,
+    "place_s": null,
+    "grip_s": null,
+    "exit_s": null,
+    "margin_s": 10.0,
+    "exit_trigger_s": 55.0
+  },
+  "vision": {
+    "frames": 5,
+    "min_hits": 3,
+    "confidence": 0.5,
+    "track_radius_m": 0.08,
+    "same_frame_radius_m": 0.025,
+    "recheck_radius_m": 0.12,
+    "depth_max_m": 5.0,
+    "frame_pause_s": 0.1
+  },
+  "gripper": {
+    "open_max": null,
+    "stability_turn": null,
+    "samples": 3
+  },
+  "evidence_dir": "../runs",
+  "camera": {
+    "intrinsics": null,
+    "calibrated": false
+  },
+  "stop_topic": "/embodied/stop",
+  "strategy": {
+    "level1_weight": 1.1,
+    "bootstrap_level1_weight": 1.2,
+    "max_pregrasp_failures": 3,
+    "max_grasp_attempts": 3,
+    "recheck_retries": 1
+  },
+  "capabilities": {
+    "table": {
+      "status": "uncalibrated",
+      "legacy_method": "catch_table"
+    },
+    "table_short": {
+      "status": "uncalibrated",
+      "legacy_method": "catch_table_short"
+    },
+    "ground": {
+      "status": "uncalibrated",
+      "legacy_method": "catch_ground"
+    },
+    "container": {
+      "status": "unsupported",
+      "legacy_method": null
+    }
+  },
+  "task_catalog": [
+    {
+      "id": "L1_01",
+      "level": 1,
+      "name_cn": "洗发水",
+      "search_label": "Shampoo",
+      "grasp_label": "shampoo",
+      "surface": "table_short",
+      "expected_count": 1,
+      "status": "uncalibrated",
+      "object_radius_m": null
+    },
+    {
+      "id": "L1_02",
+      "level": 1,
+      "name_cn": "洗手液",
+      "search_label": "Handwash",
+      "grasp_label": "handwash",
+      "surface": "table",
+      "expected_count": 1,
+      "status": "uncalibrated",
+      "object_radius_m": null
+    },
+    {
+      "id": "L1_03",
+      "level": 1,
+      "name_cn": null,
+      "search_label": null,
+      "grasp_label": null,
+      "surface": "table",
+      "expected_count": 1,
+      "status": "uncalibrated",
+      "object_radius_m": null
+    },
+    {
+      "id": "L1_04",
+      "level": 1,
+      "name_cn": null,
+      "search_label": null,
+      "grasp_label": null,
+      "surface": "table",
+      "expected_count": 1,
+      "status": "uncalibrated",
+      "object_radius_m": null
+    },
+    {
+      "id": "L1_05",
+      "level": 1,
+      "name_cn": null,
+      "search_label": null,
+      "grasp_label": null,
+      "surface": "table",
+      "expected_count": 1,
+      "status": "uncalibrated",
+      "object_radius_m": null
+    },
+    {
+      "id": "L1_06",
+      "level": 1,
+      "name_cn": null,
+      "search_label": null,
+      "grasp_label": null,
+      "surface": "table",
+      "expected_count": 1,
+      "status": "uncalibrated",
+      "object_radius_m": null
+    },
+    {
+      "id": "L1_07",
+      "level": 1,
+      "name_cn": null,
+      "search_label": null,
+      "grasp_label": null,
+      "surface": "table",
+      "expected_count": 1,
+      "status": "uncalibrated",
+      "object_radius_m": null
+    },
+    {
+      "id": "L1_08",
+      "level": 1,
+      "name_cn": null,
+      "search_label": null,
+      "grasp_label": null,
+      "surface": "table",
+      "expected_count": 1,
+      "status": "uncalibrated",
+      "object_radius_m": null
+    },
+    {
+      "id": "L2_01",
+      "level": 2,
+      "name_cn": "指定品牌零食",
+      "search_label": "Chip",
+      "grasp_label": "Chip",
+      "surface": "ground",
+      "expected_count": 1,
+      "status": "uncalibrated",
+      "object_radius_m": null
+    },
+    {
+      "id": "L2_02",
+      "level": 2,
+      "name_cn": null,
+      "search_label": null,
+      "grasp_label": null,
+      "surface": "ground",
+      "expected_count": 1,
+      "status": "uncalibrated",
+      "object_radius_m": null
+    },
+    {
+      "id": "L2_03",
+      "level": 2,
+      "name_cn": null,
+      "search_label": null,
+      "grasp_label": null,
+      "surface": "ground",
+      "expected_count": 1,
+      "status": "uncalibrated",
+      "object_radius_m": null
+    },
+    {
+      "id": "L2_04",
+      "level": 2,
+      "name_cn": null,
+      "search_label": null,
+      "grasp_label": null,
+      "surface": "ground",
+      "expected_count": 1,
+      "status": "uncalibrated",
+      "object_radius_m": null
+    },
+    {
+      "id": "L2_05",
+      "level": 2,
+      "name_cn": null,
+      "search_label": null,
+      "grasp_label": null,
+      "surface": "ground",
+      "expected_count": 1,
+      "status": "uncalibrated",
+      "object_radius_m": null
+    },
+    {
+      "id": "L2_06",
+      "level": 2,
+      "name_cn": null,
+      "search_label": null,
+      "grasp_label": null,
+      "surface": "ground",
+      "expected_count": 1,
+      "status": "uncalibrated",
+      "object_radius_m": null
+    },
+    {
+      "id": "L3_01",
+      "level": 3,
+      "name_cn": null,
+      "search_label": null,
+      "grasp_label": null,
+      "surface": "container",
+      "expected_count": 1,
+      "status": "unsupported",
+      "object_radius_m": null
+    },
+    {
+      "id": "L3_02",
+      "level": 3,
+      "name_cn": null,
+      "search_label": null,
+      "grasp_label": null,
+      "surface": "container",
+      "expected_count": 1,
+      "status": "unsupported",
+      "object_radius_m": null
+    },
+    {
+      "id": "L3_03",
+      "level": 3,
+      "name_cn": null,
+      "search_label": null,
+      "grasp_label": null,
+      "surface": "container",
+      "expected_count": 1,
+      "status": "unsupported",
+      "object_radius_m": null
+    },
+    {
+      "id": "L3_04",
+      "level": 3,
+      "name_cn": null,
+      "search_label": null,
+      "grasp_label": null,
+      "surface": "container",
+      "expected_count": 1,
+      "status": "unsupported",
+      "object_radius_m": null
+    }
+  ],
+  "table_weights": null,
+  "table_short_weights": null
+}

@@ -1,0 +1,38 @@
+{
+  "used_base": "embodied_2026_static_20261001.zip",
+  "validation_mode": "STATIC_ONLY",
+  "archives": [
+    {
+      "file": "embodied_2026_static_20261001.zip",
+      "size_bytes": 103400,
+      "sha256": "174ecb7ea54156dab96f49400cd3fd2cb5643d2447921c6b03c217eba10ab62f"
+    },
+    {
+      "file": "embodied_2026_legacy_project.zip",
+      "size_bytes": 92473,
+      "sha256": "50c5261df414fac5bfc617c9922f047225bc9974ebc312c56dc3e2391e9b8965"
+    },
+    {
+      "file": "embodied26_merged_20260927.zip",
+      "size_bytes": 55916,
+      "sha256": "61ea800a05c346ddf6ef1587b29abeb811f414c62ede83e11af380e13bef7af0"
+    },
+    {
+      "file": "embodied26_project.zip",
+      "size_bytes": 42477,
+      "sha256": "db22e2fd3d09eb206e24cbc666b110c70feee8d012ddf7596d64a44fdf4627a1"
+    },
+    {
+      "file": "往年代码2.zip",
+      "size_bytes": 29040,
+      "sha256": "f33b34c71b4bc4335aabe1e79dbf4b670fff49024ff388b65d6925ac1b4fdf49"
+    },
+    {
+      "file": "往年代码.zip",
+      "size_bytes": 399024925,
+      "sha256": "8b01cfe8fdf01e41c50f6b765cc3cbb8bd10785b81abf498261702bfa0da92d7"
+    }
+  ],
+  "previous_functional_base": "维护过的embodied_2026_legacy_project.zip",
+  "annotation_mode": "全部13个Python文件中文注释；12个运行文件AST保持；检查器分支调整有独立比对。"
+}

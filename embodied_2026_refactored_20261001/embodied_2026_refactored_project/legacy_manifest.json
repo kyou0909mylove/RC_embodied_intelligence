@@ -1,0 +1,188 @@
+[
+  {
+    "path": "legacy/tongyong_25/base_controller.py",
+    "source": "往年代码/往年代码/往年代码/shijiazhuang_2025/shijiazhuang_2025/tongyong_25/base_controller.py",
+    "sha256": "d60b002b188d1df5892dc1ff9243bf3871d94bb9b9b3e1a26b3d96234ea809a1",
+    "original_sha256": "a23ce37fb78e685fabcd7c6ff194cfd3c19eba763d22310875745c864623835c",
+    "comments_only": true,
+    "unchanged_ast_sha256": "54380d969703b9bf9122ab8117dc21e47df9a8b2f70ca0b1fd9980aebdfa23e4",
+    "fingerprint_format": "canonical-ast-v1",
+    "annotation": {
+      "baseline_attachment": "embodied_2026_static_20261001.zip",
+      "baseline_sha256": "a23ce37fb78e685fabcd7c6ff194cfd3c19eba763d22310875745c864623835c",
+      "executable_ast_unchanged": true,
+      "description": "中文文件说明、类／函数用途、关键判断与单位说明。"
+    }
+  },
+  {
+    "path": "legacy/tongyong_25/catch_ground/src/catch.py",
+    "source": "往年代码/往年代码/往年代码/shijiazhuang_2025/shijiazhuang_2025/tongyong_25/catch_ground/src/catch.py",
+    "sha256": "cb6c13f46b4f109802b1c3746d615e0dd31e03e035f41c17e6cc61e5fdc0dc96",
+    "original_sha256": "61d1b66c11fe73ceb98b29453f1660471f5a5627981da7e265cf4b0ea6e80b17",
+    "patched_methods": [
+      "__init__",
+      "getcurrentCartesianCommand",
+      "getCurrentFingerPosition",
+      "catch_table",
+      "catch_table_short"
+    ],
+    "patch_source": "2026-10-01 静态交付：既有方法体维护，签名保持",
+    "changes": [
+      "仅维护已有方法体：KinovaRobot.__init__, KinovaRobot.getcurrentCartesianCommand, KinovaRobot.getCurrentFingerPosition, KinovaRobot.catch_table, KinovaRobot.catch_table_short",
+      "函数签名、抓取位姿和运动学数值保持；详见 LEGACY_FIXES.patch"
+    ],
+    "unchanged_ast_sha256": "08ee6f6f1ad66acf47a6e169d5ec3f6a455edc25bbfcadb8e82754a623782a09",
+    "fingerprint_format": "canonical-ast-v1",
+    "comments_only": false,
+    "annotation": {
+      "baseline_attachment": "embodied_2026_static_20261001.zip",
+      "baseline_sha256": "61b4462858e8be32a4005f75b8bad4aaf1795d229dbb635132d7921898f6c58f",
+      "executable_ast_unchanged": true,
+      "description": "中文文件说明、类／函数用途、关键判断与单位说明。"
+    }
+  },
+  {
+    "path": "legacy/tongyong_25/catch_ground/src/detector_items_c.py",
+    "source": "往年代码/往年代码/往年代码/shijiazhuang_2025/shijiazhuang_2025/tongyong_25/catch_ground/src/detector_items_c.py",
+    "sha256": "e3e0474b3a87ad20037456d37ba6f77472edde4e2ab0790a45b9f20d5687436c",
+    "original_sha256": "2371cff9bb501f086670738eddfc986073287c1fd0b0ce129f9b7e4f66821950",
+    "comments_only": true,
+    "unchanged_ast_sha256": "eeefc272a553562c6132e8cb3a3f06e446682365db274a8f9be7b5fe03402657",
+    "fingerprint_format": "canonical-ast-v1",
+    "annotation": {
+      "baseline_attachment": "embodied_2026_static_20261001.zip",
+      "baseline_sha256": "2371cff9bb501f086670738eddfc986073287c1fd0b0ce129f9b7e4f66821950",
+      "executable_ast_unchanged": true,
+      "description": "中文文件说明、类／函数用途、关键判断与单位说明。"
+    }
+  },
+  {
+    "path": "legacy/tongyong_25/catch_ground/src/realsense_yolo11.py",
+    "source": "往年代码/往年代码/往年代码/shijiazhuang_2025/shijiazhuang_2025/tongyong_25/catch_ground/src/realsense_yolo11.py",
+    "sha256": "e27b8a1ec4e18278d3193e456d31cc45a9414dab7d17dac3026d59b09db0d5d8",
+    "original_sha256": "b4ce049efde7593fc873ab79084bf9cd149b5a350f91e06abd1e6dffba1a0350",
+    "patch_source": "2026-10-01 静态交付：既有方法体维护，签名保持",
+    "changes": [
+      "仅维护已有方法体：RealSenseYolo11Detector.detect_targets",
+      "函数签名、抓取位姿和运动学数值保持；详见 LEGACY_FIXES.patch"
+    ],
+    "unchanged_ast_sha256": "710a889213a02e36e2e58f3539d1cda0c961b2805f436eda6e9c9ba580e568a8",
+    "patched_methods": [
+      "detect_targets"
+    ],
+    "fingerprint_format": "canonical-ast-v1",
+    "comments_only": false,
+    "annotation": {
+      "baseline_attachment": "embodied_2026_static_20261001.zip",
+      "baseline_sha256": "4763437bdc6f462ecc7941246084a489e02c3c6a87f9924a939878b4326c10f8",
+      "executable_ast_unchanged": true,
+      "description": "中文文件说明、类／函数用途、关键判断与单位说明。"
+    }
+  },
+  {
+    "path": "legacy/tongyong_25/catch_ground/src/realsense_yolo11_desk.py",
+    "source": "往年代码/往年代码/往年代码/shijiazhuang_2025/shijiazhuang_2025/tongyong_25/catch_ground/src/realsense_yolo11_desk.py",
+    "sha256": "bab739d0757755edd643124b78a3861160d7a349a479cf365e331b337ecad9ad",
+    "original_sha256": "ee23e7c49c02faaf0bc96b0f41fe2e2d694f56150fa238b36086c934f60d2462",
+    "patch_source": "2026-10-01 静态交付：既有方法体维护，签名保持",
+    "changes": [
+      "仅维护已有方法体：RealSenseYolo11DetectorDesk.detect_targets",
+      "函数签名、抓取位姿和运动学数值保持；详见 LEGACY_FIXES.patch"
+    ],
+    "unchanged_ast_sha256": "eafbdd2337b6e9504e83237f27380f0a9bd9b62070effd2f206f55695bee48b5",
+    "patched_methods": [
+      "detect_targets"
+    ],
+    "fingerprint_format": "canonical-ast-v1",
+    "comments_only": false,
+    "annotation": {
+      "baseline_attachment": "embodied_2026_static_20261001.zip",
+      "baseline_sha256": "83792deee5eae1737ccffc1c72549794a3f0f91560c1dffb75054d9d0e4b879c",
+      "executable_ast_unchanged": true,
+      "description": "中文文件说明、类／函数用途、关键判断与单位说明。"
+    }
+  },
+  {
+    "path": "legacy/common/navigator2.py",
+    "source": "往年代码2/往年代码2/navigator2.py",
+    "sha256": "f788fa442a5fd4b74cad2fa9f34fec270fc11305f214e9e75977f7bf96bb8776",
+    "original_sha256": "5c047ba6a6040cd0630ad62ca50be5170c55f05bd01a20a2824f3145014e00f9",
+    "patched_methods": [
+      "__init__"
+    ],
+    "patch_source": "2026-10-01 静态交付：既有方法体维护，签名保持",
+    "unchanged_ast_sha256": "47e190ee646f6b32c2d8f5faf92cb775e25d49c50d76349abc7f905dc9e14fd2",
+    "fingerprint_format": "canonical-ast-v1",
+    "changes": [
+      "仅维护已有方法体：Navigator.__init__",
+      "函数签名、抓取位姿和运动学数值保持；详见 LEGACY_FIXES.patch"
+    ],
+    "comments_only": false,
+    "annotation": {
+      "baseline_attachment": "embodied_2026_static_20261001.zip",
+      "baseline_sha256": "eb896f219a2aebc40dc3aab273453164f6233abb21206d5c686988dfcf4ac839",
+      "executable_ast_unchanged": true,
+      "description": "中文文件说明、类／函数用途、关键判断与单位说明。"
+    }
+  },
+  {
+    "path": "legacy/common/position_last_second.py",
+    "source": "往年代码2/往年代码2/position_last_second.py",
+    "sha256": "96c8784c52c4ffc1857be0e01d264cd5a7d7956391e75dee9b6e4dedf0533c75",
+    "original_sha256": "5c12a66cd10e16825aee7f77a9873bd1f1e5f63247571c2935b345879555700c",
+    "comments_only": true,
+    "unchanged_ast_sha256": "e4a3d78245b40e84b40ef65c93bfcbb75379e70b3af4e7fea6ab43ce3c791af8",
+    "fingerprint_format": "canonical-ast-v1",
+    "annotation": {
+      "baseline_attachment": "embodied_2026_static_20261001.zip",
+      "baseline_sha256": "5c12a66cd10e16825aee7f77a9873bd1f1e5f63247571c2935b345879555700c",
+      "executable_ast_unchanged": true,
+      "description": "中文文件说明、类／函数用途、关键判断与单位说明。"
+    }
+  },
+  {
+    "path": "legacy/common/camera_to_map.py",
+    "source": "往年代码2/往年代码2/camera_to_map.py",
+    "sha256": "cb3bcfbe8c174dee93528d9cc53e89e8adb5588b7336592d81dc0b5b5ba916aa",
+    "original_sha256": "e449a043e4b251ad1755ce54e42aaf6df6dfd138968225985177e042d4e16b94",
+    "comments_only": true,
+    "unchanged_ast_sha256": "5720d3fb010041844f1e4cdc12d8b5ae30f039e23dc707d124db19586ab9dbdf",
+    "fingerprint_format": "canonical-ast-v1",
+    "annotation": {
+      "baseline_attachment": "embodied_2026_static_20261001.zip",
+      "baseline_sha256": "e449a043e4b251ad1755ce54e42aaf6df6dfd138968225985177e042d4e16b94",
+      "executable_ast_unchanged": true,
+      "description": "中文文件说明、类／函数用途、关键判断与单位说明。"
+    }
+  },
+  {
+    "path": "legacy/common/goal_calculator.py",
+    "source": "往年代码2/往年代码2/goal_calculator.py",
+    "sha256": "7610cc480543b237c09d2623cbe2a7867a34a6134806b1c8f0cc09f59e70e574",
+    "original_sha256": "7bcecb5538ddd00f6ed669cfcff9d5135d3356073f405d2d2421e4defd38c5f9",
+    "comments_only": true,
+    "unchanged_ast_sha256": "c98fe5e45430d5aa89f23706ff2f83a67e7009b0586de9d465e3d62d493c3d12",
+    "fingerprint_format": "canonical-ast-v1",
+    "annotation": {
+      "baseline_attachment": "embodied_2026_static_20261001.zip",
+      "baseline_sha256": "7bcecb5538ddd00f6ed669cfcff9d5135d3356073f405d2d2421e4defd38c5f9",
+      "executable_ast_unchanged": true,
+      "description": "中文文件说明、类／函数用途、关键判断与单位说明。"
+    }
+  },
+  {
+    "path": "legacy/common/summer_tts_speaker.py",
+    "source": "往年代码2/往年代码2/summer_tts_speaker.py",
+    "sha256": "507dc856ae7c01f0b1040c59f7c2de9f96295c525629cdd674a37531381ee165",
+    "original_sha256": "fdd38a41c883f5e61d0331ad63c64958691704d90e8a8d51393fa189e4ee1541",
+    "comments_only": true,
+    "unchanged_ast_sha256": "2881ecf2f81ff7fe3829706ff6b8a29f84bca189041e3f09afce4f57131de9e4",
+    "fingerprint_format": "canonical-ast-v1",
+    "annotation": {
+      "baseline_attachment": "embodied_2026_static_20261001.zip",
+      "baseline_sha256": "fdd38a41c883f5e61d0331ad63c64958691704d90e8a8d51393fa189e4ee1541",
+      "executable_ast_unchanged": true,
+      "description": "中文文件说明、类／函数用途、关键判断与单位说明。"
+    }
+  }
+]

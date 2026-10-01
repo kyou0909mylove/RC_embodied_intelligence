@@ -1,0 +1,13 @@
+{
+  "source_attachment": "embodied26_merged_20260927.zip",
+  "source_path": "embodied26_merged/safety.py",
+  "source_sha256": "1f3c7eb37216fb5bb1a3c1e179c73cfaba3150ab137ee4826076e8fba59dac09",
+  "local_path": "support/safety.py",
+  "adaptation": "复用原附件既有类/函数及签名；停止队列、有限正 action 等待、NaN 截止拒绝、取消失败不覆盖原异常。",
+  "local_sha256": "bbb0913832cbe6eb4fad9edefb4edd898c007e5f0740a206389593b9c8138573",
+  "annotation": {
+    "baseline_attachment": "embodied_2026_static_20261001.zip",
+    "baseline_sha256": "e06a58dff526ebbe9486823b3baff72f566b21d5481da86afd3a72e3930c0b5f",
+    "executable_ast_unchanged": true
+  }
+}

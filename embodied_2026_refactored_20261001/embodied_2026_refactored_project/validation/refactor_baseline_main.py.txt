@@ -1,0 +1,1383 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# ========== 中文阅读说明 ==========
+# 这是整个工程的入口：它安排任务顺序，调用 legacy 中已有的机器人动作。
+# 建议先看 main() 内的“阅读顺序”，再逐个阅读【阶段】注释。
+# 本文件较长，是因为沿用“只新增 main()、不新造机器人技能函数”的要求。
+# 任务清单和现场数值来自 config/competition.example.json，不在这里随意填坐标。
+# 没有 --real 时只检查配置；--real 的准备阶段就会调用原机械臂动作。
+# 阅读时记住：动作执行完成、反馈像是持物、视觉确认投放，是三个不同结论。
+# ==================================
+"""2026 具身智能机器人统一主函数：吸收四份方案，沿用往年 ROS 1 技能接口。
+
+新写的生产函数仅 main()；legacy/ 的既有接口签名保持，方法体补丁可核对。
+support/safety.py 复用本次合并附件中的基础设施，来源和改动有独立记录。
+配置检查不连接硬件；--real 会初始化并驱动原 Kinova 机械臂。
+详细接线、原接口列表、能力限制、标定步骤见 README.md / FUNCTIONS.md。
+"""
+import argparse
+import hashlib
+import json
+import math
+import os
+import queue
+import re
+import signal
+import sys
+import time
+from datetime import datetime, timezone
+from pathlib import Path
+
+
+# 【时间常量】整场10分钟=600秒；所有阶段都不能延长这个截止时刻。
+MATCH_SECONDS = 600.0
+
+
+# 【函数/方法 main】
+# 阅读顺序：配置校验、实机准备、等待开始、状态循环、停止清理。
+# 第一次阅读只看【阶段】和 state/holding；第二次再看视觉关联和预算公式。
+# cfg：从 JSON 读取的配置字典；areas：来源区域；slots：己方放置槽位。
+# catalog：任务清单；inventory：每个清单 ID 的数量和失败次数台账。
+# state：当前要执行的步骤；holding：当前是否可能拿着物品。
+# SELECT 选任务；NAVIGATE 走到指定点；SCAN 看物品；APPROACH 算靠近位姿。
+# GRASP 执行抓取；GRIP 检查手指反馈；STOW 收拢；PLACE 放置；STOP 结束。
+# PREPARE 和 WAIT_START 是比赛状态循环之前的准备、等开始阶段。
+# state 变成一个字符串，并不立即执行新动作；下一轮 while 才进入对应分支。
+# continue 结束本轮并开始下一轮；return 结束整个 main；raise 转入异常清理。
+# holding 的 EMPTY 表示流程认为空闲；UNKNOWN 表示可能已拿物但无法确认。
+# HOLD_INDICATED 只有夹爪辅助证据；RELEASE_UNVERIFIED 表示已松爪但未确认交付。
+# deadline：整场截止时刻；operation_deadline：当前阶段的更早截止时刻。
+# time.monotonic() 用来算间隔，电脑时钟校时不改变这个计时依据。
+# 控制台退出码 0=正常结束，1=异常/停止，2=配置或启动条件未满足。
+def main():
+    """配置校验 → 准备 → 等待开门信号 → 搜取运放复核 → 离场/停止。"""
+    # 【01 路径和命令行】root是本文件所在目录，因此从不同工作目录启动也能找到随包配置。
+    root = Path(__file__).resolve().parent
+    parser = argparse.ArgumentParser(description=__doc__)
+    # --config指定现场JSON；不填则读取仍含空值的示例模板。
+    parser.add_argument("--config", type=Path, default=root / "config/competition.example.json")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--check-config", action="store_true", help="静态校验，不导入 ROS")
+    mode.add_argument("--list-tasks", action="store_true", help="显示目标清单与能力，不连接硬件")
+    mode.add_argument("--real", action="store_true", help="启动实机流程，原构造器会开爪和回 home")
+    parser.add_argument("--match-id", help="实机运行必填；同一局不得更换 ID 重置 600 秒")
+    args = parser.parse_args()
+    # 【02 读取配置】expanduser处理~，resolve得到绝对路径；本段尚未导入ROS或连接机器人。
+    config_path = args.config.expanduser().resolve()
+    try:
+        cfg = json.loads(config_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        print("配置读取失败：" + str(exc), file=sys.stderr)
+        return 2
+
+    # 所有现场坐标、耗时估计和夹爪阈值显式校验；bool 不能冒充数值。
+    # errors收集所有错误，便于一次看到多个待填项，而不是每次只修一个。
+    errors = []
+    if (not isinstance(cfg, dict) or type(cfg.get("schema_version")) is not int
+            or cfg["schema_version"] != 3):
+        print("需要 schema_version=3 的任务清单配置；迁移说明见 MERGE_NOTES.md", file=sys.stderr)
+        return 2
+    # 清单 ID 表示任务配额，绝不冒充视觉跟踪器给真实物品分配的实例 ID。
+    # 【03 任务清单】catalog_id表示计划搬哪类物品及数量配额，不是视觉生成的物品实例ID。
+    catalog_errors = []
+    catalog, capabilities = cfg.get("task_catalog"), cfg.get("capabilities")
+    strategy = cfg.get("strategy")
+    methods = {"table": "catch_table", "table_short": "catch_table_short", "ground": "catch_ground"}
+    if not isinstance(catalog, list) or not catalog or not all(isinstance(t, dict) for t in catalog):
+        catalog_errors.append("task_catalog 必须是非空对象数组")
+        catalog = []
+    ids = [t.get("id") for t in catalog]
+    if (any(not isinstance(i, str) or not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", i) for i in ids)
+            or len(set(i for i in ids if isinstance(i, str))) != len(ids)):
+        catalog_errors.append("任务清单 id 无效或重复")
+    catalog_by_id = {t["id"]: t for t in catalog if isinstance(t.get("id"), str)}
+    # 逐条检查难度、摆放方式、配额、名称/标签和尺寸；三级容器操作只能标为unsupported。
+    for t in catalog:
+        if type(t.get("level")) is not int or t["level"] not in (1, 2, 3):
+            catalog_errors.append("任务清单 level 必须为 1/2/3")
+        if type(t.get("expected_count")) is not int or not 1 <= t["expected_count"] <= 18:
+            catalog_errors.append("expected_count 必须为 1–18 的整数")
+        if t.get("status") not in ("ready", "uncalibrated", "unsupported"):
+            catalog_errors.append("任务状态必须为 ready/uncalibrated/unsupported")
+        if t.get("surface") not in (*methods, "container"):
+            catalog_errors.append("任务清单 surface 无效")
+        if t.get("level") == 3 and (t.get("status") != "unsupported" or t.get("surface") != "container"):
+            catalog_errors.append("往年接口不具备柜门/抽屉技能，三级任务只能标为 unsupported")
+        if t.get("surface") == "container" and t.get("status") != "unsupported":
+            catalog_errors.append("container 能力未实现，不能标为可运行")
+        if t.get("surface") == "ground" and t.get("level") != 2:
+            catalog_errors.append("地面目标须为二级")
+        if t.get("status") == "ready":
+            if any(not isinstance(t.get(k), str) or not t[k].strip()
+                   for k in ("name_cn", "search_label", "grasp_label")):
+                catalog_errors.append("ready 任务必须填写中文名称和精确模型标签")
+            r = t.get("object_radius_m")
+            if type(r) not in (int, float) or not math.isfinite(r) or not 0 < r < 0.5:
+                catalog_errors.append("ready 任务须填写有限、正且小于 0.5 米的物品包络半径")
+    if not catalog_errors:
+        for level, maximum in ((1, 8), (2, 6), (3, 4)):
+            if sum(t["expected_count"] for t in catalog if t["level"] == level) > maximum:
+                catalog_errors.append("任务清单配额超过该等级比赛物品总数：" + str(level))
+    if not isinstance(capabilities, dict):
+        catalog_errors.append("capabilities 必须是对象")
+        capabilities = {}
+    # 【能力接线】surface决定调用哪个既有catch方法；JSON不能凭一个ready标志创造新技能。
+    for surface, method in {**methods, "container": None}.items():
+        c = capabilities.get(surface)
+        if (not isinstance(c, dict) or c.get("legacy_method") != method
+                or c.get("status") not in ("ready", "uncalibrated", "unsupported")):
+            catalog_errors.append("能力声明与既有接口不一致：" + surface)
+        elif surface == "container" and c["status"] != "unsupported":
+            catalog_errors.append("禁止通过能力标志启用未实现的柜体操作")
+    # 只显示任务清单时在这里返回；后面实际位姿、模型文件和ROS初始化都不会执行。
+    if args.list_tasks:
+        print(json.dumps({"task_catalog": catalog, "capabilities": capabilities,
+                          "note": "清单是任务配额；ready 仍需模型、坐标及标定校验，不代表实机验证通过。"},
+                         ensure_ascii=False, indent=2))
+        if catalog_errors:
+            print("\n".join(catalog_errors), file=sys.stderr)
+        return 2 if catalog_errors else 0
+    errors.extend(catalog_errors)
+    # 【04 策略参数】一级偏好、尝试次数和复扫次数是调度规则，不是机械臂位姿。
+    if not isinstance(strategy, dict):
+        errors.append("strategy 必须是对象")
+    else:
+        for key in ("level1_weight", "bootstrap_level1_weight"):
+            value = strategy.get(key)
+            if type(value) not in (int, float) or not math.isfinite(value) or not 1 <= value <= 2:
+                errors.append("strategy." + key + " 须为 1–2 的有限数")
+        for key in ("max_pregrasp_failures", "max_grasp_attempts", "recheck_retries"):
+            value = strategy.get(key)
+            if type(value) is not int or not (0 if key == "recheck_retries" else 1) <= value <= 10:
+                errors.append("strategy." + key + " 超出允许整数范围")
+    for key in ("locations", "start", "limits", "estimates", "vision", "gripper", "camera"):
+        if not isinstance(cfg.get(key), dict):
+            errors.append(key + " 必须是对象")
+    for key in ("areas", "slots"):
+        if not isinstance(cfg.get(key), list) or not cfg[key]:
+            errors.append(key + " 必须是非空数组")
+    if errors:
+        print("\n".join(errors), file=sys.stderr)
+        return 2
+    # 【05 区域与槽位】启用区域加入areas；visits记录已访问次数，避免无限循环搜索。
+    areas = []
+    for area in cfg["areas"]:
+        if not isinstance(area, dict) or type(area.get("enabled")) is not bool:
+            errors.append("每个区域须明确 enabled: true/false")
+            continue
+        if not area["enabled"]:
+            continue
+        if not isinstance(area.get("targets"), list) or not area["targets"]:
+            errors.append("启用区域必须提供 targets")
+            continue
+        if not all(isinstance(t, dict) for t in area["targets"]):
+            errors.append("targets 成员必须是对象")
+            continue
+        areas.append(dict(area, visits=0, cycle_mean_s=None))
+    # 每个放置位另加运行状态：AVAILABLE可用，RESERVED预留，OCCUPIED已投放，BLOCKED/UNVERIFIED不可再用。
+    slots = [dict(s, status="AVAILABLE") for s in cfg["slots"] if isinstance(s, dict)]
+    if len(slots) != len(cfg["slots"]) or not slots or not areas:
+        errors.append("至少一个有效启用区域和放置位")
+    # calibrated是现场测试完成的声明；--real要求相机、目标和槽位的标定声明都完成。
+    calibrations = [("camera", cfg["camera"].get("calibrated"))]
+    calibrations += [("slot " + str(s.get("id")), s.get("calibrated")) for s in slots]
+    calibrations += [("target " + str(t.get("name_cn")), t.get("calibrated"))
+                     for a in areas for t in a["targets"]]
+    for name, calibrated in calibrations:
+        if type(calibrated) is not bool:
+            errors.append(name + ".calibrated 必须为布尔值")
+        elif args.real and not calibrated:
+            errors.append(name + " 尚未完成实机标定，不启动实机")
+    # 【相机内参】9个数字按行组成K=[[fx,0,cx],[0,fy,cy],[0,0,1]]，用于像素到相机点。
+    intrinsics = cfg["camera"].get("intrinsics")
+    if (not isinstance(intrinsics, list) or len(intrinsics) != 9 or
+            not all(type(x) in (int, float) and math.isfinite(x) for x in intrinsics)):
+        errors.append("camera.intrinsics 需要现场相机的 3×3 内参矩阵，按行展开为 9 个数")
+    elif (intrinsics[0] <= 0 or intrinsics[4] <= 0 or intrinsics[1] != 0
+          or intrinsics[3] != 0 or intrinsics[6:] != [0, 0, 1]):
+        errors.append("camera.intrinsics 须为 fx/fy 为正、零 skew、末行为 [0,0,1] 的针孔矩阵")
+    if not isinstance(cfg.get("stop_topic"), str) or not cfg["stop_topic"].startswith("/"):
+        errors.append("stop_topic 必须是 ROS 绝对话题名")
+    elif cfg["stop_topic"] == cfg["start"].get("topic"):
+        errors.append("停止话题不能与开始话题相同")
+    if type(cfg["gripper"].get("samples")) is not int or not 2 <= cfg["gripper"]["samples"] <= 10:
+        errors.append("gripper.samples 须为 2–10 的整数")
+    for entries, kind in ((areas, "area"), (slots, "slot")):
+        names = [a.get("id") for a in entries]
+        if any(not isinstance(n, str) or not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", n) for n in names):
+            errors.append(kind + " id 只允许 1–64 位字母、数字、下划线、连字符")
+        elif len(set(names)) != len(names):
+            errors.append(kind + " id 重复")
+    # 【位姿格式】map位姿是[[x,y,z],[qx,qy,qz,qw]]；位置用米，后四个值是方向四元数。
+    poses = [("locations." + n, cfg["locations"].get(n)) for n in ("entry", "exit", "score_view")]
+    poses += [("area " + str(a.get("id")), a.get("search_location")) for a in areas]
+    poses += [("slot " + str(s.get("id")), s.get("drop_location")) for s in slots]
+    for name, pose in poses:
+        if (not isinstance(pose, list) or len(pose) != 2
+                or not isinstance(pose[0], list) or len(pose[0]) != 3
+                or not isinstance(pose[1], list) or len(pose[1]) != 4
+                or not all(type(v) in (int, float) and math.isfinite(v) for p in pose for v in p)):
+            errors.append("待填写有效位姿：" + name)
+        elif abs(sum(v * v for v in pose[1]) - 1) > 0.02:
+            errors.append("四元数未归一化：" + name)
+    # 【矩形格式】[xmin,xmax,ymin,ymax]；来源区用于过滤物品，槽位用于判断投放。
+    bounds_list = [(k, cfg.get(k)) for k in ("field_bounds", "score_bounds")]
+    bounds_list += [("area " + str(a.get("id")), a.get("source_bounds")) for a in areas]
+    bounds_list += [("slot " + str(s.get("id")), s.get("bounds")) for s in slots]
+    bounds_ok = True
+    for name, b in bounds_list:
+        if (not isinstance(b, list) or len(b) != 4
+                or not all(type(v) in (int, float) and math.isfinite(v) for v in b)
+                or b[0] >= b[1] or b[2] >= b[3]):
+            errors.append("待填写 [xmin,xmax,ymin,ymax]：" + name)
+            bounds_ok = False
+    # 这里的positive是待核对的“名字、数值”列表，不是函数；要求有限且大于0。
+    positive = [("score_margin_m", cfg.get("score_margin_m"))]
+    for group, keys in {
+        "limits": ("prepare_s", "nav_s", "scan_s", "grasp_s", "arm_s", "grip_s", "local_s"),
+        "estimates": ("nav_s", "scan_s", "place_s", "grip_s", "exit_s", "margin_s", "exit_trigger_s"),
+        "vision": ("confidence", "track_radius_m", "same_frame_radius_m", "recheck_radius_m", "depth_max_m", "frame_pause_s"),
+        "gripper": ("open_max", "stability_turn"),
+    }.items():
+        positive += [(group + "." + k, cfg[group].get(k)) for k in keys]
+    # 区域目标须引用清单ID，并保持标签、难度、摆放和物品半径一致。
+    bound_catalog_ids = []
+    for area in areas:
+        if type(area.get("visit_limit")) is not int or not 1 <= area["visit_limit"] <= 100:
+            errors.append("visit_limit 必须为 1–100 的整数")
+        labels = []
+        for t in area["targets"]:
+            cid = t.get("catalog_id")
+            entry = catalog_by_id.get(cid) if isinstance(cid, str) else None
+            if entry is None:
+                errors.append("启用目标必须引用已有 catalog_id")
+            else:
+                bound_catalog_ids.append(cid)
+                for key in ("name_cn", "search_label", "grasp_label", "level", "surface", "object_radius_m"):
+                    if t.get(key) != entry.get(key):
+                        errors.append("目标与任务清单不一致：" + cid + "." + key)
+                if entry.get("status") == "unsupported":
+                    errors.append("不能启用 unsupported 任务：" + cid)
+                elif args.real and entry.get("status") != "ready":
+                    errors.append("目标清单尚未标为 ready：" + cid)
+            capability = capabilities.get(t.get("surface")) if isinstance(t.get("surface"), str) else None
+            if not isinstance(capability, dict) or capability.get("status") == "unsupported":
+                errors.append("目标没有可用的既有抓取能力")
+            elif args.real and capability.get("status") != "ready":
+                errors.append("抓取能力尚未标定 ready：" + str(t.get("surface")))
+            for key in ("name_cn", "search_label", "grasp_label"):
+                if not isinstance(t.get(key), str) or not t[key].strip():
+                    errors.append("目标缺少字符串 " + key)
+            labels.append(t.get("search_label"))
+            if type(t.get("level")) is not int or t["level"] not in (1, 2):
+                errors.append("仅支持已标定的一级/二级任务；原代码没有开柜技能")
+            if t.get("surface") not in ("table", "table_short", "ground"):
+                errors.append("surface 必须为 table/table_short/ground")
+            if t.get("surface") == "ground" and t.get("level") != 2:
+                errors.append("地面目标按该规则配置为二级")
+            positive += [("target." + k, t.get(k)) for k in
+                         ("standoff_m", "success_prior", "pickup_estimate_s", "hold_min", "hold_max", "object_radius_m")]
+        if all(isinstance(label, str) for label in labels) and len(set(labels)) != len(labels):
+            errors.append("一个区域内同一搜索标签只能对应一种等级/表面/抓取标定")
+    if len(set(bound_catalog_ids)) != len(bound_catalog_ids):
+        errors.append("一个清单 ID 只能绑定一个启用区域；多件同类物品使用 expected_count")
+    for name, value in positive:
+        if type(value) not in (int, float) or not math.isfinite(value) or value <= 0:
+            errors.append("待填写有限正数：" + name)
+    for s in slots:
+        p = s.get("drop_poses")
+        if (not isinstance(p, list) or not p or any(
+                not isinstance(v, list) or len(v) != 6 or not all(
+                    type(x) in (int, float) and math.isfinite(x) for x in v) for v in p)):
+            errors.append("放置位需要至少一个现场标定的 mdeg drop_poses")
+    v = cfg["vision"]
+    if (type(v.get("frames")) is not int or type(v.get("min_hits")) is not int
+            or not 2 <= v["min_hits"] <= v["frames"] <= 20):
+        errors.append("视觉帧数须满足 2 <= min_hits <= frames <= 20")
+    start = cfg["start"]
+    if not isinstance(start.get("topic"), str) or not start["topic"].startswith("/"):
+        errors.append("start.topic 必须为 ROS 绝对话题名")
+    if start.get("type") not in ("String", "Bool"):
+        errors.append("start.type 仅支持 String/Bool，须与现场发布者一致")
+    elif ((start["type"] == "String" and (not isinstance(start.get("value"), str) or not start["value"].strip()))
+          or (start["type"] == "Bool" and start.get("value") is not True)):
+        errors.append("启动内容应为非空 String 或 Bool true")
+    if not isinstance(cfg.get("evidence_dir"), str) or not cfg["evidence_dir"].strip():
+        errors.append("evidence_dir 必须是非空路径")
+    if args.real and (not args.match_id or not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", args.match_id)):
+        errors.append("--real 需要有效 --match-id，每局唯一，同局保持不变")
+
+    # 只有类型校验通过才进行数值关系运算，避免 NaN/负数绕过预算。
+    if not errors:
+        # 【06 参数之间的关系】est是预计耗时，用于选任务；lim是硬性的阶段软件超时，两者用途不同。
+        est, lim = cfg["estimates"], cfg["limits"]
+        if lim["prepare_s"] > 60:
+            errors.append("准备阶段软件上限不得超过 60 秒；实际以裁判计时为准")
+        if not 0 < cfg["score_margin_m"] < 0.5:
+            errors.append("score_margin_m 必须小于 0.5")
+        if v["confidence"] > 1 or v["same_frame_radius_m"] >= v["track_radius_m"]:
+            errors.append("confidence <= 1，且同帧合并距离须小于跨帧关联距离")
+        if v["recheck_radius_m"] < v["track_radius_m"]:
+            errors.append("recheck_radius_m 不得小于 track_radius_m")
+        if (est["exit_trigger_s"] < est["exit_s"] + est["margin_s"]
+                or est["exit_trigger_s"] >= MATCH_SECONDS):
+            errors.append("exit_trigger_s 须覆盖离场估计+余量，且小于 600")
+        for e, l in (("nav_s", "nav_s"), ("scan_s", "scan_s"), ("place_s", "arm_s"),
+                     ("grip_s", "grip_s"), ("exit_s", "nav_s")):
+            if est[e] > lim[l]:
+                errors.append("估计耗时超过对应超时上限：" + e)
+        if cfg["gripper"]["open_max"] >= 6800 or cfg["gripper"]["stability_turn"] >= 6800:
+            errors.append("夹爪阈值应小于原驱动的 6800 turn")
+        for a in areas:
+            for t in a["targets"]:
+                if not cfg["gripper"]["open_max"] < t["hold_min"] < t["hold_max"] < 6800:
+                    errors.append("需要 open_max < hold_min < hold_max < 6800")
+                if t["success_prior"] > 1:
+                    errors.append("success_prior 不得大于 1")
+                if t["object_radius_m"] + cfg["score_margin_m"] >= 0.5:
+                    errors.append("物品包络半径加边线余量过大，无法置于 1m 得分区")
+        if bounds_ok:
+            fx0, fx1, fy0, fy1 = cfg["field_bounds"]
+            sx0, sx1, sy0, sy1 = cfg["score_bounds"]
+            margin = cfg["score_margin_m"]
+            if abs(sx1 - sx0 - 1) > 0.02 or abs(sy1 - sy0 - 1) > 0.02:
+                errors.append("score_bounds 须对应己方 1m × 1m 得分区")
+            if not (fx0 <= sx0 < sx1 <= fx1 and fy0 <= sy0 < sy1 <= fy1):
+                errors.append("得分区不在场地范围内")
+            for a in areas:
+                x0, x1, y0, y1 = a["source_bounds"]
+                if not (fx0 <= x0 < x1 <= fx1 and fy0 <= y0 < y1 <= fy1):
+                    errors.append("source_bounds 超出场地")
+                if x0 < sx1 and x1 > sx0 and y0 < sy1 and y1 > sy0:
+                    errors.append("搜索物品区域不能与得分区重叠")
+                x, y = a["search_location"][0][:2]
+                if not (fx0 <= x <= fx1 and fy0 <= y <= fy1):
+                    errors.append("搜索停车位超出场地")
+            for i, a in enumerate(areas):
+                x0, x1, y0, y1 = a["source_bounds"]
+                labels = {t["search_label"] for t in a["targets"]}
+                for other in areas[:i]:
+                    a0, a1, b0, b1 = other["source_bounds"]
+                    if (x0 < a1 and x1 > a0 and y0 < b1 and y1 > b0
+                            and labels & {t["search_label"] for t in other["targets"]}):
+                        errors.append("同类目标的搜索区域不能重叠，无法仅凭 map XY 区分任务归属")
+            for pose in [cfg["locations"]["score_view"]] + [s["drop_location"] for s in slots]:
+                x, y = pose[0][:2]
+                if not (fx0 <= x <= fx1 and fy0 <= y <= fy1):
+                    errors.append("得分区观察/放置停车位超出场地")
+            # 还要确认槽位不越过己方边界、槽位之间有间距，并容得下物品包络。
+            for i, s in enumerate(slots):
+                x0, x1, y0, y1 = s["bounds"]
+                if not (sx0 + margin <= x0 < x1 <= sx1 - margin
+                        and sy0 + margin <= y0 < y1 <= sy1 - margin):
+                    errors.append("放置位须位于己方得分区内并保留边线余量")
+                for other in slots[:i]:
+                    a0, a1, b0, b1 = other["bounds"]
+                    gap_x, gap_y = max(a0 - x1, x0 - a1, 0), max(b0 - y1, y0 - b1, 0)
+                    if math.hypot(gap_x, gap_y) <= 2 * v["track_radius_m"]:
+                        errors.append("放置位之间须留出大于两倍关联误差的间距")
+            for a in areas:
+                for t in a["targets"]:
+                    clearance = t["object_radius_m"] + margin
+                    if not any(max(s["bounds"][0], sx0 + clearance) < min(s["bounds"][1], sx1 - clearance)
+                               and max(s["bounds"][2], sy0 + clearance) < min(s["bounds"][3], sy1 - clearance)
+                               for s in slots):
+                        errors.append("没有容纳物品包络及边线余量的槽位：" + t["catalog_id"])
+
+    try:
+        # 【07 来源检查】哈希相当于文件指纹：校验实际旧模块与本次交付清单一致。
+        manifest = json.loads((root / "legacy_manifest.json").read_text(encoding="utf-8"))
+        for entry in manifest:
+            path = root / entry["path"]
+            if hashlib.sha256(path.read_bytes()).hexdigest() != entry["sha256"]:
+                errors.append("原模块与交付版本不一致：" + entry["path"])
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        errors.append("原代码清单检查失败：" + str(exc))
+    try:
+        support_source = json.loads((root / "support/SOURCE.json").read_text(encoding="utf-8"))
+        if hashlib.sha256((root / "support/safety.py").read_bytes()).hexdigest() != support_source["local_sha256"]:
+            errors.append("截止门控与交付版本不一致：support/safety.py")
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        errors.append("截止门控来源检查失败：" + str(exc))
+    # 【模型路径】按启用能力检查对应权重；有一个空/不存在的路径就不能开始实机流程。
+    weights = [cfg.get("search_weights")]
+    targets = [t for a in areas for t in a["targets"]]
+    if any(t.get("surface") == "ground" for t in targets):
+        weights.append(cfg.get("ground_weights"))
+    weights += [cfg.get(surface + "_weights") for surface in ("table", "table_short")
+                if any(t.get("surface") == surface for t in targets)]
+    for w in weights:
+        if not isinstance(w, str) or not w.strip():
+            errors.append("需要实际模型权重路径；不能把通用 YOLO 当作比赛模型")
+            continue
+        path = Path(w).expanduser()
+        if not path.is_absolute():
+            path = config_path.parent / path
+        if not path.is_file():
+            errors.append("缺少权重：" + str(path))
+    for key in ("search_weights", "ground_weights", "table_weights", "table_short_weights"):
+        if isinstance(cfg.get(key), str) and cfg[key]:
+            p = Path(cfg[key]).expanduser()
+            cfg[key] = str((p if p.is_absolute() else config_path.parent / p).resolve())
+    if errors:
+        print("配置未完成，未连接机器人：\n- " + "\n- ".join(errors), file=sys.stderr)
+        return 2
+    # 【静态检查到此结束】未加--real会在这里返回，下面的驱动、模型和相机不会初始化。
+    if not args.real:
+        print("配置结构、文件和原代码哈希检查通过；标定/模型标签/硬件尚未验证。")
+        return 0
+    if not sys.platform.startswith("linux"):
+        print("实机流程需要 Linux / ROS 1。", file=sys.stderr)
+        return 2
+    if signal.getitimer(signal.ITIMER_REAL)[0] > 0:
+        print("当前进程已有活动定时器，不能覆盖其截止时间。", file=sys.stderr)
+        return 2
+
+    # 【08 实机场次保护】从此进入实际运行路径；同目录同时只能有一个实机进程，同局不能重置计时。
+    import fcntl
+    evidence = Path(cfg["evidence_dir"]).expanduser()
+    if not evidence.is_absolute():
+        evidence = config_path.parent / evidence
+    evidence = evidence.resolve()
+    evidence.mkdir(parents=True, exist_ok=True)
+    # 在原构造器可能开爪之前拒绝同局重启；不提供伪造的恢复剩余时间功能。
+    marker = evidence / ("match_" + args.match_id + ".json")
+    session_lock = (evidence / "robot_session.lock").open("a+")
+    try:
+        fcntl.flock(session_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        session_lock.close()
+        print("该记录目录已有实机进程运行。", file=sys.stderr)
+        return 2
+    if marker.exists():
+        session_lock.close()
+        print("此 match-id 已启动过；禁止重新初始化夹爪或重置本局计时。", file=sys.stderr)
+        return 2
+    run_dir = evidence / (args.match_id + "_" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S_%fZ"))
+    run_dir.mkdir()
+    (run_dir / "config_used.json").write_text(json.dumps(cfg, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    sys.path[:0] = [str(root), str(root / "legacy/common"), str(root / "legacy/tongyong_25")]
+    # 【截止门控】两者来自support/safety.py；统一时间和停止检查，并包装原action客户端。
+    from support.safety import DeadlineGate, GuardedClient
+    if Path(sys.modules["support.safety"].__file__).resolve() != (root / "support/safety.py").resolve():
+        session_lock.close()
+        print("截止门控模块来源错误", file=sys.stderr)
+        return 2
+    # gate是检查对象；stop_messages/start_messages是ROS回调放消息的队列，不直接在回调中做机器人动作。
+    gate = DeadlineGate(clock=time.monotonic)
+    stop_messages = queue.SimpleQueue()
+    gate.stop_messages = stop_messages
+    start_messages = queue.SimpleQueue()
+    start_sub = stop_sub = None
+    navigator = base = kinova = camera = None
+    rospy = cv2 = None
+    # 【运行变量】state管步骤；holding管是否可能携物；二者不能混用。
+    state, holding = "PREPARE", "EMPTY"
+    started = deadline = None
+    task = area = slot = None
+    target_map = None
+    result_code = 0
+    deliveries = []
+    # 每个清单ID独立统计：expected计划数，delivered已视觉确认数，grasp_attempts抓取次数，pregrasp_failures抓取前失败次数。
+    inventory = {t["id"]: {"expected": t["expected_count"], "delivered": 0,
+                 "grasp_attempts": 0, "pregrasp_failures": 0,
+                 "status": "PENDING" if t["id"] in bound_catalog_ids else
+                           ("UNSUPPORTED" if t["status"] == "unsupported" else "NOT_ENABLED")}
+                 for t in catalog}
+    # record是本地运行证据：保存观察、尝试、事件、库存和退出状态；official_score保持None，不能冒充裁判得分。
+    record = {"match_id": args.match_id, "deliveries": deliveries, "observations": [],
+              "attempts": [], "events": [], "exit_completed": False,
+              "rule_source": "用户提供 PDF，第12–14页", "official_score": None,
+              "task_catalog": catalog, "capabilities": capabilities, "inventory": inventory,
+              "strategy": strategy, "slot_capacity": len(slots)}
+    journal_cursor = 0
+    old_alarm = signal.signal(signal.SIGALRM, signal.default_int_handler)
+    old_term = signal.signal(signal.SIGTERM, signal.default_int_handler)
+    old_int = signal.signal(signal.SIGINT, signal.default_int_handler)
+    try:
+        # 【09 准备阶段】SIGALRM到时会触发异常收尾；该阶段也有最多60秒的预算。
+        signal.setitimer(signal.ITIMER_REAL, cfg["limits"]["prepare_s"])
+        gate.deadline = time.monotonic() + cfg["limits"]["prepare_s"]
+        import numpy as np
+        import cv2
+        import rospy
+        from actionlib_msgs.msg import GoalStatus
+        from kinova_msgs.msg import FingerPosition
+        from std_msgs.msg import String, Bool
+        # 导入导航、底盘、TF、检测、语音和机械臂的旧接口；具体文件在legacy子目录。
+        from navigator2 import Navigator
+        from base_controller import Base
+        from position_last_second import SmartGoalFinder
+        from camera_to_map import CoordinateConverter
+        from goal_calculator import calculate_facing_goal
+        from summer_tts_speaker import SummerTTSSpeaker
+        from catch_ground.src.catch import KinovaRobot
+        from catch_ground.src.detector_items_c import KinectCamera, ItemsDetector
+        from catch_ground.src.realsense_yolo11 import RealSenseYolo11Detector
+        from catch_ground.src.realsense_yolo11_desk import RealSenseYolo11DetectorDesk
+
+        # 防止环境中的同名旧模块抢先导入，明确本次运行的真实来源。
+        for name, relative in (
+            ("navigator2", "legacy/common/navigator2.py"),
+            ("base_controller", "legacy/tongyong_25/base_controller.py"),
+            ("position_last_second", "legacy/common/position_last_second.py"),
+            ("camera_to_map", "legacy/common/camera_to_map.py"),
+            ("goal_calculator", "legacy/common/goal_calculator.py"),
+            ("summer_tts_speaker", "legacy/common/summer_tts_speaker.py"),
+            ("catch_ground.src.catch", "legacy/tongyong_25/catch_ground/src/catch.py"),
+            ("catch_ground.src.detector_items_c", "legacy/tongyong_25/catch_ground/src/detector_items_c.py"),
+            ("catch_ground.src.realsense_yolo11", "legacy/tongyong_25/catch_ground/src/realsense_yolo11.py"),
+            ("catch_ground.src.realsense_yolo11_desk", "legacy/tongyong_25/catch_ground/src/realsense_yolo11_desk.py"),
+        ):
+            if Path(sys.modules[name].__file__).resolve() != (root / relative).resolve():
+                raise RuntimeError("同名模块来源错误：" + name)
+        rospy.init_node("embodied_2026_main", anonymous=False, disable_signals=True)
+        stop_sub = rospy.Subscriber(cfg["stop_topic"], Bool, stop_messages.put, queue_size=1)
+        gate.check()
+        # 尽早保存底盘发布器；后续模型/设备准备失败也能请求零速度。
+        base = Base.__new__(Base)
+        Base.__init__(base)
+        gate.check()
+        # 加载真实搜索模型后核对精确标签；配置文件里写了标签不代表模型真的能识别。
+        detector = ItemsDetector(model_path=cfg["search_weights"])
+        gate.check()
+        names = detector.model.names
+        search_names = set(names.values() if isinstance(names, dict) else names)
+        for t in targets:
+            if t["search_label"] not in search_names:
+                raise ValueError("搜索模型没有精确标签：" + t["search_label"])
+        for surface in ("table", "table_short"):
+            selected = [t for t in targets if t["surface"] == surface]
+            if selected:
+                weights = cfg[surface + "_weights"]
+                check = RealSenseYolo11DetectorDesk(weights=Path(weights))
+                gate.check()
+                names = check.model.names
+                labels = set(names.values() if isinstance(names, dict) else names)
+                if any(t["grasp_label"] not in labels for t in selected):
+                    raise ValueError("桌面模型标签与 grasp_label 不一致：" + surface)
+                del check
+        ground_detector = None
+        if any(t["surface"] == "ground" for t in targets):
+            ground_detector = RealSenseYolo11Detector(weights=Path(cfg["ground_weights"]), conf_thres=0.5)
+            names = ground_detector.model.names
+            labels = set(names.values() if isinstance(names, dict) else names)
+            if any(t["grasp_label"] not in labels for t in targets if t["surface"] == "ground"):
+                raise ValueError("地面模型标签与 grasp_label 不一致")
+        speaker = SummerTTSSpeaker()
+        if speaker.tts_pub.get_num_connections() == 0:
+            raise RuntimeError("TTS 节点未就绪")
+        # 保存部分初始化对象，构造过程中被中断也能取消已建立的 action 客户端。
+        # __new__先保存未初始化对象，再执行原__init__；这样初始化中断时还能尝试取消已建立的客户端。
+        navigator = Navigator.__new__(Navigator)
+        navigator.deadline_gate = gate
+        Navigator.__init__(navigator, cfg["locations"])
+        planner, converter = SmartGoalFinder(), CoordinateConverter()
+        if planner.get_robot_pose() is None or rospy.is_shutdown():
+            raise RuntimeError("定位或 TF 未就绪")
+        kinova = KinovaRobot.__new__(KinovaRobot)
+        # 把同一个门控对象注入旧类实例；原__init__参数签名不变，初始化动作也要先查停止/截止。
+        kinova.deadline_gate = gate
+        gate.check()
+        KinovaRobot.__init__(kinova, "j2n6s300")
+        # 两个既有 catch_table 方法保留签名和动作顺序，通过实例属性读取部署权重。
+        kinova.table_weights = cfg.get("table_weights")
+        kinova.table_short_weights = cfg.get("table_short_weights")
+        gate.check()
+        if (rospy.is_shutdown() or kinova.client_arm.get_state() != GoalStatus.SUCCEEDED
+                or kinova.client_finger.get_state() != GoalStatus.SUCCEEDED):
+            raise RuntimeError("原机械臂初始化失败")
+        camera = KinectCamera()
+        camera.K = np.array(intrinsics, dtype=float).reshape(3, 3)
+        camera.open_camera()
+        gate.check()
+        # Kinova 构造器从 client 建立时即门控；初始化动作与比赛动作使用同一包装。
+        navigator.client = GuardedClient(navigator.client, gate, rospy.Duration)
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        gate.deadline = float("inf")
+        # 【10 等正式开始】准备完成后常驻订阅开始话题，忽略锁存的旧消息。
+        state = "WAIT_START"
+        start_sub = rospy.Subscriber(start["topic"], String if start["type"] == "String" else Bool,
+                                     start_messages.put, queue_size=1)
+        speaker.speak("准备完成，等待比赛开始。")
+        while not rospy.is_shutdown():
+            gate.check()
+            try:
+                msg = start_messages.get(timeout=0.1)
+            except queue.Empty:
+                continue
+            gate.check()
+            if str(getattr(msg, "_connection_header", {}).get("latching", "0")) == "1":
+                record["events"].append({"event": "ignored_latched_start"})
+                continue
+            data = msg.data.strip() if isinstance(msg.data, str) else msg.data
+            if data != start["value"]:
+                continue
+            # started为收到本次有效开始消息时的单调时钟；deadline固定为started+600。
+            started = time.monotonic()
+            deadline = started + MATCH_SECONDS
+            gate.deadline = deadline
+            record["start_wall_utc"] = datetime.now(timezone.utc).isoformat()
+            record["events"].append({"event": "started", "wall_utc": record["start_wall_utc"]})
+            with marker.open("x", encoding="utf-8") as f:
+                json.dump({"match_id": args.match_id, "start_wall_utc": record["start_wall_utc"],
+                           "run_dir": str(run_dir), "resume_supported": False}, f, ensure_ascii=False)
+                f.flush()
+                os.fsync(f.fileno())
+            break
+        if started is None:
+            raise RuntimeError("ROS 在启动信号到达前退出")
+
+        est, lim, vision = cfg["estimates"], cfg["limits"], cfg["vision"]
+        # 【预算解释】返航含去观察位、去投放位、再回观察位，共3次导航；投放前后共2次扫描，还有投放和持物检查。
+        return_cost = 3 * est["nav_s"] + 2 * est["scan_s"] + est["place_s"] + est["grip_s"]
+        exit_cost = est["exit_s"] + est["margin_s"]
+        limits = {"SELECT": lim["local_s"], "APPROACH": lim["local_s"],
+                  "NAVIGATE": lim["nav_s"], "SCAN": lim["scan_s"], "GRASP": lim["grasp_s"],
+                  "GRIP": lim["grip_s"], "STOW": lim["arm_s"], "PLACE": lim["arm_s"]}
+        destination = cfg["locations"]["entry"]
+        nav_kind, nav_after, state = "entry", "SELECT", "NAVIGATE"
+        scan_mode = grip_after = None
+        attempt = None
+        before_zone = None
+        # 【11 状态循环】每轮只执行当前state；分支结束设置下一步状态。真正STOP后离开while并进入finally。
+        while state != "STOP" and not rospy.is_shutdown():
+            gate.deadline = deadline
+            gate.check()
+            now = time.monotonic()
+            remaining = deadline - now
+            if remaining <= 0:
+                raise TimeoutError("比赛 600 秒到时")
+            # stage固定本轮步骤名称，即使后面修改state，本轮截止/记录仍对应原来的步骤。
+            stage = state
+            # 取“整场截止”和“本阶段预算截止”中更早的那个，防止接近600秒时还再拿完整阶段时间。
+            operation_deadline = min(deadline, now + limits[stage])
+            gate.deadline = operation_deadline
+            gate.check()
+            signal.setitimer(signal.ITIMER_REAL, max(0.001, operation_deadline - now))
+            record["events"].append({"event": "stage", "state": stage,
+                                      "elapsed_s": round(now - started, 3), "holding": holding})
+            rospy.loginfo("阶段=%s 剩余=%.1fs 持物=%s 已复核交付=%d", stage, remaining, holding, len(deliveries))
+            try:
+                # 【阶段 SELECT：选区域/任务】要求空闲夹爪；按配额、次数、预计完整周期和收益筛选。
+                if stage == "SELECT":
+                    if holding != "EMPTY":
+                        raise RuntimeError("持物状态不明确，禁止选择下一次抓取")
+                    ranked = []
+                    for i, a in enumerate(areas):
+                        if a["visits"] >= a["visit_limit"]:
+                            continue
+                        costs = []
+                        for t in a["targets"]:
+                            item = inventory[t["catalog_id"]]
+                            if item["delivered"] >= item["expected"]:
+                                item["status"] = "COMPLETE"
+                                continue
+                            if (item["pregrasp_failures"] >= strategy["max_pregrasp_failures"]
+                                    or item["grasp_attempts"] >= strategy["max_grasp_attempts"]):
+                                item["status"] = "ATTEMPT_LIMIT"
+                                continue
+                            cycle = (2 * est["nav_s"] + 2 * est["scan_s"]
+                                     + t["pickup_estimate_s"] + return_cost)
+                            if a["cycle_mean_s"] is not None:
+                                cycle = max(cycle, 1.2 * a["cycle_mean_s"])
+                            if cycle + exit_cost <= remaining:
+                                # 平滑估计：初始先验占两个虚拟样本，实际确认交付提高值，失败和尝试降低值；这只是调度启发式。
+                                probability = (2 * t["success_prior"] + item["delivered"]) / (
+                                    2 + item["grasp_attempts"] + item["pregrasp_failures"])
+                                bias = strategy["level1_weight"] if t["level"] == 1 else 1.0
+                                if not deliveries and t["level"] == 1:
+                                    bias *= strategy["bootstrap_level1_weight"]
+                                score = (30 if t["level"] == 1 else 40) * probability * bias
+                                costs.append(score / cycle)
+                        if costs:
+                            ranked.append((max(costs) / (1 + a["visits"]), -a["visits"], -i, i))
+                    free_slot = any(s["status"] == "AVAILABLE" for s in slots)
+                    # 只有至少一件已确认交付才考虑自主离场；退出触发阈值与真正需要的退出预算是两件事。
+                    should_exit = deliveries and (remaining <= est["exit_trigger_s"] or not ranked or not free_slot)
+                    if should_exit:
+                        # 触发阈值与最低可用预算分开；剩余 44.9 秒不会因低于 55 秒而被拒绝。
+                        if remaining >= exit_cost:
+                            destination = cfg["locations"]["exit"]
+                            nav_kind, nav_after, state = "exit", "STOP", "NAVIGATE"
+                        else:
+                            record["events"].append({"event": "insufficient_exit_budget"})
+                            state = "STOP"
+                        continue
+                    if not ranked or not free_slot:
+                        record["events"].append({"event": "no_feasible_cycle", "delivery_gate": bool(deliveries)})
+                        state = "STOP"
+                        continue
+                    # ranked每个元组保存得分和区域索引；max取最高分，末尾索引用于拿到那个区域。
+                    area = areas[max(ranked)[3]]
+                    record["events"].append({"event": "selected_area", "area": area["id"],
+                                             "expected_value_per_s": max(ranked)[0]})
+                    area["visits"] += 1
+                    cycle_started = time.monotonic()
+                    task = attempt = None
+                    destination = area["search_location"]
+                    scan_mode = "SEARCH"
+                    nav_kind, nav_after, state = "search", "SCAN", "NAVIGATE"
+
+                # 【阶段 NAVIGATE：去指定位置】destination是位姿；nav_kind说明用途，nav_after说明到达后转哪个状态。
+                elif stage == "NAVIGATE":
+                    goal = navigator.set_goal("map", destination[0], destination[1])
+                    goal.target_pose.header.stamp = rospy.Time.now()
+                    pose = planner.get_robot_pose()
+                    gate.check()
+                    if time.monotonic() >= operation_deadline:
+                        raise TimeoutError("定位调用超时")
+                    # 先有真实定位，再查规划路径；返回再查截止，迟到的True不能授权发目标。
+                    reachable = pose is not None and planner.validate_goal(pose, goal.target_pose)
+                    # 服务即使迟到返回 True，也不能继续派发导航，更不能 wait(Duration(0))。
+                    gate.check()
+                    if time.monotonic() >= operation_deadline:
+                        raise TimeoutError("路径检查超时，未发送导航目标")
+                    arrived = False
+                    if reachable:
+                        wait_s = operation_deadline - time.monotonic() - 0.02
+                        if wait_s <= 0:
+                            raise TimeoutError("导航预算耗尽")
+                        # 真正向move_base发送导航目标；client已被GuardedClient包装。
+                        navigator.client.send_goal(goal)
+                        wait_s = operation_deadline - time.monotonic() - 0.01
+                        if wait_s <= 0:
+                            raise TimeoutError("导航发送后预算耗尽")
+                        try:
+                            arrived = bool(navigator.client.wait_for_result(rospy.Duration(wait_s)))
+                        except TimeoutError:
+                            # 门控会把 action 失败变为异常。仅及时返回的终态失败可换点；
+                            # 外部停止、到时、等待未完成均继续抛出并停止整场流程。
+                            gate.check()
+                            nav_status = navigator.client.get_state()
+                            if nav_status in (2, 4, 5, 8, 9):
+                                arrived = False
+                            else:
+                                raise
+                        gate.check()
+                        if time.monotonic() >= operation_deadline:
+                            raise TimeoutError("导航结果迟到")
+                        arrived = arrived and navigator.client.get_state() == GoalStatus.SUCCEEDED
+                    if not arrived:
+                        navigator.stop()
+                        base.stop()
+                        record["events"].append({"event": "navigation_failed", "kind": nav_kind})
+                        if attempt is not None:
+                            attempt["status"] = "NAVIGATION_FAILED"
+                        # 仅空闲夹爪下的搜索/靠近失败允许换任务；携物返回或投放导航失败时保守停止。
+                        if holding == "EMPTY" and nav_kind in ("search", "approach"):
+                            state = "SELECT"
+                        else:
+                            raise RuntimeError("入场/携物回程/离场导航失败")
+                    else:
+                        base.stop()
+                        gate.check()
+                        if time.monotonic() >= operation_deadline:
+                            raise TimeoutError("导航到达确认迟到")
+                        if nav_kind == "exit":
+                            record["exit_completed"] = True
+                        state = nav_after
+
+                # 【阶段 SCAN：看物品并核对】scan_mode决定这次看来源区、靠近目标、投放前基线还是投放后变化。
+                elif stage == "SCAN":
+                    # 基础识别仍为原 pred/world；这里仅做返回结果的帧间关联。
+                    base.stop()
+                    # tracks是跨帧轨迹；seen_points保存所有有效几何观察；image_paths保存本次图像证据文件名。
+                    tracks, seen_points, image_paths = [], [], []
+                    valid_frames, invalid_points, last_valid_frame = 0, 0, None
+                    for frame_id in range(vision["frames"]):
+                        gate.check()
+                        if time.monotonic() >= operation_deadline:
+                            raise TimeoutError("视觉阶段预算耗尽")
+                        # 合入新增附件的同 capture 思路；直接组合往年已用的 SDK 方法，
+                        # 不新增 get_rgbd 功能函数，也不改原 KinectCamera 源文件。
+                        # 彩色与深度从同一个capture取得；depth[y,x]才对应这张彩色图的像素。
+                        capture = camera.device.update()
+                        gate.check()
+                        ok, rgb = capture.get_color_image()
+                        gate.check()
+                        if time.monotonic() >= operation_deadline:
+                            raise TimeoutError("彩色图像返回迟到")
+                        ok_depth, depth = capture.get_transformed_depth_image()
+                        gate.check()
+                        if time.monotonic() >= operation_deadline:
+                            raise TimeoutError("深度图像返回迟到")
+                        if not ok or not ok_depth or rgb is None or depth is None:
+                            continue
+                        if (rgb.ndim != 3 or depth.ndim != 2
+                                or rgb.shape[:2] != depth.shape):
+                            continue  # 对齐深度与彩色尺寸不一致不能参与几何判断。
+                        valid_frames += 1
+                        last_valid_frame = frame_id
+                        detector.color_frame = rgb.copy()
+                        detections = detector.pred()
+                        gate.check()
+                        if time.monotonic() >= operation_deadline:
+                            raise TimeoutError("模型推理返回迟到")
+                        points = []
+                        for detection in detections:
+                            confidence = float(detection.conf)
+                            if not math.isfinite(confidence) or confidence < vision["confidence"]:
+                                continue
+                            px, py = int(detection.x), int(detection.y)
+                            if not (0 <= py < depth.shape[0] and 0 <= px < depth.shape[1]):
+                                invalid_points += 1
+                                continue
+                            z = float(depth[py, px]) * 0.001
+                            if not math.isfinite(z) or not 0 < z <= vision["depth_max_m"]:
+                                invalid_points += 1
+                                continue
+                            # 第一步：像素+深度+内参得到相机点；下一步TF再得到地图点。world()名字不能理解成已经在map中。
+                            point_camera = detector.world(camera, depth, detection)
+                            if not all(math.isfinite(float(x)) for x in point_camera):
+                                invalid_points += 1
+                                continue
+                            point = converter.get_map_coords([float(x) for x in point_camera])
+                            gate.check()
+                            if time.monotonic() >= operation_deadline:
+                                raise TimeoutError("坐标转换返回迟到")
+                            if point is None or not all(math.isfinite(float(x)) for x in point):
+                                invalid_points += 1
+                                continue
+                            p = {"label": detection.name, "xy": [float(point[0]), float(point[1])]}
+                            # 同帧相邻重叠框只保留一次；绝不把框的数量当作连续命中帧数。
+                            if any(old["label"] == p["label"] and math.dist(old["xy"], p["xy"]) <=
+                                   vision["same_frame_radius_m"] for old in points):
+                                continue
+                            points.append(p)
+                        seen_points.extend(points)
+                        pairs = []
+                        for ti, track in enumerate(tracks):
+                            for pi, p in enumerate(points):
+                                distance = math.dist(track["xy"], p["xy"])
+                                if track["label"] == p["label"] and distance <= vision["track_radius_m"]:
+                                    pairs.append((distance, ti, pi))
+                        # 一对一关联：一个框本帧最多归入一条轨迹，一条轨迹本帧最多加一次命中。
+                        used_tracks, used_points = set(), set()
+                        for _, ti, pi in sorted(pairs):
+                            if ti in used_tracks or pi in used_points:
+                                continue
+                            track, p = tracks[ti], points[pi]
+                            hits = len(track["frames"])
+                            track["xy"] = [(track["xy"][j] * hits + p["xy"][j]) / (hits + 1) for j in range(2)]
+                            track["frames"].append(frame_id)
+                            used_tracks.add(ti)
+                            used_points.add(pi)
+                        for pi, p in enumerate(points):
+                            if pi not in used_points:
+                                tracks.append(dict(p, frames=[frame_id]))
+                        stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S_%fZ")
+                        image_path = run_dir / (stamp + "_" + scan_mode.lower() + "_" + str(frame_id) + ".jpg")
+                        cv2.putText(detector.color_frame, stamp, (10, 30), cv2.FONT_HERSHEY_SIMPLEX,
+                                    0.7, (0, 255, 255), 2)
+                        cv2.putText(detector.color_frame, scan_mode + " elapsed=" + str(round(time.monotonic() - started, 2)),
+                                    (10, 55), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2)
+                        if not cv2.imwrite(str(image_path), detector.color_frame):
+                            raise OSError("证据图像无法保存")
+                        image_paths.append(image_path.name)
+                        gate.check()
+                        if time.monotonic() >= operation_deadline:
+                            raise TimeoutError("证据保存迟到")
+                        if frame_id + 1 < vision["frames"]:
+                            time.sleep(min(vision["frame_pause_s"], max(0, operation_deadline - time.monotonic())))
+                    # 早期看见后消失的轨迹不用于靠近或交付确认。
+                    # 必须在不同帧累计足够命中，且最后一帧仍出现；同帧多个框不能冒充多帧。
+                    stable = [t for t in tracks if len(set(t["frames"])) >= vision["min_hits"]
+                              and vision["frames"] - 1 in t["frames"]]
+                    observation = {"mode": scan_mode, "tracks": tracks, "images": image_paths,
+                                   "valid_frames": valid_frames, "last_valid_frame": last_valid_frame,
+                                   "invalid_points": invalid_points,
+                                   "elapsed_s": round(time.monotonic() - started, 3)}
+                    record["observations"].append(observation)
+                    gate.check()
+                    if time.monotonic() >= operation_deadline:
+                        raise TimeoutError("视觉复核迟到")
+                    if valid_frames < vision["min_hits"] or last_valid_frame != vision["frames"] - 1:
+                        if holding == "EMPTY" and scan_mode == "SEARCH":
+                            record["events"].append({"event": "search_frames_insufficient", "area": area["id"]})
+                            state = "SELECT"
+                            continue
+                        if (holding == "EMPTY" and scan_mode == "RECHECK"
+                                and attempt["recheck_retries"] < strategy["recheck_retries"]):
+                            attempt["recheck_retries"] += 1
+                            record["events"].append({"event": "recheck_retry", "reason": "insufficient_frames"})
+                            state = "SCAN"
+                            continue
+                        if holding == "EMPTY" and scan_mode == "RECHECK":
+                            inventory[task["catalog_id"]]["pregrasp_failures"] += 1
+                            attempt["status"] = "RECHECK_FRAMES_INSUFFICIENT"
+                            state = "SELECT"
+                            continue
+                        raise RuntimeError("有效相机帧不足，不能把观察失败当作区域为空")
+                    # 【扫描模式 SEARCH】从来源区域内的稳定目标中选符合标签和预算的一件，并记录识别证据。
+                    if scan_mode == "SEARCH":
+                        candidates = []
+                        x0, x1, y0, y1 = area["source_bounds"]
+                        for ti, t in enumerate(area["targets"]):
+                            item = inventory[t["catalog_id"]]
+                            if (item["delivered"] >= item["expected"]
+                                    or item["pregrasp_failures"] >= strategy["max_pregrasp_failures"]
+                                    or item["grasp_attempts"] >= strategy["max_grasp_attempts"]):
+                                continue
+                            needed = (est["nav_s"] + est["scan_s"] + t["pickup_estimate_s"]
+                                      + return_cost + exit_cost)
+                            if deadline - time.monotonic() < needed:
+                                continue
+                            for pi, p in enumerate(stable):
+                                x, y = p["xy"]
+                                if p["label"] == t["search_label"] and x0 <= x <= x1 and y0 <= y <= y1:
+                                    # 使用同一成功先验与台账数据，比较本次可见候选的预计收益；它是调度估计值。
+                                    probability = (2 * t["success_prior"] + item["delivered"]) / (
+                                        2 + item["grasp_attempts"] + item["pregrasp_failures"])
+                                    bias = strategy["level1_weight"] if t["level"] == 1 else 1.0
+                                    if not deliveries and t["level"] == 1:
+                                        bias *= strategy["bootstrap_level1_weight"]
+                                    value = (30 if t["level"] == 1 else 40) * probability * bias / needed
+                                    candidates.append((value, -ti, -pi, ti, pi))
+                        if not candidates:
+                            state = "SELECT"
+                            continue
+                        # Python解包：前面不需要的排名字段丢给_，ti是目标配置索引，pi是视觉轨迹索引。
+                        *_, ti, pi = max(candidates)
+                        task = area["targets"][ti]
+                        target_map = stable[pi]["xy"] + [0.0]  # 原转换的 z 不用于机械臂
+                        attempt = {"id": len(record["attempts"]) + 1, "area": area["id"],
+                                   "catalog_id": task["catalog_id"], "recheck_retries": 0,
+                                   "label": task["search_label"], "name_cn": task["name_cn"],
+                                   "level": task["level"], "source_xy": target_map[:2], "status": "RECOGNIZED",
+                                   "recognition_images": image_paths}
+                        record["attempts"].append(attempt)
+                        if speaker.tts_pub.get_num_connections() == 0:
+                            raise RuntimeError("识别时 TTS 连接已断开")
+                        gate.check()
+                        speaker.speak("识别到{}，{}级难度。".format(task["name_cn"], task["level"]))
+                        attempt["announcement"] = "REQUEST_PUBLISHED_NO_PLAYBACK_ACK"
+                        state = "APPROACH"
+                    # 【扫描模式 RECHECK】靠近后再次看同一个目标；原抓取只能按类别操作，所以出现同类歧义要跳过。
+                    elif scan_mode == "RECHECK":
+                        visible = [p for p in stable if p["label"] == task["search_label"]]
+                        # 原桌面接口只能按类别抓取，不能传入实例 ID；同类歧义时不冒充实例抓取。
+                        other_seen = any(p["label"] == task["search_label"] and
+                                         math.dist(p["xy"], target_map[:2]) > vision["recheck_radius_m"]
+                                         for p in seen_points)
+                        if (invalid_points or other_seen or len(visible) != 1 or
+                                math.dist(visible[0]["xy"], target_map[:2]) > vision["recheck_radius_m"]):
+                            # 同类歧义不原地重抓。只有暂时丢失/几何失效时，空爪允许有限次复扫。
+                            if (not other_seen and len(visible) <= 1
+                                    and attempt["recheck_retries"] < strategy["recheck_retries"]):
+                                attempt["recheck_retries"] += 1
+                                attempt["status"] = "RECHECK_RETRY"
+                                record["events"].append({"event": "recheck_retry", "reason": "lost_or_invalid_geometry"})
+                                state = "SCAN"
+                            else:
+                                inventory[task["catalog_id"]]["pregrasp_failures"] += 1
+                                attempt["status"] = "RECHECK_AMBIGUOUS_OR_LOST"
+                                state = "SELECT"
+                        else:
+                            target_map[:2] = visible[0]["xy"]
+                            state = "GRASP"
+                    # 【扫描模式 SLOT_BEFORE】先记录得分区同类物品基线，再挑本次可放且没有已识别占用的槽位。
+                    elif scan_mode == "SLOT_BEFORE":
+                        if invalid_points:
+                            raise RuntimeError("放置前有检测框缺少可靠深度/TF，不能确认槽位无已识别占用")
+                        sx0, sx1, sy0, sy1 = cfg["score_bounds"]
+                        before_zone = [p for p in stable if p["label"] == task["search_label"] and
+                                       sx0 <= p["xy"][0] <= sx1 and sy0 <= p["xy"][1] <= sy1]
+                        uncertain_old = any(
+                            p["label"] == task["search_label"] and
+                            sx0 <= p["xy"][0] <= sx1 and sy0 <= p["xy"][1] <= sy1 and
+                            not any(math.dist(p["xy"], old["xy"]) <= vision["track_radius_m"] for old in before_zone)
+                            for p in seen_points)
+                        if uncertain_old:
+                            raise RuntimeError("得分区基线中有未稳定关联的同类检测，不能视为不存在")
+                        slot = None
+                        for s in slots:
+                            if s["status"] != "AVAILABLE":
+                                continue
+                            x0, x1, y0, y1 = s["bounds"]
+                            clearance = task["object_radius_m"] + cfg["score_margin_m"]
+                            usable = [max(x0, sx0 + clearance), min(x1, sx1 - clearance),
+                                      max(y0, sy0 + clearance), min(y1, sy1 - clearance)]
+                            if usable[0] >= usable[1] or usable[2] >= usable[3]:
+                                continue
+                            # 对已识别物品以计划内最大包络半径保守估算，留出双方半径和关联误差。
+                            # 未识别/遮挡物体仍无法由此证明不存在。
+                            # 间距保留两件物品的包络半径和关联误差；这是保守几何判据，不是完整障碍物检测。
+                            spacing = (task["object_radius_m"] + max(t["object_radius_m"] for t in targets)
+                                       + vision["track_radius_m"])
+                            occupied = any(math.hypot(
+                                max(usable[0] - p["xy"][0], p["xy"][0] - usable[1], 0),
+                                max(usable[2] - p["xy"][1], p["xy"][1] - usable[3], 0)) <= spacing
+                                for p in seen_points)
+                            if occupied:
+                                s["status"] = "BLOCKED"
+                            elif slot is None:
+                                slot = s
+                                slot["usable_bounds"] = usable
+                        if slot is None:
+                            raise RuntimeError("无可用放置位；保留夹持并停止")
+                        slot["status"] = "RESERVED"
+                        attempt["slot_id"] = slot["id"]
+                        attempt["before_images"] = image_paths
+                        attempt["before_zone"] = before_zone
+                        destination = slot["drop_location"]
+                        grip_after = "PLACE"
+                        nav_kind, nav_after, state = "drop", "GRIP", "NAVIGATE"
+                    # 【扫描模式 SLOT_AFTER】投放后全区同类恰好多一件；旧物能匹配，唯一新增物落在本次槽位才确认。
+                    else:  # SLOT_AFTER
+                        # 全区同类数量 +1，所有旧物品都能一对一关联，唯一新增物品在预定槽位。
+                        # 防止旧物品从旧槽位移到新槽位时被误当作本次新增交付。
+                        sx0, sx1, sy0, sy1 = cfg["score_bounds"]
+                        after_zone = [p for p in stable if p["label"] == task["search_label"] and
+                                      sx0 <= p["xy"][0] <= sx1 and sy0 <= p["xy"][1] <= sy1]
+                        pairs = []
+                        for bi, old in enumerate(before_zone):
+                            for ai, new in enumerate(after_zone):
+                                distance = math.dist(old["xy"], new["xy"])
+                                if distance <= vision["track_radius_m"]:
+                                    pairs.append((distance, bi, ai))
+                        old_matched, new_matched = set(), set()
+                        for _, bi, ai in sorted(pairs):
+                            if bi not in old_matched and ai not in new_matched:
+                                old_matched.add(bi)
+                                new_matched.add(ai)
+                        additions = [p for i, p in enumerate(after_zone) if i not in new_matched]
+                        x0, x1, y0, y1 = slot["usable_bounds"]
+                        matches = [p for p in additions if
+                                   x0 <= p["xy"][0] <= x1 and y0 <= p["xy"][1] <= y1]
+                        uncertain_new = any(
+                            p["label"] == task["search_label"] and
+                            sx0 <= p["xy"][0] <= sx1 and sy0 <= p["xy"][1] <= sy1 and
+                            not any(math.dist(p["xy"], new["xy"]) <= vision["track_radius_m"] for new in after_zone)
+                            for p in seen_points)
+                        attempt["after_zone"] = after_zone
+                        if (invalid_points or uncertain_new or len(after_zone) != len(before_zone) + 1
+                                or len(old_matched) != len(before_zone) or len(matches) != 1):
+                            slot["status"] = "UNVERIFIED"
+                            attempt["status"] = "DELIVERY_UNVERIFIED"
+                            raise RuntimeError("放置后未得到唯一的新物品视觉证据，不增加交付数量")
+                        gate.check()
+                        if time.monotonic() >= operation_deadline:
+                            raise TimeoutError("交付证据迟到，不登记成功")
+                        slot["status"] = "OCCUPIED"
+                        attempt["status"] = "DELIVERED_CONFIRMED"
+                        # 在全部判据通过且没迟到后才追加交付记录；后面的库存+1也只在这里发生。
+                        deliveries.append({"attempt_id": attempt["id"], "slot_id": slot["id"],
+                                           "catalog_id": task["catalog_id"],
+                                           "label": task["search_label"], "level": task["level"],
+                                           "map_xy": matches[0]["xy"], "images": image_paths,
+                                           "elapsed_s": round(time.monotonic() - started, 3)})
+                        item = inventory[task["catalog_id"]]
+                        item["delivered"] += 1
+                        item["status"] = "COMPLETE" if item["delivered"] >= item["expected"] else "PENDING"
+                        holding = "EMPTY"
+                        elapsed = time.monotonic() - cycle_started
+                        old_mean = area["cycle_mean_s"]
+                        area["cycle_mean_s"] = elapsed if old_mean is None else 0.5 * (old_mean + elapsed)
+                        gate.check()
+                        speaker.speak("已将{}运回己方得分区。".format(task["name_cn"]))
+                        state = "SELECT"
+
+                # 【阶段 APPROACH：计算靠近位姿】调用goal_calculator，不在这里移动；计算通过后交给NAVIGATE。
+                elif stage == "APPROACH":
+                    pose = planner.get_robot_pose()
+                    goal_pose = calculate_facing_goal(pose, target_map, task["standoff_m"]) if pose is not None else None
+                    gate.check()
+                    if time.monotonic() >= operation_deadline:
+                        raise TimeoutError("靠近位姿计算迟到")
+                    x0, x1, y0, y1 = cfg["field_bounds"]
+                    if (goal_pose is None or not all(math.isfinite(float(x)) for p in goal_pose for x in p)
+                            or not x0 <= goal_pose[0][0] <= x1 or not y0 <= goal_pose[0][1] <= y1):
+                        attempt["status"] = "APPROACH_UNAVAILABLE"
+                        state = "SELECT"
+                        continue
+                    destination = goal_pose
+                    scan_mode = "RECHECK"
+                    nav_kind, nav_after, state = "approach", "SCAN", "NAVIGATE"
+
+                # 【阶段 GRASP：调用原抓取】再次确认空闲与返航/离场预算，再按surface选table/table_short/ground。
+                elif stage == "GRASP":
+                    if holding != "EMPTY":
+                        raise RuntimeError("非空闲夹爪禁止新抓取")
+                    if deadline - time.monotonic() < task["pickup_estimate_s"] + return_cost + exit_cost:
+                        attempt["status"] = "DEFERRED_TIME"
+                        state = "SELECT"
+                        continue
+                    base.stop()
+                    if task["surface"] == "ground":
+                        kinova.goto_detect()
+                        gate.check()
+                        if time.monotonic() >= operation_deadline:
+                            raise TimeoutError("地面观察动作迟到")
+                        if kinova.client_arm.get_state() != GoalStatus.SUCCEEDED:
+                            raise RuntimeError("未到达地面观察位")
+                        ground_result = ground_detector.detect_targets(
+                            target_items=[task["grasp_label"]], max_retry=3, show_window=False)
+                        gate.check()
+                        if time.monotonic() >= operation_deadline:
+                            raise TimeoutError("地面检测迟到")
+                        if (ground_result is None or ground_result.name != task["grasp_label"]
+                                or not all(math.isfinite(float(x)) for x in
+                                           (ground_result.x, ground_result.y, ground_result.z, ground_result.angle))
+                                or not 0.1 <= ground_result.z <= vision["depth_max_m"]):
+                            attempt["status"] = "GROUND_DETECTION_FAILED"
+                            inventory[task["catalog_id"]]["pregrasp_failures"] += 1
+                            # 原观察位仍须回 home 才能移动；此时尚未调用抓取。
+                            grip_after, state = "SELECT", "STOW"
+                            continue
+                        # commands保存“方法对象、参数字典”；下面command(**kwargs)才真正调用它。
+                        commands = [(kinova.catch_ground, {"result": ground_result})]
+                    elif task["surface"] == "table":
+                        commands = [(kinova.catch_table, {"target": [task["grasp_label"]]})]
+                    else:
+                        commands = [(kinova.catch_table_short, {"target": [task["grasp_label"]]})]
+                    # 开始抓取后先标为UNKNOWN：发生异常时不能假设空爪，然后继续抓第二件。
+                    holding = "UNKNOWN"
+                    attempt["status"] = "GRASP_STARTED"
+                    inventory[task["catalog_id"]]["grasp_attempts"] += 1
+                    # 原 catch_* 返回 None，绝不据此判定成功或失败。
+                    # 原抓取动作结束后追加闭爪请求；是否支持持物由后续GRIP反馈样本判断。
+                    commands.append((kinova.close_finger, {}))
+                    table_detection_failed = False
+                    for command, kwargs in commands:
+                        gate.check()
+                        if time.monotonic() >= operation_deadline:
+                            raise TimeoutError("抓取预算耗尽")
+                        command(**kwargs)
+                        gate.check()
+                        if time.monotonic() >= operation_deadline:
+                            raise TimeoutError("原抓取/夹爪调用迟到")
+                        if (kinova.client_arm.get_state() != GoalStatus.SUCCEEDED
+                                or kinova.client_finger.get_state() != GoalStatus.SUCCEEDED):
+                            raise RuntimeError("原动作最后的 action 未成功；停止后续动作")
+                        if (task["surface"] != "ground" and command != kinova.close_finger
+                                and getattr(kinova, "last_grasp_detection", "NOT_REPORTED") is None):
+                            # 原方法的 if result 分支未执行，此前的空爪状态仍成立。
+                            # 先收拢再换任务；不把 None 返回值本身当作失败，也不闭空爪。
+                            holding = "EMPTY"
+                            attempt["status"] = "TABLE_DETECTION_FAILED"
+                            inventory[task["catalog_id"]]["pregrasp_failures"] += 1
+                            inventory[task["catalog_id"]]["grasp_attempts"] -= 1
+                            grip_after, state = "SELECT", "STOW"
+                            table_detection_failed = True
+                            break
+                    if table_detection_failed:
+                        continue
+                    grip_after, state = "STOW", "GRIP"
+
+                # 【阶段 GRIP：持物辅助检查】采多个新反馈，要求同样至少两根手指落在范围内且读数稳定。
+                elif stage == "GRIP":
+                    samples = []
+                    for _ in range(cfg["gripper"]["samples"]):
+                        wait_s = min(1.0, operation_deadline - time.monotonic() - 0.01)
+                        if wait_s <= 0:
+                            raise TimeoutError("夹爪反馈预算耗尽")
+                        feedback = rospy.wait_for_message("/j2n6s300_driver/out/finger_position", FingerPosition, timeout=wait_s)
+                        gate.check()
+                        if time.monotonic() >= operation_deadline:
+                            raise TimeoutError("夹爪反馈迟到")
+                        kinova.setCurrentFingerPosition(feedback)
+                        samples.append([float(x) for x in kinova.currentFingerPosition])
+                    valid = all(len(s) == 3 and all(math.isfinite(x) and 0 <= x <= 6800 for x in s) for s in samples)
+                    # 按手指索引i比较所有样本，防止每个样本合格的手指不同却误判为持续夹持。
+                    same_fingers = (valid and sum(
+                        all(task["hold_min"] <= s[i] <= task["hold_max"] for s in samples) and
+                        max(s[i] for s in samples) - min(s[i] for s in samples) <= cfg["gripper"]["stability_turn"]
+                        for i in range(3)) >= 2)
+                    attempt.setdefault("grip_samples", []).append(samples)
+                    if not same_fingers:
+                        holding = "UNKNOWN"
+                        attempt["status"] = "HOLD_UNKNOWN"
+                        raise RuntimeError("夹爪反馈不足以支持持物判断；不重抓、不松爪、不离场")
+                    holding = "HOLD_INDICATED"  # 辅助判据，不等同于力传感器确认
+                    attempt["status"] = "HOLD_INDICATED"
+                    if grip_after == "SCORE_VIEW":
+                        destination = cfg["locations"]["score_view"]
+                        scan_mode = "SLOT_BEFORE"
+                        nav_kind, nav_after, state = "score_view_before", "SCAN", "NAVIGATE"
+                    else:
+                        state = grip_after
+
+                # 【阶段 STOW：收拢】调用旧goto_home；失败时不能开始携物底盘导航。
+                elif stage == "STOW":
+                    gate.check()
+                    if time.monotonic() >= operation_deadline:
+                        raise TimeoutError("回 home 预算耗尽")
+                    kinova.goto_home()
+                    gate.check()
+                    if time.monotonic() >= operation_deadline:
+                        raise TimeoutError("回 home 返回迟到")
+                    if kinova.client_arm.get_state() != GoalStatus.SUCCEEDED:
+                        raise RuntimeError("回 home 失败，不开始底盘导航")
+                    if holding == "EMPTY":  # 地面检测失败且尚未抓取
+                        state = "SELECT"
+                    else:
+                        grip_after, state = "SCORE_VIEW", "GRIP"
+
+                # 【阶段 PLACE：放置】先到已标定姿态，才允许松爪；随后检查多次打开反馈并回home。
+                elif stage == "PLACE":
+                    if holding != "HOLD_INDICATED" or slot["status"] != "RESERVED":
+                        raise RuntimeError("放置前条件不满足")
+                    # 从已校准 drop 停车位执行既有 arm_run；不调用带固定交接动作的 open_finger。
+                    for pose in slot["drop_poses"]:
+                        gate.check()
+                        if time.monotonic() >= operation_deadline:
+                            raise TimeoutError("放置姿态预算耗尽")
+                        kinova.arm_run(unit="mdeg", pose_target=pose, relative=False)
+                        gate.check()
+                        if time.monotonic() >= operation_deadline:
+                            raise TimeoutError("放置动作迟到；禁止继续松爪")
+                        if kinova.client_arm.get_state() != GoalStatus.SUCCEEDED:
+                            raise RuntimeError("放置姿态未到达；禁止松爪")
+                    gate.check()
+                    if time.monotonic() >= operation_deadline:
+                        raise TimeoutError("松爪前预算耗尽")
+                    # 此时只是开始松爪，物品是否真实落入区内还不知道；不能直接把库存+1。
+                    holding = "RELEASE_UNVERIFIED"
+                    kinova.finger_run(unit="percent", finger_target=[5, 5, 5], relative=False)
+                    gate.check()
+                    if time.monotonic() >= operation_deadline:
+                        raise TimeoutError("松爪返回迟到；不登记交付")
+                    if kinova.client_finger.get_state() != GoalStatus.SUCCEEDED:
+                        raise RuntimeError("松爪 action 失败")
+                    # 收集配置数量的打开反馈，三根手指都要在范围内，且跨样本变化不能超过稳定阈值。
+                    open_samples = []
+                    for _ in range(cfg["gripper"]["samples"]):
+                        gate.check()
+                        wait_s = min(1.0, operation_deadline - time.monotonic() - 0.01)
+                        if wait_s <= 0:
+                            raise TimeoutError("松爪反馈预算耗尽")
+                        feedback = rospy.wait_for_message("/j2n6s300_driver/out/finger_position", FingerPosition, timeout=wait_s)
+                        gate.check()
+                        kinova.setCurrentFingerPosition(feedback)
+                        sample = [float(x) for x in kinova.currentFingerPosition]
+                        open_samples.append(sample)
+                        attempt["open_samples"] = open_samples
+                        if (len(sample) != 3 or not all(math.isfinite(x) and
+                                0 <= x <= cfg["gripper"]["open_max"] for x in sample)):
+                            raise RuntimeError("夹爪未达到标定的打开范围")
+                    if any(max(s[i] for s in open_samples) - min(s[i] for s in open_samples)
+                           > cfg["gripper"]["stability_turn"] for i in range(3)):
+                        raise RuntimeError("松爪反馈不稳定，不登记交付")
+                    gate.check()
+                    if time.monotonic() >= operation_deadline:
+                        raise TimeoutError("放置后回 home 预算耗尽")
+                    kinova.goto_home()
+                    gate.check()
+                    if time.monotonic() >= operation_deadline:
+                        raise TimeoutError("放置后回 home 迟到")
+                    if kinova.client_arm.get_state() != GoalStatus.SUCCEEDED:
+                        raise RuntimeError("放置后回 home 失败")
+                    destination = cfg["locations"]["score_view"]
+                    scan_mode = "SLOT_AFTER"
+                    nav_kind, nav_after, state = "score_view_after", "SCAN", "NAVIGATE"
+
+                gate.check()
+                if time.monotonic() >= operation_deadline:
+                    raise TimeoutError("阶段结束时预算耗尽：" + stage)
+            finally:
+                try:
+                    # 【每轮检查点】内层finally即使遇到continue也会执行；保存当前状态，便于出错后分析，但不支持续赛恢复。
+                    # 检查点同样受当前阶段定时器约束；磁盘迟到不能授权下一次动作。
+                    if time.monotonic() < operation_deadline and not gate.stopped:
+                        gate.check()
+                        checkpoint_time = datetime.now(timezone.utc).isoformat()
+                        record.update(checkpoint=True, checkpoint_wall_utc=checkpoint_time,
+                                      last_state=state, holding_at_stop=holding, slots=slots,
+                                      elapsed_s=round(time.monotonic() - started, 3))
+                        checkpoint_path = run_dir / "match_record.tmp"
+                        checkpoint_path.write_text(json.dumps(record, ensure_ascii=False, indent=2), encoding="utf-8")
+                        checkpoint_path.replace(run_dir / "match_record.json")
+                        with (run_dir / "events.jsonl").open("a", encoding="utf-8") as event_file:
+                            for event in record["events"][journal_cursor:]:
+                                event_file.write(json.dumps(dict(event, logged_wall_utc=checkpoint_time,
+                                    logged_elapsed_s=record["elapsed_s"]), ensure_ascii=False) + "\n")
+                        journal_cursor = len(record["events"])
+                        gate.check()
+                finally:
+                    signal.setitimer(signal.ITIMER_REAL, 0)
+        if rospy.is_shutdown() and state != "STOP":
+            raise RuntimeError("ROS 中断")
+    # 【12 异常出口】Ctrl+C、SIGTERM或SIGALRM中断会进入这里；其它错误进下面except Exception。
+    except KeyboardInterrupt:
+        record["events"].append({"event": "interrupt_or_deadline", "state": state})
+        result_code = 1
+    except Exception as exc:
+        record["events"].append({"event": "stopped", "state": state,
+                                 "error": type(exc).__name__ + ": " + str(exc)})
+        print("流程停止：" + str(exc), file=sys.stderr)
+        result_code = 1
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        # 【13 最终收尾】最外层finally负责取消导航/机械臂/夹爪、发零速度、关相机、保存记录和释放锁。
+        # 这里不会回home或开爪，因为停止后的新动作可能造成再次运动或掉物。
+        gate.stopped = True
+        # 独立取消三类客户端；某个停止接口异常不会跳过其余停止请求。
+        stop_calls = []
+        if navigator is not None and hasattr(navigator, "client"):
+            stop_calls.append(navigator.stop)
+        if kinova is not None:
+            for client_name in ("client_arm", "client_finger"):
+                if hasattr(kinova, client_name):
+                    stop_calls.append(getattr(kinova, client_name).cancel_all_goals)
+        if base is not None and hasattr(base, "pub") and hasattr(base, "twist"):
+            stop_calls.extend([base.stop] * 5)
+        for stop_call in stop_calls:
+            try:
+                stop_call()
+            except Exception as exc:
+                record["events"].append({"event": "stop_failed", "error": str(exc)})
+        # 停止后不回 home、不打开夹爪；这些都是新动作，可能让手中物体掉落。
+        if camera is not None and hasattr(camera, "device"):
+            try:
+                camera.release()
+            except Exception as exc:
+                record["events"].append({"event": "camera_release_failed", "error": str(exc)})
+        if cv2 is not None:
+            try:
+                cv2.destroyAllWindows()
+            except Exception:
+                pass
+        for subscriber in (start_sub, stop_sub):
+            if subscriber is not None:
+                try:
+                    subscriber.unregister()
+                except Exception:
+                    pass
+        record.update(checkpoint=False, last_state=state, holding_at_stop=holding, slots=slots,
+                      elapsed_s=None if started is None else round(time.monotonic() - started, 3),
+                      return_code=result_code)
+        if task is not None and attempt is not None and attempt["status"] in ("GRASP_STARTED", "HOLD_INDICATED"):
+            attempt["status"] = "INTERRUPTED_WITH_POSSIBLE_OBJECT"
+        try:
+            tmp_record = run_dir / "match_record.tmp"
+            tmp_record.write_text(json.dumps(record, ensure_ascii=False, indent=2), encoding="utf-8")
+            tmp_record.replace(run_dir / "match_record.json")
+            with (run_dir / "events.jsonl").open("a", encoding="utf-8") as event_file:
+                for event in record["events"][journal_cursor:]:
+                    event_file.write(json.dumps(dict(event, logged_wall_utc=datetime.now(timezone.utc).isoformat(),
+                        logged_elapsed_s=record["elapsed_s"]), ensure_ascii=False) + "\n")
+        except OSError as exc:
+            print("运行记录写入失败：" + str(exc), file=sys.stderr)
+            result_code = 1
+        try:
+            if rospy is not None:
+                rospy.signal_shutdown("2026 主流程结束")
+        except Exception as exc:
+            print("ROS 关闭失败：" + str(exc), file=sys.stderr)
+            result_code = 1
+        finally:
+            signal.signal(signal.SIGALRM, old_alarm)
+            signal.signal(signal.SIGTERM, old_term)
+            signal.signal(signal.SIGINT, old_int)
+            session_lock.close()
+    # 打印的是本地证据台账；result_code说明程序退出情况，不是比赛得分。
+    print("已复核交付={}，自主离场={}；本地记录不等于裁判计分。".format(len(deliveries), record["exit_completed"]))
+    return result_code
+
+
+# 【脚本入口】只有直接运行本文件才执行这里；从其它文件import不会进入这个分支。
+# 这里调用本文件自己的main；该文件的用途见开头中文说明。
+if __name__ == "__main__":
+    raise SystemExit(main())
