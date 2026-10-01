@@ -216,3 +216,16 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# 密钥文件
+.env
+.env.*
+
+# 机器人运行记录
+runs/
+
+# 模型文件，在 Ubuntu 电脑上单独保存
+models/
+*.pt
+*.pth
+*.onnx
