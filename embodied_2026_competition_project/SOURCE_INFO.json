@@ -1,0 +1,1385 @@
+{
+  "source_bundles": [
+    "embodied_2026_navigation_flow_20261002.zip",
+    "embodied_2026_navigation_only_patch_20261002.zip"
+  ],
+  "additional_source": "tongyong25.py",
+  "reviewed_sources": [
+    "jujia26.py",
+    "tongyong25.py",
+    "往年代码.zip",
+    "往年代码2.zip",
+    "speech相关(1).zip",
+    "vosk_speech_recognition(1).zip",
+    "赛程(1).pdf:印刷页23-25",
+    "1789105599369831.pdf:2026具身智能具体规则,PDF页12-14/7/16-20"
+  ],
+  "speech_adaptation": {
+    "speaker_source": "speech相关/summer_tts_speaker.py",
+    "speaker_sha256": "f09ff0d2769e5583cda21cceda7c76ea97153ab3cc777751e68ddc99b989a04c",
+    "cpp_source": "speech相关/summer_tts_node.cpp",
+    "cpp_sha256": "3c115606c1794d7430458482d379983be9af1b0eee51f3060a47aa9a8b7ff65f",
+    "changes": "保留 is_connected/_done_callback/speak(wait_done,timeout)；单调时钟与停止门控；回执超时不假报完成；C++增加模型/音频写入/播放命令检查，失败不发done，修正音频缓冲释放，增加原部署路径的ROS私有参数；缺完整构建依赖尚未编译",
+    "not_required_for_navigation": "speech_2026.py 的 Vosk录音/居家人物解析、约65MB语音识别模型与历史录音；这些不是TTS合成模型"
+  },
+  "jujia26_adaptation": {
+    "source_file": "jujia26.py",
+    "source_sha256": "aebb8f19aaca492c7fa25f4ebbc22023fc63d086349bbe629f7c15a20a7d94e8",
+    "initial_pose": "Controller.publish_initial_pose：默认准备等待5秒、map帧、z=0、原协方差、间隔0.5秒发布两次；固定坐标改为配置；增加有界连接等待和人工确认",
+    "stage_speech": "control/find_room：入场到达、开始遍历、提前自主离场；复用上传新版 SummerTTSSpeaker.speak，不构造需要录音模型的 CompetitionVoiceService",
+    "not_copied": "旧场地坐标、人物/行为任务、不兼容的 turn(timeout=...)、goto 布尔返回假设和人员靠近代码"
+  },
+  "model_sha256": "719c28ebd9d5f30b2467d843fa4c2abbd922ee9e0742e060c02ed527ae49557f",
+  "scope": "按正式规则修改已有编排与识别证据；原硬件接口保留，未新增真实抓稳/交付/对手避让/开柜能力",
+  "hardware_sources": {
+    "navigation/navigator.py": {
+      "original_file": "legacy/common/navigator2.py",
+      "original_sha256": "f788fa442a5fd4b74cad2fa9f34fec270fc11305f214e9e75977f7bf96bb8776",
+      "signatures": {
+        "Navigator.__init__": {
+          "positional": [
+            "self",
+            "location"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "Navigator.goto": {
+          "positional": [
+            "self",
+            "place"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "Navigator.set_goal": {
+          "positional": [
+            "self",
+            "frame_id",
+            "position",
+            "orientation"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "Navigator.go_to_location": {
+          "positional": [
+            "self",
+            "location_goal"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "Navigator.stop": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        }
+      }
+    },
+    "navigation/base_controller.py": {
+      "original_file": "legacy/tongyong_25/base_controller.py",
+      "original_sha256": "d60b002b188d1df5892dc1ff9243bf3871d94bb9b9b3e1a26b3d96234ea809a1",
+      "signatures": {
+        "Base.__init__": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "Base.now_pose": {
+          "positional": [
+            "self",
+            "pose"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "Base.get_pose": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "Base.get_angle": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "Base.turn": {
+          "positional": [
+            "self",
+            "angle",
+            "kp",
+            "kd"
+          ],
+          "posonly_count": 0,
+          "defaults": [
+            "1.5",
+            "0.5"
+          ],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "Base.rotate": {
+          "positional": [
+            "self",
+            "speed"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "Base.stop": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "Base.quad2euler": {
+          "positional": [
+            "self",
+            "x",
+            "y",
+            "z",
+            "w"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        }
+      }
+    },
+    "navigation/position_last_second.py": {
+      "original_file": "legacy/common/position_last_second.py",
+      "original_sha256": "e5ef64f44152e1df67cd6abcd5701e660f89e53a41bf1dd4b90d518baa51ed7e",
+      "signatures": {
+        "SmartGoalFinder.__init__": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "SmartGoalFinder.get_robot_pose": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "SmartGoalFinder.validate_goal": {
+          "positional": [
+            "self",
+            "start_pose",
+            "goal_pose"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "SmartGoalFinder.find_best_goal": {
+          "positional": [
+            "self",
+            "person_pose_stamped"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        }
+      }
+    },
+    "navigation/goal_calculator.py": {
+      "original_file": "legacy/common/goal_calculator.py",
+      "original_sha256": "7610cc480543b237c09d2623cbe2a7867a34a6134806b1c8f0cc09f59e70e574",
+      "signatures": {
+        "calculate_facing_goal": {
+          "positional": [
+            "robot_pose",
+            "target_point_map",
+            "distance"
+          ],
+          "posonly_count": 0,
+          "defaults": [
+            "0.3"
+          ],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        }
+      }
+    },
+    "camera/camera_to_map.py": {
+      "original_file": "legacy/common/camera_to_map.py",
+      "original_sha256": "cb3bcfbe8c174dee93528d9cc53e89e8adb5588b7336592d81dc0b5b5ba916aa",
+      "signatures": {
+        "CoordinateConverter.__init__": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "CoordinateConverter.get_map_coords": {
+          "positional": [
+            "self",
+            "camera_point"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        }
+      }
+    },
+    "camera/detector_items_c.py": {
+      "original_file": "legacy/tongyong_25/catch_ground/src/detector_items_c.py",
+      "original_sha256": "e3e0474b3a87ad20037456d37ba6f77472edde4e2ab0790a45b9f20d5687436c",
+      "signatures": {
+        "YoloResult.__init__": {
+          "positional": [
+            "self",
+            "name",
+            "box",
+            "x",
+            "y",
+            "conf"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "YoloResult.__str__": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "Camera.get_frame": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "Camera.get_depth": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "Camera.get_calibration": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "Camera.release": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinectCamera.__init__": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinectCamera.open_camera": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinectCamera.get_frame": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinectCamera.get_depth": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinectCamera.get_calibration": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinectCamera.release": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "RealSenseCamera.__init__": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "RealSenseCamera.open_camera": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "RealSenseCamera.get_frame": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "RealSenseCamera.get_depth": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "RealSenseCamera.get_calibration": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "RealSenseCamera.release": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "WebCamera.__init__": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "WebCamera.get_frame": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "WebCamera.get_depth": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "WebCamera.get_calibration": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "WebCamera.release": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "ItemsDetector.__init__": {
+          "positional": [
+            "self",
+            "model_path"
+          ],
+          "posonly_count": 0,
+          "defaults": [
+            "'/home/zq/catkin_ws/src/cmoon/src/shijiazhuang_2025/tongyong_25/model/allbest.pt'"
+          ],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "ItemsDetector.get_target_distance": {
+          "positional": [
+            "self",
+            "depth_image",
+            "x",
+            "y"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "ItemsDetector.detect": {
+          "positional": [
+            "self",
+            "camera",
+            "target",
+            "max_distance",
+            "depth"
+          ],
+          "posonly_count": 0,
+          "defaults": [
+            "'person'",
+            "None",
+            "True"
+          ],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "ItemsDetector.get_object_classes_sorted": {
+          "positional": [
+            "self",
+            "camera",
+            "range",
+            "visualize"
+          ],
+          "posonly_count": 0,
+          "defaults": [
+            "0.8",
+            "True"
+          ],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "ItemsDetector.visualize_sorted_objects": {
+          "positional": [
+            "self",
+            "frame",
+            "objects",
+            "width",
+            "range"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "ItemsDetector.pred": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "ItemsDetector.show": {
+          "positional": [
+            "self",
+            "frame",
+            "width",
+            "range"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "ItemsDetector.judge": {
+          "positional": [
+            "self",
+            "pattern",
+            "yolors",
+            "target",
+            "resolution",
+            "range"
+          ],
+          "posonly_count": 0,
+          "defaults": [
+            "None",
+            "640",
+            "0.8"
+          ],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "ItemsDetector.judge_range": {
+          "positional": [
+            "self",
+            "x",
+            "resolution",
+            "range"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "ItemsDetector.world": {
+          "positional": [
+            "self",
+            "camera",
+            "depth_image",
+            "yolors"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        }
+      }
+    },
+    "camera/realsense_yolo11.py": {
+      "original_file": "legacy/tongyong_25/catch_ground/src/realsense_yolo11.py",
+      "original_sha256": "e27b8a1ec4e18278d3193e456d31cc45a9414dab7d17dac3026d59b09db0d5d8",
+      "signatures": {
+        "YoloResult.__init__": {
+          "positional": [
+            "self",
+            "name",
+            "x",
+            "y",
+            "z",
+            "angle"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "YoloResult.__str__": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "RealSenseYolo11Detector.__init__": {
+          "positional": [
+            "self",
+            "weights",
+            "imgsz",
+            "conf_thres",
+            "iou_thres"
+          ],
+          "posonly_count": 0,
+          "defaults": [
+            "Path(\"weights\")",
+            "640",
+            "0.2",
+            "0.45"
+          ],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "RealSenseYolo11Detector._calc_item_angle": {
+          "positional": [
+            "self",
+            "item_img"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "RealSenseYolo11Detector._get_realsense_data": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "RealSenseYolo11Detector.detect_targets": {
+          "positional": [
+            "self",
+            "target_items",
+            "max_retry",
+            "show_window"
+          ],
+          "posonly_count": 0,
+          "defaults": [
+            "5",
+            "True"
+          ],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        }
+      }
+    },
+    "camera/realsense_yolo11_desk.py": {
+      "original_file": "legacy/tongyong_25/catch_ground/src/realsense_yolo11_desk.py",
+      "original_sha256": "bab739d0757755edd643124b78a3861160d7a349a479cf365e331b337ecad9ad",
+      "signatures": {
+        "YoloResult.__init__": {
+          "positional": [
+            "self",
+            "name",
+            "x",
+            "y",
+            "z"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "YoloResult.__str__": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "RealSenseYolo11DetectorDesk.__init__": {
+          "positional": [
+            "self",
+            "weights",
+            "imgsz",
+            "conf_thres",
+            "iou_thres"
+          ],
+          "posonly_count": 0,
+          "defaults": [
+            "Path(\"weights\")",
+            "1280",
+            "0.2",
+            "0.45"
+          ],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "RealSenseYolo11DetectorDesk._calc_item_angle": {
+          "positional": [
+            "self",
+            "item_img"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "RealSenseYolo11DetectorDesk._get_realsense_data": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "RealSenseYolo11DetectorDesk.detect_targets": {
+          "positional": [
+            "self",
+            "target_items",
+            "max_retry",
+            "show_window"
+          ],
+          "posonly_count": 0,
+          "defaults": [
+            "5",
+            "True"
+          ],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        }
+      }
+    },
+    "arm/catch.py": {
+      "original_file": "legacy/tongyong_25/catch_ground/src/catch.py",
+      "original_sha256": "cb6c13f46b4f109802b1c3746d615e0dd31e03e035f41c17e6cc61e5fdc0dc96",
+      "signatures": {
+        "KinovaRobot.__init__": {
+          "positional": [
+            "self",
+            "kinova_robotType"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinovaRobot.quaternion_to_rotation_matrix": {
+          "positional": [
+            "self",
+            "qw",
+            "qx",
+            "qy",
+            "qz"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinovaRobot.arm_run": {
+          "positional": [
+            "self",
+            "unit",
+            "pose_target",
+            "relative"
+          ],
+          "posonly_count": 0,
+          "defaults": [
+            "'mdeg'",
+            "None",
+            "False"
+          ],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinovaRobot.finger_run": {
+          "positional": [
+            "self",
+            "unit",
+            "finger_target",
+            "relative"
+          ],
+          "posonly_count": 0,
+          "defaults": [
+            "'percent'",
+            "None",
+            "False"
+          ],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinovaRobot.cartesian_pose_client": {
+          "positional": [
+            "self",
+            "position",
+            "orientation"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinovaRobot.gripper_client": {
+          "positional": [
+            "self",
+            "finger_positions"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinovaRobot.unitParser_arm": {
+          "positional": [
+            "self",
+            "unit_",
+            "pose_value_",
+            "relative_"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinovaRobot.QuaternionNorm": {
+          "positional": [
+            "self",
+            "Q_raw"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinovaRobot.Quaternion2EulerXYZ": {
+          "positional": [
+            "self",
+            "Q_raw"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinovaRobot.EulerXYZ2Quaternion": {
+          "positional": [
+            "self",
+            "EulerXYZ_"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinovaRobot.unitParser_finger": {
+          "positional": [
+            "self",
+            "unit_",
+            "finger_value_",
+            "relative_"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinovaRobot.getcurrentCartesianCommand": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinovaRobot.setcurrentCartesianCommand": {
+          "positional": [
+            "self",
+            "feedback"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinovaRobot.getCurrentFingerPosition": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinovaRobot.setCurrentFingerPosition": {
+          "positional": [
+            "self",
+            "feedback"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinovaRobot.transform": {
+          "positional": [
+            "self",
+            "position"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinovaRobot.image_to_arm": {
+          "positional": [
+            "self",
+            "camera_x",
+            "camera_y",
+            "camera_z"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinovaRobot.verboseParser": {
+          "positional": [
+            "self",
+            "verbose"
+          ],
+          "posonly_count": 0,
+          "defaults": [
+            "False"
+          ],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinovaRobot.goto_detect": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinovaRobot.goto_home": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinovaRobot.catch_ground": {
+          "positional": [
+            "self",
+            "result"
+          ],
+          "posonly_count": 0,
+          "defaults": [
+            "None"
+          ],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinovaRobot.open_finger": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinovaRobot.help": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinovaRobot.no_close_finger": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinovaRobot.close_finger": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinovaRobot.catch_table": {
+          "positional": [
+            "self",
+            "target"
+          ],
+          "posonly_count": 0,
+          "defaults": [
+            "[\"bottle\"]"
+          ],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "KinovaRobot.catch_table_short": {
+          "positional": [
+            "self",
+            "target"
+          ],
+          "posonly_count": 0,
+          "defaults": [
+            "[\"bottle\"]"
+          ],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        }
+      }
+    },
+    "speech/summer_tts_speaker.py": {
+      "original_file": "speech相关(1).zip:speech相关/summer_tts_speaker.py",
+      "original_sha256": "f09ff0d2769e5583cda21cceda7c76ea97153ab3cc777751e68ddc99b989a04c",
+      "signatures": {
+        "SummerTTSSpeaker.__init__": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "SummerTTSSpeaker._wait_for_subscribers": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "SummerTTSSpeaker.speak": {
+          "positional": [
+            "self",
+            "text",
+            "wait_done",
+            "timeout"
+          ],
+          "posonly_count": 0,
+          "defaults": [
+            "False",
+            "30.0"
+          ],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "SummerTTSSpeaker.is_connected": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        },
+        "SummerTTSSpeaker._done_callback": {
+          "positional": [
+            "self",
+            "msg"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        }
+      }
+    },
+    "navigation/initial_pose.py": {
+      "original_file": "jujia26.py:Controller.publish_initial_pose",
+      "original_sha256": "aebb8f19aaca492c7fa25f4ebbc22023fc63d086349bbe629f7c15a20a7d94e8",
+      "signatures": {
+        "Controller.publish_initial_pose": {
+          "positional": [
+            "self"
+          ],
+          "posonly_count": 0,
+          "defaults": [],
+          "kwonly": [],
+          "kw_defaults": [],
+          "vararg": null,
+          "kwarg": null
+        }
+      }
+    }
+  },
+  "formal_rules_adaptation": {
+    "source_file": "1789105599369831.pdf",
+    "sha256": "388a2d26053bbcc3403b906879af5168a006293371b9eb3ca095de7ebd572003",
+    "title": "2026年度赛事规则—服务机器人—具身智能机器人项目",
+    "rule_pages": {
+      "scores": 13,
+      "judgement_and_exit": 14,
+      "time_and_score_zone": 12,
+      "penalties": 13,
+      "robot_requirements": 7
+    },
+    "changes": [
+      "main要求已有start topic，与裁判开门同步；测试仍直接延迟启动且不改配置文件",
+      "无真实交付确认的main禁止自主离场；测试演练离场不取得资格",
+      "启用存图时保存选中候选帧而不是末帧，绘框/精确标签/UTC时间戳，单点只写一张图",
+      "功能/缺件说明包含逐阶段计分、目标覆盖缺口、碰撞处理和文件内口径冲突"
+    ],
+    "unresolved": [
+      "真实抓稳与得分区内交付反馈",
+      "最终正式目标与颜色/品牌模型覆盖",
+      "三级开柜/抽屉接口",
+      "对手避让/制动实测",
+      "正式中断续赛计时/状态继承",
+      "识别/抓取未运返的阶段分、同分和跟随人员口径"
+    ],
+    "validation": {
+      "python_runtime": "3.12.14",
+      "python38_ast_files": 28,
+      "hardware_modules": 11,
+      "retained_signatures": 98,
+      "offline_tests": 73,
+      "device_connection": false,
+      "tts_cpp_compiled": false
+    }
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "schema_version": 4,
+  "profile": "navigation_flow",
+  "initial_pose": null,
+  "localization": {
+    "initial_pose_wait_s": 5.0,
+    "confirmation_timeout_s": 45.0
+  },
+  "locations": {
+    "entry": null,
+    "exit": null,
+    "drop": null
+  },
+  "detection_points": [
+    {
+      "id": "detect_01",
+      "name": "区域1检测点1",
+      "region": "region_1",
+      "pose": null,
+      "test_label": "cola_bottle",
+      "target_labels": []
+    },
+    {
+      "id": "detect_02",
+      "name": "区域2检测点1",
+      "region": "region_2",
+      "pose": null,
+      "test_label": "sprite_bottle",
+      "target_labels": []
+    },
+    {
+      "id": "detect_03",
+      "name": "区域3检测点1",
+      "region": "region_3",
+      "pose": null,
+      "test_label": "blue_bowl",
+      "target_labels": []
+    }
+  ],
+  "model": {
+    "weights": "../models/best.pt",
+    "sha256": "719c28ebd9d5f30b2467d843fa4c2abbd922ee9e0742e060c02ed527ae49557f",
+    "labels": [
+      "cola_bottle",
+      "sprite_bottle",
+      "orange_fanta_bottle",
+      "baima_dish_soap",
+      "lays_stax_can",
+      "safeguard_pump_bottle",
+      "blue_bowl",
+      "spoon",
+      "black_green_box",
+      "oreo_long_box",
+      "green_shampoo_bottle"
+    ],
+    "confidence": 0.45,
+    "frames": 3,
+    "imgsz": 640,
+    "device": "cpu"
+  },
+  "camera": {
+    "backend": "azure_kinect",
+    "color_mode": "1080p"
+  },
+  "actions": {
+    "mode": "print"
+  },
+  "flow": {
+    "empty_detection": "skip",
+    "exit_when_done": true,
+    "skip_unreachable_detection": true
+  },
+  "timing": {
+    "match_s": 600,
+    "exit_reserve_s": 30,
+    "prepare_timeout_s": 60,
+    "nav_timeout_s": 35,
+    "scan_timeout_s": 12,
+    "nav_estimate_s": 15,
+    "scan_estimate_s": 6,
+    "grasp_estimate_s": 1,
+    "place_estimate_s": 1,
+    "exit_estimate_s": 20
+  },
+  "start": {
+    "mode": "topic",
+    "delay_s": 3,
+    "topic": "/start_signal",
+    "value": "start"
+  },
+  "stop_topic": "/embodied/stop",
+  "speech": {
+    "pause_s": 2.0,
+    "announce_stages": true,
+    "wait_done": true,
+    "timeout_s": 12.0
+  },
+  "recording": {
+    "save_images": true
+  },
+  "evidence_dir": "../runs"
+}
