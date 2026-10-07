@@ -1,0 +1,729 @@
+{
+  "schema_version": 7,
+  "profile": "competition",
+  "initial_pose": [
+    [
+      1.2500435587632346,
+      -0.0006977315478924467,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.27082721403451265,
+      0.962627975979456
+    ]
+  ],
+  "localization": {
+    "initial_pose_wait_s": 5,
+    "publish_interval_s": 0.5,
+    "navigate_to_initial_pose": true
+  },
+  "locations": {
+    "entry": [
+      [
+        1.2500435587632346,
+        -0.0006977315478924467,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.27082721403451265,
+        0.962627975979456
+      ]
+    ],
+    "exit": [
+      [
+        1.2500435587632346,
+        -0.0006977315478924467,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.27082721403451265,
+        0.962627975979456
+      ]
+    ],
+    "drop": [
+      [
+        4.163222398472371,
+        -3.6379925410086065,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        -0.7990175387325067,
+        0.601307718890958
+      ]
+    ]
+  },
+  "detection_points": [
+    {
+      "id": "detect_03",
+      "name": "区域3检测点1",
+      "region": "region_3",
+      "pose": [
+        [
+          4.711865086263453,
+          2.070828765200905,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.25678575817544086,
+          0.9664683514726512
+        ]
+      ],
+      "target_labels": [],
+      "difficulty": 2,
+      "grasp_profile": "shelf",
+      "surface_kind": "shelf",
+      "detect_pose": null,
+      "layers": [
+        {
+          "id": "low",
+          "name": "低层",
+          "detect_pose": [
+            0.270429,
+            -0.074298,
+            0.334523,
+            -93.77,
+            75.993,
+            175.232
+          ],
+          "alternate_detect_poses": []
+        },
+        {
+          "id": "mid",
+          "name": "中层",
+          "detect_pose": [
+            0.295184,
+            -0.075805,
+            0.711248,
+            -93.77,
+            75.993,
+            175.232
+          ],
+          "alternate_detect_poses": []
+        },
+        {
+          "id": "high",
+          "name": "高层",
+          "detect_pose": [
+            0.366699,
+            -0.085689,
+            0.861343,
+            -93.77,
+            75.993,
+            175.232
+          ],
+          "alternate_detect_poses": []
+        }
+      ],
+      "layer_hint": "mid",
+      "lift_dz_m": 0.03,
+      "furniture_id": "shelf_1",
+      "alternate_detect_poses": [],
+      "reposition_points": [],
+      "enabled": true
+    },
+    {
+      "id": "detect_01",
+      "name": "区域1检测点1",
+      "region": "region_1",
+      "pose": [
+        [
+          3.620928685657394,
+          -2.6777161355177697,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.9762629567014619,
+          -0.21658864091295177
+        ]
+      ],
+      "target_labels": [],
+      "difficulty": 1,
+      "grasp_profile": "surface",
+      "surface_kind": "table",
+      "detect_pose": [
+        0.319639,
+        -0.023217,
+        0.281487,
+        81.04,
+        83.972,
+        5.606
+      ],
+      "layers": [],
+      "layer_hint": null,
+      "lift_dz_m": 0.03,
+      "furniture_id": "table_1",
+      "alternate_detect_poses": [],
+      "reposition_points": [],
+      "enabled": true
+    },
+    {
+      "id": "ground_01",
+      "name": "二级地面圆圈",
+      "region": "floor",
+      "pose": [
+        [
+          5.59818342860548,
+          -1.7392346936517333,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.24728904546716776,
+          0.9689417567593714
+        ]
+      ],
+      "target_labels": [],
+      "difficulty": 2,
+      "enabled": true,
+      "grasp_profile": "ground",
+      "surface_kind": "ground",
+      "detect_pose": [
+        0.529655,
+        -0.073377,
+        0.494384,
+        174.838,
+        7.703,
+        -89.706
+      ],
+      "layers": [],
+      "layer_hint": null,
+      "lift_dz_m": 0.03,
+      "furniture_id": "floor_circle_1",
+      "alternate_detect_poses": [],
+      "reposition_points": [],
+      "ground": {},
+      "placement_diameter_m": 0.3,
+      "grasp_timeout_s": 180
+    }
+  ],
+  "model": {
+    "weights": "../models/table.pt",
+    "sha256": "0dddb4ca7266a74ec3a182d0980b0bb81e83998289967e54f7d74e150e61006a",
+    "labels": [
+      "biscuit",
+      "chip",
+      "lays",
+      "bread",
+      "cookie",
+      "handwash",
+      "dishsoap",
+      "water",
+      "sprite",
+      "cola",
+      "juice",
+      "shampoo",
+      "milk",
+      "cereal",
+      "bowl",
+      "plate",
+      "spoon",
+      "fork",
+      "bag",
+      "tablet",
+      "cup"
+    ],
+    "confidence": 0.5,
+    "frames": 3,
+    "imgsz": 640,
+    "device": "auto",
+    "metadata_file": "../models/TABLE_MODEL_INFO.json"
+  },
+  "camera": {
+    "backend": "azure_kinect",
+    "color_mode": "1080p",
+    "process_join_timeout_s": 0.2
+  },
+  "actions": {
+    "mode": "kinova",
+    "robot_type": "j2n6s300",
+    "camera_serial": "",
+    "tool_frame": "j2n6s300_link_base",
+    "home_pose": [
+      0.212583,
+      -0.255877,
+      0.506381,
+      94.805,
+      63.854,
+      6.944
+    ],
+    "place_pose": [
+      0.49458742141723633,
+      -0.0776473730802536,
+      0.15427930653095245,
+      81.04,
+      83.972,
+      11.606
+    ],
+    "finger_open": [
+      7,
+      7,
+      7
+    ],
+    "finger_close": [
+      85,
+      85,
+      85
+    ],
+    "finger_tight": [
+      100,
+      100,
+      100
+    ],
+    "grasp_timeout_s": 120,
+    "place_timeout_s": 45,
+    "tool_pose_timeout_s": 2,
+    "tool_pose_max_age_s": 0.5,
+    "pose_tolerance_m": 0.015,
+    "orientation_tolerance_deg": 5,
+    "wrist": {
+      "frames": 5,
+      "min_hits": 3,
+      "iou_threshold": 0.4,
+      "depth_tolerance_m": 0.015,
+      "depth_min_m": 0.1,
+      "depth_max_m": 1.2,
+      "max_age_s": 2,
+      "settle_frames": 5,
+      "scan_timeout_s": 12,
+      "device": "auto",
+      "imgsz": 640,
+      "max_fresh_retries": 1,
+      "width": 640,
+      "height": 480,
+      "angle_tolerance_deg": 10,
+      "frame_timeout_s": 1
+    },
+    "profiles": {
+      "surface": {
+        "transform": "surface",
+        "hand_eye_R": [
+          [
+            -0.999283591,
+            0.02314491,
+            -0.02461251
+          ],
+          [
+            -0.023260283,
+            -0.999191706,
+            -0.03734953
+          ],
+          [
+            -0.02564872,
+            -0.03450989,
+            0.99907178
+          ]
+        ],
+        "tcp_grip_cam_m": [
+          -0.07,
+          0.067,
+          0.065
+        ],
+        "model": {
+          "weights": "../models/table.pt",
+          "sha256": "0dddb4ca7266a74ec3a182d0980b0bb81e83998289967e54f7d74e150e61006a",
+          "labels": [
+            "biscuit",
+            "chip",
+            "lays",
+            "bread",
+            "cookie",
+            "handwash",
+            "dishsoap",
+            "water",
+            "sprite",
+            "cola",
+            "juice",
+            "shampoo",
+            "milk",
+            "cereal",
+            "bowl",
+            "plate",
+            "spoon",
+            "fork",
+            "bag",
+            "tablet",
+            "cup"
+          ],
+          "confidence": 0.2,
+          "metadata_file": "../models/TABLE_MODEL_INFO.json"
+        },
+        "label_map": {
+          "biscuit": "biscuit",
+          "chip": "chip",
+          "lays": "lays",
+          "bread": "bread",
+          "cookie": "cookie",
+          "handwash": "handwash",
+          "dishsoap": "dishsoap",
+          "water": "water",
+          "sprite": "sprite",
+          "cola": "cola",
+          "juice": "juice",
+          "shampoo": "shampoo",
+          "milk": "milk",
+          "cereal": "cereal",
+          "bowl": "bowl",
+          "plate": "plate",
+          "spoon": "spoon",
+          "fork": "fork",
+          "bag": "bag",
+          "tablet": "tablet",
+          "cup": "cup"
+        }
+      },
+      "shelf": {
+        "transform": "shelf",
+        "hand_eye_R": [
+          [
+            -0.999283591,
+            0.02314491,
+            -0.02461251
+          ],
+          [
+            -0.023260283,
+            -0.999191706,
+            -0.03734953
+          ],
+          [
+            -0.02564872,
+            -0.03450989,
+            0.99907178
+          ]
+        ],
+        "hand_eye_T_m": [
+          0.02359225,
+          0.08173328,
+          -0.14197627
+        ],
+        "compensation_m": [
+          0,
+          0.085,
+          0.12
+        ],
+        "model": {
+          "weights": "../models/table.pt",
+          "sha256": "0dddb4ca7266a74ec3a182d0980b0bb81e83998289967e54f7d74e150e61006a",
+          "labels": [
+            "biscuit",
+            "chip",
+            "lays",
+            "bread",
+            "cookie",
+            "handwash",
+            "dishsoap",
+            "water",
+            "sprite",
+            "cola",
+            "juice",
+            "shampoo",
+            "milk",
+            "cereal",
+            "bowl",
+            "plate",
+            "spoon",
+            "fork",
+            "bag",
+            "tablet",
+            "cup"
+          ],
+          "confidence": 0.2,
+          "metadata_file": "../models/TABLE_MODEL_INFO.json"
+        },
+        "label_map": {
+          "biscuit": "biscuit",
+          "chip": "chip",
+          "lays": "lays",
+          "bread": "bread",
+          "cookie": "cookie",
+          "handwash": "handwash",
+          "dishsoap": "dishsoap",
+          "water": "water",
+          "sprite": "sprite",
+          "cola": "cola",
+          "juice": "juice",
+          "shampoo": "shampoo",
+          "milk": "milk",
+          "cereal": "cereal",
+          "bowl": "bowl",
+          "plate": "plate",
+          "spoon": "spoon",
+          "fork": "fork",
+          "bag": "bag",
+          "tablet": "tablet",
+          "cup": "cup"
+        },
+        "detect_euler_deg": [
+          -93.77,
+          75.993,
+          175.232
+        ],
+        "detect_tries": 2,
+        "align_y_factor": 0.6666666666666666,
+        "execution_mode": "full",
+        "finger_open": [
+          7,
+          7,
+          7
+        ],
+        "finger_close": [
+          85,
+          85,
+          85
+        ],
+        "finger_tight": [
+          100,
+          100,
+          100
+        ]
+      },
+      "ground": {
+        "transform": "ground",
+        "hand_eye_R": [
+          [
+            -0.00846062,
+            0.99974337,
+            -0.02101445
+          ],
+          [
+            -0.03355864,
+            0.02071949,
+            0.99922196
+          ],
+          [
+            0.99940094,
+            0.00915925,
+            0.03337473
+          ]
+        ],
+        "hand_eye_T_m": [
+          0.020816677729270594,
+          0.06788506740074149,
+          -0.10464690917725247
+        ],
+        "model": {
+          "weights": "../models/table.pt",
+          "sha256": "0dddb4ca7266a74ec3a182d0980b0bb81e83998289967e54f7d74e150e61006a",
+          "labels": [
+            "biscuit",
+            "chip",
+            "lays",
+            "bread",
+            "cookie",
+            "handwash",
+            "dishsoap",
+            "water",
+            "sprite",
+            "cola",
+            "juice",
+            "shampoo",
+            "milk",
+            "cereal",
+            "bowl",
+            "plate",
+            "spoon",
+            "fork",
+            "bag",
+            "tablet",
+            "cup"
+          ],
+          "confidence": 0.2,
+          "metadata_file": "../models/TABLE_MODEL_INFO.json"
+        },
+        "label_map": {
+          "biscuit": "biscuit",
+          "chip": "chip",
+          "lays": "lays",
+          "bread": "bread",
+          "cookie": "cookie",
+          "handwash": "handwash",
+          "dishsoap": "dishsoap",
+          "water": "water",
+          "sprite": "sprite",
+          "cola": "cola",
+          "juice": "juice",
+          "shampoo": "shampoo",
+          "milk": "milk",
+          "cereal": "cereal",
+          "bowl": "bowl",
+          "plate": "plate",
+          "spoon": "spoon",
+          "fork": "fork",
+          "bag": "bag",
+          "tablet": "tablet",
+          "cup": "cup"
+        },
+        "reference_detect_pose": [
+          0.529655,
+          -0.073377,
+          0.494384,
+          174.838,
+          7.703,
+          -89.706
+        ],
+        "anchor_m": [
+          0.633305,
+          -0.19527,
+          0.257235
+        ],
+        "grasp_z_m": -0.2,
+        "grasp_euler_xy_deg": [
+          -173,
+          -3.4
+        ],
+        "yaw_offset_deg": 89.4,
+        "side_clearance_m": 0.2,
+        "forward_offset_m": 0.1,
+        "finger_open": [
+          5,
+          5,
+          5
+        ],
+        "finger_close": [
+          75,
+          75,
+          75
+        ],
+        "finger_tight": [
+          100,
+          100,
+          100
+        ],
+        "observe_settle_s": 3.0
+      }
+    },
+    "gripper_feedback": {
+      "timeout_s": 3,
+      "max_age_s": 0.5,
+      "stable_samples": 3,
+      "stable_span_s": 0.12,
+      "stable_tolerance_turn": 60,
+      "empty_closed_turn": 6750,
+      "blocked_margin_turn": 100,
+      "min_blocked_fingers": 1,
+      "open_max_turn": 800
+    },
+    "arm_action_timeout_s": 20,
+    "finger_action_timeout_s": 10,
+    "server_timeout_s": 5,
+    "cancel_timeout_s": 3,
+    "home_timeout_s": 20,
+    "startup_open_timeout_s": 10,
+    "startup_home_timeout_s": 20,
+    "abandon_timeout_s": 30,
+    "reach_estimate_s": 5,
+    "return_estimate_s": 5,
+    "close_estimate_s": 5,
+    "observe_retries": 1,
+    "initial_feedback_timeout_s": 10
+  },
+  "flow": {
+    "skip_unreachable_detection": true
+  },
+  "timing": {
+    "match_s": 600,
+    "exit_reserve_s": 30,
+    "prepare_timeout_s": 60,
+    "nav_timeout_s": 35,
+    "scan_timeout_s": 12,
+    "exit_estimate_s": 20,
+    "config_check_timeout_s": 10,
+    "state_timeout_s": 5,
+    "record_timeout_s": 2,
+    "cleanup_timeout_s": 3
+  },
+  "stop_topic": "/embodied/stop",
+  "speech": {
+    "pause_s": 2,
+    "announce_stages": true,
+    "wait_done": true,
+    "timeout_s": 12,
+    "label_names": {
+      "biscuit": "奥利奥饼干",
+      "chip": "薯愿薯片",
+      "lays": "乐事薯片",
+      "bread": "面包",
+      "cookie": "曲奇",
+      "handwash": "舒肤佳洗手液",
+      "dishsoap": "立白洗洁精",
+      "water": "农夫山泉瓶装550ml",
+      "sprite": "雪碧瓶装500ml",
+      "cola": "可乐瓶装500ml",
+      "juice": "芬达瓶装500ml",
+      "shampoo": "清扬男士洗发水",
+      "milk": "牛奶",
+      "cereal": "谷物",
+      "bowl": "碗",
+      "plate": "盘子",
+      "spoon": "勺子",
+      "fork": "刀",
+      "bag": "袋子",
+      "tablet": "第20项待核对物品",
+      "cup": "马克杯"
+    },
+    "subscriber_timeout_s": 5,
+    "max_timeout_s": 60,
+    "completion_slack_s": 2
+  },
+  "recording": {
+    "save_images": true
+  },
+  "evidence_dir": "../runs",
+  "strategy": {
+    "enabled_levels": [
+      1,
+      2
+    ],
+    "empty_confirmations": 2,
+    "round_wait_s": 3,
+    "max_visits_per_point": 0
+  },
+  "perception": {
+    "min_hits": 2,
+    "iou_threshold": 0.4,
+    "depth_tolerance_m": 0.02
+  },
+  "targets_file": "targets.json",
+  "excluded_labels": [
+    "tablet"
+  ],
+  "field_inventory": {
+    "level_totals": {
+      "1": 8,
+      "2": 6,
+      "3": 4
+    },
+    "distribution": "unknown",
+    "scope": "shared_by_both_robots"
+  },
+  "recovery": {
+    "camera_restarts": 1,
+    "nav_retries": 1,
+    "speech_retries": 1,
+    "retry_delay_s": 1,
+    "communication_timeout_s": 10,
+    "nav_server_timeout_s": 5,
+    "drop_max_attempts": 3,
+    "reset_retries": 1,
+    "reset_retry_wait_s": 2,
+    "exit_retry_wait_s": 5,
+    "point_wait_timeout_s": 120,
+    "reset_timeout_s": 30,
+    "drop_retry_wait_s": 5,
+    "drop_retry_timeout_s": 120,
+    "costmap_timeout_s": 3,
+    "costmap_settle_s": 1
+  }
+}

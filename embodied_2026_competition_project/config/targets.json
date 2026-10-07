@@ -1,0 +1,227 @@
+{
+  "schema_version": 1,
+  "source": {
+    "filename": "物品集(1).docx",
+    "sha256": "459aaba180cecb07a01ac62b1f0d4120513130cf8aeea1420167bd8adb844179",
+    "scope": "用户确认的本次比赛全部物品集",
+    "categories": [
+      "food",
+      "drink",
+      "cleaning_stuff",
+      "cutlery"
+    ],
+    "category_assignment": "文档只列四大类，逐项分组为本项目按用途整理；袋子分组留空"
+  },
+  "items": [
+    {
+      "id": 1,
+      "label": "biscuit",
+      "source_english": "biscuit",
+      "name_zh": "奥利奥饼干",
+      "category": "food",
+      "optional": false,
+      "identity_verified": true,
+      "notes": ""
+    },
+    {
+      "id": 2,
+      "label": "chip",
+      "source_english": "chip",
+      "name_zh": "薯愿薯片",
+      "category": "food",
+      "optional": false,
+      "identity_verified": true,
+      "notes": ""
+    },
+    {
+      "id": 3,
+      "label": "lays",
+      "source_english": "lays",
+      "name_zh": "乐事薯片",
+      "category": "food",
+      "optional": false,
+      "identity_verified": true,
+      "notes": ""
+    },
+    {
+      "id": 4,
+      "label": "bread",
+      "source_english": "bread",
+      "name_zh": "面包",
+      "category": "food",
+      "optional": false,
+      "identity_verified": true,
+      "notes": ""
+    },
+    {
+      "id": 5,
+      "label": "cookie",
+      "source_english": "cookie",
+      "name_zh": "曲奇",
+      "category": "food",
+      "optional": false,
+      "identity_verified": true,
+      "notes": ""
+    },
+    {
+      "id": 6,
+      "label": "handwash",
+      "source_english": "handwash",
+      "name_zh": "舒肤佳洗手液",
+      "category": "cleaning_stuff",
+      "optional": false,
+      "identity_verified": true,
+      "notes": ""
+    },
+    {
+      "id": 7,
+      "label": "dishsoap",
+      "source_english": "dishsoap",
+      "name_zh": "立白洗洁精",
+      "category": "cleaning_stuff",
+      "optional": false,
+      "identity_verified": true,
+      "notes": ""
+    },
+    {
+      "id": 8,
+      "label": "water",
+      "source_english": "water",
+      "name_zh": "农夫山泉瓶装550ml",
+      "category": "drink",
+      "optional": false,
+      "identity_verified": true,
+      "notes": ""
+    },
+    {
+      "id": 9,
+      "label": "sprite",
+      "source_english": "sprite",
+      "name_zh": "雪碧瓶装500ml",
+      "category": "drink",
+      "optional": false,
+      "identity_verified": true,
+      "notes": ""
+    },
+    {
+      "id": 10,
+      "label": "cola",
+      "source_english": "cola",
+      "name_zh": "可乐瓶装500ml",
+      "category": "drink",
+      "optional": false,
+      "identity_verified": true,
+      "notes": ""
+    },
+    {
+      "id": 11,
+      "label": "juice",
+      "source_english": "orange juice",
+      "name_zh": "芬达瓶装500ml",
+      "category": "drink",
+      "optional": false,
+      "identity_verified": true,
+      "notes": "文档英文 orange juice；21类模型的精确标签为 juice，照片11为芬达。"
+    },
+    {
+      "id": 12,
+      "label": "shampoo",
+      "source_english": "shampoo",
+      "name_zh": "清扬男士洗发水",
+      "category": "cleaning_stuff",
+      "optional": false,
+      "identity_verified": true,
+      "notes": ""
+    },
+    {
+      "id": 13,
+      "label": "milk",
+      "source_english": "milk",
+      "name_zh": "牛奶",
+      "category": "drink",
+      "optional": false,
+      "identity_verified": true,
+      "notes": ""
+    },
+    {
+      "id": 14,
+      "label": "cereal",
+      "source_english": "cereal",
+      "name_zh": "谷物",
+      "category": "food",
+      "optional": false,
+      "identity_verified": true,
+      "notes": ""
+    },
+    {
+      "id": 15,
+      "label": "bowl",
+      "source_english": "bowl",
+      "name_zh": "碗",
+      "category": "cutlery",
+      "optional": false,
+      "identity_verified": true,
+      "notes": ""
+    },
+    {
+      "id": 16,
+      "label": "plate",
+      "source_english": "plate",
+      "name_zh": "盘子",
+      "category": "cutlery",
+      "optional": false,
+      "identity_verified": true,
+      "notes": ""
+    },
+    {
+      "id": 17,
+      "label": "spoon",
+      "source_english": "spoon",
+      "name_zh": "勺子",
+      "category": "cutlery",
+      "optional": true,
+      "identity_verified": true,
+      "notes": "文档注明找不到就没有；保留模型类别，现场未摆放时不会识别到，不要求提前指定各家具目标。"
+    },
+    {
+      "id": 18,
+      "label": "fork",
+      "source_english": "fork",
+      "name_zh": "刀",
+      "category": "cutlery",
+      "optional": false,
+      "identity_verified": true,
+      "notes": "文档英文 fork，但中文为刀，照片18也是刀；保留权重标签 fork，中文不改成叉。"
+    },
+    {
+      "id": 19,
+      "label": "bag",
+      "source_english": "bag",
+      "name_zh": "袋子",
+      "category": null,
+      "optional": false,
+      "identity_verified": true,
+      "notes": "照片为绿色提手袋；文档未单列袋子属于哪一组，分组不参与抓取。"
+    },
+    {
+      "id": 20,
+      "label": "tablet",
+      "source_english": "tablet",
+      "name_zh": "洗碗机片剂",
+      "category": "cleaning_stuff",
+      "optional": false,
+      "identity_verified": false,
+      "notes": "文字为洗碗机片剂，照片20看起来是海绵；身份待核对，实臂禁止选入此目标，不能擅改模型类别为 sponge。"
+    },
+    {
+      "id": 21,
+      "label": "cup",
+      "source_english": "cup",
+      "name_zh": "马克杯",
+      "category": "cutlery",
+      "optional": false,
+      "identity_verified": true,
+      "notes": ""
+    }
+  ]
+}

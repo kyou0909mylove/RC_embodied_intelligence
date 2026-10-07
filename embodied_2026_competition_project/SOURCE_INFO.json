@@ -1,0 +1,394 @@
+{
+  "program_version": "v13-main-bounded-recovery-and-priority-exit",
+  "date": "2026-10-07",
+  "config_schema": 7,
+  "default_entry": "python3 -B main.py",
+  "scope": "继续原六项任务，按用户最新确认修改：封闭场地无人员监控、无ROI、三层柜、沿用两包腕部标定、不设自定义末端XYZ范围、随机摆放不设家具库存；main直接启动，实际夹爪闭合反馈，多视角和多物品复查，同场中断恢复。二级增加平躺地面拾取；三级先开柜门后shelf、先拉抽屉后ground，实测开门/内部参数未填前默认关闭，另四项任务不处理。",
+  "project_base": {
+    "source": "用户上传 embodied_2026_competition_project(1).zip",
+    "preserved": [
+      "initial_pose",
+      "locations",
+      "detection_points的map点位/ID/启用项/家具分组",
+      "用户home_pose/place_pose",
+      "模型类别、语音、调度和网络参数"
+    ],
+    "parameter_migrations": [
+      "柜层原默认姿态及手眼/经验公式更新为task2_pick_v2实际值",
+      "地面原默认锚点更新0.633305、抓取Z更新-0.20；源观察后等待3秒",
+      "删除只供已移除测试入口使用的test_label"
+    ]
+  },
+  "direct_kinova_reuse": {
+    "source_bundle": "kinova_wn.zip",
+    "original_file": "kinova_wn/catch_ground/src/catch.py",
+    "original_sha256": "61d1b66c11fe73ceb98b29453f1660471f5a5627981da7e265cf4b0ea6e80b17",
+    "runtime_file": "arm/original_kinova.py",
+    "original_class": "KinovaRobot",
+    "method_ast_sha256": {
+      "arm_run": "2342b4cb4559754afa7a23e4d396be640c5c84b4949931dc3dd81971921041d9",
+      "finger_run": "45dc89b99a3a555a4a068cd62722fbea1b103708d42c7a2c67001217d118813a",
+      "cartesian_pose_client": "1747f71bbcd812e1a89b5457913ad5d06321cf84c564448540c3427a53face83",
+      "gripper_client": "5c63f0d7b24aa5da43f1efdc6c441b2051f82b68017b416f83dc9200d7d15367",
+      "unitParser_arm": "026f7d7d51c7ad1e8371ce635f174a38297e25fdf28b1ec7eb5cae63d5e0047c",
+      "unitParser_finger": "727116238a3060d6cd287542c969fc8a4e499e61fb810e1fdcc1e8bb13689559",
+      "QuaternionNorm": "5c008b0017cf8455e4665f4de266a5ae38253e72552d4c39cb3c5d497f75475f",
+      "Quaternion2EulerXYZ": "5457ce7f96e0b00bbfd7cd6e592c30cbadc4931761ec826e6a983b8698f20e94",
+      "EulerXYZ2Quaternion": "c0cf4061a8d53b6b2c8248800b08a2d74609d5d937819991ca6decfa096aed7b"
+    },
+    "initialization_changes": "等待驱动两类初始反馈分别有日志和超时；main关闭构造器自动动作，新场次由startup先张爪再收臂；resume保留实际反馈核对。",
+    "import_changes": "驱动只保留ROS/action和标准库；删除不供main使用的旧相机、语音、业务抓取与标定副本。",
+    "driver_contract": "move 调用原 arm_run(mdeg)，fingers 调用原 finger_run(percent)；不重写目标消息与单位转换",
+    "v13_adaptation": "Server/arm/finger waits read configuration; unit conversion and geometric formulas retained"
+  },
+  "ground_adaptation": {
+    "uploaded_sources": {
+      "catch_3.py": {
+        "sha256": "af30ddc383dc3647112c84686e2e4b8158b38a55cbf1793f9305c79616f18796",
+        "original_upload_unchanged": true
+      },
+      "catch_ground.py": {
+        "sha256": "d48fadb708001b84ba105c03931de4edde39d736d516797a8a32dd1ec2e17a3b",
+        "original_upload_unchanged": true
+      },
+      "catch_ty.py": {
+        "sha256": "fc3d398382f4ddb06cacf014240347434f093279c659821ee42f39be34037ea4",
+        "original_upload_unchanged": true
+      }
+    },
+    "ground_source": "hangzhou2026.zip/hangzhou2026/tongyong_25/catch_ty.py: KinovaRobotGroud.catch_ground（jujia26实际调用）",
+    "angle_source": "kinova_wn/catch_ground/src/realsense_yolo11.py/_calc_item_angle",
+    "source_constants": {
+      "observe_pose": [
+        0.529655,
+        -0.073377,
+        0.494384,
+        174.838,
+        7.703,
+        -89.706
+      ],
+      "anchor_m": [
+        0.633305,
+        -0.19527,
+        0.257235
+      ],
+      "grasp_z_m": -0.2,
+      "orientation_xy_deg": [
+        -173,
+        -3.4
+      ],
+      "yaw_offset_deg": 89.4,
+      "fingers": [
+        [
+          5,
+          5,
+          5
+        ],
+        [
+          75,
+          75,
+          75
+        ],
+        [
+          100,
+          100,
+          100
+        ]
+      ],
+      "observe_settle_s": 3.0
+    },
+    "adaptations": [
+      "地面沿用新catch_ty的观察、横移、前伸、下降、75%/100%闭爪、直接home顺序",
+      "相机统一使用camera/wrist.py，不调用原函数内部另开的RealSense",
+      "类别使用现有赛事21类模型，保留excluded_labels等现有允许项",
+      "R/T及camera X/Z/Y输入轴顺序保留；本包默认锚点及抓取Z改为新源值",
+      "通过原KinovaRobot.arm_run/finger_run发送动作；闭合程度反馈仍决定持物状态",
+      "回位使用用户配置home_pose，得分区仍调用arm/put.py",
+      "抽屉单独配置内部几何，保留已有分段退出，三级模板保持未启用"
+    ],
+    "opening_parameters_measured": false,
+    "door_sensor_verified": false,
+    "ground_hardware_verified": false
+  },
+  "shelf_adaptation": {
+    "source": "task2_pick_v2.py",
+    "source_sha256": "eda3f40d3342ac84b024135ad93db81acf2b980b2e7bffc458cef73b27a4ba35",
+    "original_source_complete_grasp": false,
+    "source_execution": "实际只有开爪和中间点运动；其他抓取/回程被注释，原True不代表持物。",
+    "chosen_behavior": "full required by competition precheck; align_only is rejected before movement",
+    "coordinate_formula": "p_ee=R*[cam_x,cam_z,cam_y]+T；grasp=实际detect_xyz+[-p_y,p_x+0.085,p_z+0.12]，角度沿当前层。",
+    "align_formula": "align=grasp；align_y=(配置detect_y+grasp_y)*2/3，沿实际执行语句，修正源注释的X中点描述。",
+    "selection": "在当前点允许的全部类别中选离画面中心最近且有稳定深度的物品；记录/反馈/交付用实际选中类别。",
+    "layer_order": "提示层开始向上，再向下；每观察位最多2次重拍，再看已填备用位和下一层。",
+    "motion": "open -> observe -> align -> grasp -> close/tight -> lift/retreat -> configured home -> final finger confirmation",
+    "shared_camera": "camera/wrist.py；不另开源脚本内部RealSense或第二个KinovaRobot",
+    "hardware_verified": false
+  },
+  "initialization_adaptation": {
+    "source": "hangzhou2026/tongyong_25/jujia26.py Controller.__init__",
+    "device_order": [
+      "ROS",
+      "navigation",
+      "Kinova",
+      "wrist_camera",
+      "head_camera",
+      "speech",
+      "task_clock"
+    ],
+    "initial_pose_default": "默认保留当前定位，主流程实际导航到initial_pose；仅显式--set-initial-pose发布定位",
+    "feedback_wait_topic_suffixes": [
+      "out/cartesian_command",
+      "out/finger_position"
+    ],
+    "feedback_timeout_s": 10.0,
+    "hardware_verified": false,
+    "initial_navigation_after_preparation": true
+  },
+  "startup_reset_adaptation": {
+    "date": "2026-10-06",
+    "source": "按hangzhou2026/jujia26的初始化顺序接入；保留现场JSON参数",
+    "module": "arm/startup.py",
+    "new_match_sequence": [
+      "等待机械臂位姿和三指驱动反馈，分别最多initial_feedback_timeout_s秒",
+      "按actions.finger_open张爪并等待驱动动作成功",
+      "回actions.home_pose并等待驱动动作成功",
+      "准备腕部和头部相机、语音",
+      "默认保留当前定位，开始计时后导航到initial_pose"
+    ],
+    "resume_behavior": "cancel, fresh feedback, remaining recorded retreat, stow; preserve possible load; no new match clock",
+    "failure_behavior": "initial device/motion failure may pause; in-match software recovery bounded; pose tolerance alone warns",
+    "grasp_or_delivery_counted": false,
+    "new_required_config_fields": [],
+    "driver_factory_home_service_used": false,
+    "offline_cases": 14,
+    "hardware_verified": false
+  },
+  "runtime_model": {
+    "file": "models/table.pt",
+    "metadata_file": "models/TABLE_MODEL_INFO.json",
+    "sha256": "0dddb4ca7266a74ec3a182d0980b0bb81e83998289967e54f7d74e150e61006a",
+    "names": {
+      "0": "biscuit",
+      "1": "chip",
+      "2": "lays",
+      "3": "bread",
+      "4": "cookie",
+      "5": "handwash",
+      "6": "dishsoap",
+      "7": "water",
+      "8": "sprite",
+      "9": "cola",
+      "10": "juice",
+      "11": "shampoo",
+      "12": "milk",
+      "13": "cereal",
+      "14": "bowl",
+      "15": "plate",
+      "16": "spoon",
+      "17": "fork",
+      "18": "bag",
+      "19": "tablet",
+      "20": "cup"
+    },
+    "uploaded_file": "best(1).pt",
+    "uploaded_byte_identical": true,
+    "class_count": 21,
+    "uses": [
+      "head",
+      "surface_wrist",
+      "shelf_wrist",
+      "ground_wrist"
+    ]
+  },
+  "catalog_source": {
+    "filename": "物品集(1).docx",
+    "sha256": "459aaba180cecb07a01ac62b1f0d4120513130cf8aeea1420167bd8adb844179",
+    "complete_catalog": true,
+    "class_count": 21,
+    "embedded_images_inspected": 5,
+    "project_catalog": "config/targets.json",
+    "notes": [
+      "orange juice→实际权重juice；照片为芬达",
+      "fork文字/照片为刀，保留权重类名",
+      "spoon可选",
+      "tablet文字与照片20矛盾，实臂未确认前禁用"
+    ]
+  },
+  "speech_adaptation": {
+    "speaker_source": "speech相关/summer_tts_speaker.py",
+    "speaker_sha256": "f09ff0d2769e5583cda21cceda7c76ea97153ab3cc777751e68ddc99b989a04c",
+    "cpp_source": "speech相关/summer_tts_node.cpp",
+    "cpp_sha256": "3c115606c1794d7430458482d379983be9af1b0eee51f3060a47aa9a8b7ff65f",
+    "changes": "保留 SummerTTSSpeaker 的已有接口、单调时钟与截止门控；匹配非锁存完成回执。完整 TTS 构建工程和模型已由 summer_tts_ws.zip 补齐，现场沿用其中已有节点。项目内 C++ 加固源码增加错误检查、正确释放和路径参数，尚未确认重新编译部署。",
+    "not_required_for_navigation": "speech_2026.py 的 Vosk录音/居家人物解析、约65MB语音识别模型与历史录音；这些不是TTS合成模型",
+    "runtime_workspace": {
+      "source_file": "summer_tts_ws.zip",
+      "sha256": "ed1bc8bdb79ee7dcb49d104ab01785de310e37bae8e77f699bf873c4d435450b",
+      "workspace": "/home/zq/summer_tts_ws",
+      "ros_package": "summer_tts",
+      "executable": "summer_tts_node",
+      "ros_node": "/summer_tts_sub_node",
+      "command": "rosrun summer_tts summer_tts_node",
+      "request_topic": "/summer_tts_topic",
+      "done_topic": "/summer_tts_done",
+      "cpp_sha256": "fe070da16f00d2a5084fccaaf3372964eab0bc350fdeb54af16d15646b5ac585",
+      "binary_sha256": "4b42a5f2622d54f2ff9ed0212874547163bfc24b79294d6479bb0eab8ebd2580",
+      "done_in_source_and_binary": true,
+      "compiled_project_hardened_cpp_verified": false
+    }
+  },
+  "retained_hardware_sources": {
+    "navigation/navigator.py": {
+      "original_file": "legacy/common/navigator2.py",
+      "original_sha256": "f788fa442a5fd4b74cad2fa9f34fec270fc11305f214e9e75977f7bf96bb8776"
+    },
+    "navigation/base_controller.py": {
+      "original_file": "legacy/tongyong_25/base_controller.py",
+      "original_sha256": "d60b002b188d1df5892dc1ff9243bf3871d94bb9b9b3e1a26b3d96234ea809a1"
+    },
+    "speech/summer_tts_speaker.py": {
+      "original_file": "speech相关(1).zip:speech相关/summer_tts_speaker.py",
+      "original_sha256": "f09ff0d2769e5583cda21cceda7c76ea97153ab3cc777751e68ddc99b989a04c"
+    },
+    "navigation/initial_pose.py": {
+      "original_file": "jujia26.py:Controller.publish_initial_pose",
+      "original_sha256": "aebb8f19aaca492c7fa25f4ebbc22023fc63d086349bbe629f7c15a20a7d94e8"
+    }
+  },
+  "cleanup": {
+    "removed": [
+      "testing",
+      "test_start_command.txt",
+      "STARTUP_UPDATE.md",
+      "ORIGINAL_KINOVA_REUSE.md",
+      "ACTION_ERROR_FIX.md",
+      "arm/catch.py",
+      "arm/kinova.py",
+      "camera/camera_to_map.py",
+      "camera/detector_items_c.py",
+      "camera/realsense_yolo11.py",
+      "camera/realsense_yolo11_desk.py",
+      "navigation/goal_calculator.py",
+      "navigation/position_last_second.py",
+      "navigation/start_signal.py",
+      "models/best.pt",
+      "models/MODEL_INFO.json"
+    ],
+    "original_kinova_trimmed": "删除闲置业务；保留动作发送、单位转换、反馈订阅与等待",
+    "documents": [
+      "README.md",
+      "docs/PROJECT_STATUS.md",
+      "docs/MISSING_FILES.md"
+    ],
+    "model_weights_count": 1
+  },
+  "validation": {
+    "offline_behavior_checks_passed": 81,
+    "python38_syntax_checked": true,
+    "full_local_config_checked": true,
+    "physical_parameters_byte_preserved": true,
+    "hardware_verified": false,
+    "test_files_in_deliverables": false
+  },
+  "grasp_source_review": {
+    "date": "2026-10-06",
+    "jujia_entry": "hangzhou2026/tongyong_25/jujia26.py: Controller.trash_room",
+    "actual_ground_call": "KinovaRobotGroud.catch_ground(self.kinova, weights_path=TRASH_MODEL_PATH)",
+    "ground_source": "hangzhou2026/tongyong_25/catch_ty.py",
+    "ground_source_sha256": "fc3d398382f4ddb06cacf014240347434f093279c659821ee42f39be34037ea4",
+    "low_level_method_comparison": {
+      "method_count": 9,
+      "all_ast_equal": true,
+      "sources": [
+        "kinova_wn/catch_ground/src/catch.py",
+        "hangzhou2026/tongyong_25/catch_ground/src/catch.py",
+        "hangzhou2026/tongyong_25/catch_ty.py"
+      ]
+    },
+    "numerical_checks": [
+      "直接执行catch_ty地面函数，多组相机点/角度比较横移/前伸/下降及5/75/100开合爪",
+      "桌面公式与xg_table_pick执行结果比较",
+      "柜层公式、对准点及回程与上传task2_pick_v2执行结果比较"
+    ],
+    "motion_formulas_changed": false,
+    "local_json_changed": false,
+    "failure_policy": {
+      "observation_attempts_per_pose": 2,
+      "failed_observation_retreat": "观察重试的home失败后允许有限复位；复位仍失败暂停，不发下一点导航",
+      "observation_fallback": "已配置的备用位和其他柜层",
+      "arm_failed_point": "等待阈值内重试；确认空爪时取消、张开、收臂后去后续点；下一轮清临时障碍重查，不记空",
+      "navigation_unreachable_point": "导航有限重试后只跳过本轮，下一轮清临时记录和旧代价图重新尝试",
+      "preclose_approach_failed": "空爪收臂后记arm_failed；本点阈值内重新观察尝试，超时复位后下轮重查",
+      "load_unknown_or_held": "fresh unknown/unstable preserves possible load, bounded recover/stow; sustained no fresh feedback pauses",
+      "old_resume_migration": "保留抓放编号/计数，清除旧永久禁用/冷却/头部不完整判空标记，按配置重查",
+      "incomplete_observation": "有配置观察位未到达且其他位未找到物品时，仍记arm_failed，不增加空家具次数",
+      "delivery_priority": "3 attempts/120s; online exhaustion releases before next furniture, soft deadline keeps load for exit"
+    },
+    "failure_diagnostics": [
+      "动作步骤",
+      "目标米/度位姿",
+      "tool_frame",
+      "反馈XYZ/四元数",
+      "反馈年龄及是否来自本次动作期间",
+      "位置/姿态误差；缺失、过期、错误坐标系反馈不计算"
+    ],
+    "offline_cases_passed": 79,
+    "driver_abort_cause_verified": false,
+    "hardware_verified": false,
+    "review_version": "historical pre-v13 source comparisons; configured wait adaptation later recorded in main_flow_v13"
+  },
+  "validation_history": [
+    {
+      "revision": "before_v12",
+      "record": {
+        "logic_cases_passed": 115,
+        "new_shelf_and_main_cases": 6,
+        "source_formula_comparisons_passed": true,
+        "device_connection": false,
+        "tts_cpp_compiled": false,
+        "python38_runtime_files": 40,
+        "hardware_verified": false,
+        "latest_revision_cases_passed": 79,
+        "latest_revision": "抓取源码逐项核对、观察位失败恢复与动作位姿诊断"
+      }
+    },
+    {
+      "revision": "v12",
+      "record": {
+        "updated_at": "2026-10-06",
+        "hardware_validated": false,
+        "offline_behavior_checks": 44,
+        "source_parameters_preserved": true,
+        "initial_pose": "默认导航到目标，不默认发布目标为当前位置",
+        "scheduler": "config_order_rounds；动态受阻下一轮重试；完整空观察两次；默认不限访问",
+        "speech": "本次全部稳定候选先播报，按实例统计同类数量；腕部补报，同次到点去重",
+        "timeout": "空爪取消/张开/收臂；已持物保留并优先交付；未知反馈暂停",
+        "delivery": "持物期间锁定drop，等待5秒后清图重规划，默认120秒导航窗口；耗尽保留持物暂停",
+        "grasp": "同一观察位发现并抓取；播报后按需原位重拍；完成整套动作后判断持物",
+        "ground_angle": "沿旧脚本默认0度，可用null关闭；记录fallback来源",
+        "diagram": "docs/MAIN_FLOW_V12.md / MAIN_FLOW_V12.svg / MAIN_FLOW_V12.png"
+      }
+    }
+  ],
+  "main_flow_v13": {
+    "updated_at": "2026-10-07",
+    "hardware_validated": false,
+    "parameters_preserved": "map poses, home/place, all detect poses, hand-eye/calibration, model bytes",
+    "drop": "3 total navigation attempts / 120s inclusive window; if online exhausted, open/confirm/stow before next furniture",
+    "put": "actual drop arrival then direct release; no arrival holding check; open confirmation retained",
+    "soft_exit": "default 535s=600-max(30,45+20); keep possible load, complete required stow, exit",
+    "exit_failure": "retry bounded 35s goals and 5s waits until real arrival or 600s TIME_UP",
+    "fingers": "6750 boundary no fatal dead zone; stable holding counts, unstable fresh feedback conservatively carried unconfirmed",
+    "pose_tolerance": "fresh valid feedback after succeeded action gives warning, not independent abort",
+    "software_recovery": "point errors reset/skip, scheduler rebuild, FIFO record fallback; sustained inability to cancel/stow/open still pauses",
+    "parameter_diagnostics": "pre-motion full validation, source file/key/line when locatable",
+    "documentation": [
+      "docs/TIMEOUTS.md",
+      "docs/ERROR_GUIDE.md",
+      "docs/MAIN_FLOW_V13.md"
+    ],
+    "reposition_points": "validated relation only; navigation keeps configured route order",
+    "resume_client_status": "No local GoalHandle default LOST is distinguished using fresh idle server status; unknown active server goals require resolution, never cancel_all other controllers",
+    "exit_receipt": "Register saved completed release once during priority exit or TIME_UP; no new motion at hard deadline"
+  }
+}

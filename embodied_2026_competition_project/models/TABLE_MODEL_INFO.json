@@ -1,0 +1,31 @@
+{
+  "filename": "table.pt",
+  "sha256": "0dddb4ca7266a74ec3a182d0980b0bb81e83998289967e54f7d74e150e61006a",
+  "size_bytes": 19166106,
+  "names": {
+    "0": "biscuit",
+    "1": "chip",
+    "2": "lays",
+    "3": "bread",
+    "4": "cookie",
+    "5": "handwash",
+    "6": "dishsoap",
+    "7": "water",
+    "8": "sprite",
+    "9": "cola",
+    "10": "juice",
+    "11": "shampoo",
+    "12": "milk",
+    "13": "cereal",
+    "14": "bowl",
+    "15": "plate",
+    "16": "spoon",
+    "17": "fork",
+    "18": "bag",
+    "19": "tablet",
+    "20": "cup"
+  },
+  "class_count": 21,
+  "source": "桌面抓取.zip / 桌面抓取/best.pt",
+  "extraction": "pickle opcode metadata only; no unpickling or model execution"
+}
