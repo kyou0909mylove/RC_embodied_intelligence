@@ -1,10 +1,10 @@
 # RC 具身智能项目
 
-更新日期：2026-10-12。进入含 `main.py` 的目录，仍运行 `python3 -B main.py`。柜层沿用上传的 `task2_pick_v4(2).py` 抓取动作；本次统一模型配置并删除重复权重，保留主函数、启动参数、已填导航点位和抓取参数。
+更新日期：2026-10-13。进入含 `main.py` 的目录，仍运行 `python3 -B main.py`。本次新增点位剩余数量调度、腕部自主选物和模型复用；延续最后30秒优先离场、识别播报与抓取并行。修改内容和验证范围见 [2026-10-13 修改说明](docs/UPDATE_20261013.md)。
 
 ## 原功能文件与调用关系
 
-以下六份功能源码的动作、坐标、补偿和开合爪参数保持不变。`arm/task2_pick_v4.py` 仅修改模型路径及对应说明，其余五份沿用本次输入文件。
+原抓取动作、坐标、补偿和开合爪参数保留。RealSense 识别模块增加模型缓存，调用接口取消 Kinect 类别对腕部选物的限制。
 
 | 原功能文件 | 当前调用 |
 | --- | --- |
@@ -12,7 +12,8 @@
 | `arm/xg_table_pick.py` | 家具表面：`pick_surface` 调用 `pick_once` |
 | `arm/catch_ty.py` | 地面：`pick_ground` 调用原类的 `catch_ground` |
 | `catch_ground/src/catch.py` | 原 Kinova 动作发送及单位换算 |
-| `catch_ground/src/realsense_yolo11.py` | 原 RealSense 识别器 |
+| `catch_ground/src/realsense_yolo11.py` | 地面腕部识别器，复用同一权重/设备的模型 |
+| `catch_ground/src/realsense_yolo11_ref.py` | 桌面和柜层共用的腕部识别器，复用同一权重/设备的模型 |
 | `catch_ground/src/realsense_yolo11_desk.py` | 原 SDK 导入依赖 |
 
 `pick_surface.py`、`pick_shelf.py`、`pick_ground.py` 保留为独立调用接口，原动作仍在对应原功能文件里。投放、收臂、初始化、开柜、开抽屉也各自保留独立文件。
@@ -32,7 +33,20 @@
 
 顶层 `model` 和 `actions.profiles.ground.model` 使用 `../models/best.pt`；`actions.profiles.surface.model` 和 `actions.profiles.shelf.model` 使用 `../models/best(1).pt`。两份 JSON 的桌面、柜层类别和哈希资料已同步，`label_map` 沿用已明确的六类头部到腕部映射。配置读取会合并 local 与 example，因此两份文件均须保留本次修改。
 
-`arm/driver.py::load_original` 为柜层和桌面入口指定同一个 `models/best(1).pt`。柜层原脚本自身的模型默认路径也已指向该文件，删除重复权重后独立入口仍可找到模型。桌面接口 `arm/pick_surface.py` 仍使用原有六类映射；本次没有扩展可抓类别。
+`arm/driver.py::load_original` 为柜层和桌面入口指定同一个 `models/best(1).pt`。柜层原脚本自身的模型默认路径也已指向该文件。桌面腕部按原脚本的18类 `TARGET_NAMES` 自行选物，不再限定为 Kinect 识别出的单一类别。已核对的六类映射只用于记录实际抓取类别；其他类别保留腕部原标签，显式 `excluded_labels` 仍生效。
+
+设备准备阶段预加载已启用点位所需的腕部模型，同一识别模块中的同一权重和设备只加载一次。每次抓取仍创建独立相机管道、重新采集图像和深度、重新计算坐标，并按原流程预热和关闭相机；本次没有让 RealSense 常驻，也不复用上一次的抓取坐标。
+
+## 点位数量与遍历顺序
+
+在 `config/navigation.local.json` 的每个 `detection_points[]` 中填写 `object_count`，不填默认1，填0则跳过该点。例如原点位对象增加 `"object_count": 2`，表示这个点计划确认抓取两件。该数由现场填写，不根据 Kinect 数框自动更新。
+
+- 每轮按配置列表顺序访问所有剩余点位，每点执行一次完整抓取。
+- 沿用现有夹爪反馈判定，确认成功后剩余数量减1；同一物品ID重复登记、投放重试不重复扣减。
+- 数量减到0后退出待搜索队列，但继续完成当前持物的投放。原 JSON 点位不删除。
+- 抓取失败、没有目标或导航失败不扣数量，下一轮重新到该点；腕部原脚本内部的采图重试和柜层搜索仍保留。
+- 所有点位数量完成则离场；否则持续遍历到离场预留时间。旧 `empty_confirmations`、`max_visits_per_point` 不再用于结束搜索。
+- `--resume` 从恢复快照沿用剩余数量和成功ID，不重置数量或比赛时钟；新场次重新使用配置的 `object_count`。
 
 ## 本次目录整理
 
@@ -47,6 +61,9 @@
 - 普通前伸按 `jujia26` 顺序等待返回后继续合爪、收紧和收臂；普通动作的非成功状态或单次等待超时记录后继续。收臂完成后才判断是否持物。
 - 投放位普通返回失败或单动作等待超时后仍执行张爪，再确认释放和收臂。初始化、真实收臂失败、急停、ROS 关闭及硬截止保护继续保留。
 - 地图目标发送配置中的完整 XYZ，允许打点记录的非零 Z；初始化定位消息仍沿用平面 Z=0。
+- Kinect 用于识别播报，抓取目标和坐标由腕部识别决定。没有 Kinect 候选仍会进入腕部识别。
+- 识别播报先排队，主流程立即继续抓取；后台每句收到 `/summer_tts_done` 后才发送下一句，避免挤满语音节点队列。播报失败只影响语音队列。
+- 当前600秒比赛在第570秒优先中断普通任务，取消旧动作、必要回撤及收臂后导航离场，保留持物。离场准备按剩余时间减去 `exit_estimate_s` 限时，仍受总截止、急停和收臂条件约束。
 
 ## 启动与现场配置
 
@@ -74,6 +91,10 @@ python3 -B main.py --resume
 
 ## 核验
 
-2026-10-09 基线记录：50 份 Python 完成静态编译、Python 3.8 语法和缩进检查，73 项离线回归通过。该记录是此前版本的检查结果。本次完成配置检查、保留模型哈希检查、模型路径检查和修改源码的语法检查；`main.py`、导航点位、抓取动作和保留权重的内容与本次输入相同。
+在项目根目录运行离线回归，不连接 ROS、机器人或相机：
 
-离线回归使用 SDK、检测结果和 action 客户端替身，未连接真实机器人，也未验证 Linux SIGALRM。交付不包含测试脚本、日志、缓存或临时文件。来源及校验记录见 `SOURCE_INFO.json`，当前状态见 `docs/PROJECT_STATUS.md`。
+```bash
+python3 -B -m unittest discover -s testing -p 'test_*.py' -v
+```
+
+测试覆盖点位数量、成功去重、失败复查、恢复数量、Kinect错误类别下的腕部选物、模型缓存与新相机管道、新图片，以及播报队列和离场优先级；包含 Linux SIGALRM 对阻塞等待的实际中断检查。SDK、YOLO推理和action传输使用替身，实际识别效果、加载耗时和实体抓取仍需现场验证。当前状态见 [PROJECT_STATUS](docs/PROJECT_STATUS.md)。

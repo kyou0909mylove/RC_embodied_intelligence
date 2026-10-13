@@ -15,6 +15,7 @@
   "detection_points": [
     {
       "id": "detect_03",
+      "object_count": 1,
       "name": "区域3检测点1",
       "region": "region_3",
       "pose": [
@@ -85,6 +86,7 @@
     },
     {
       "id": "detect_01",
+      "object_count": 1,
       "name": "区域1检测点1",
       "region": "region_1",
       "pose": [[-0.7083351653861346,-4.13616557358631,0.13799999999999996],[0.0,0.0,0.9616223904017814,0.2743763442390102]],
@@ -110,6 +112,7 @@
     },
     {
       "id": "ground_01",
+      "object_count": 1,
       "name": "二级地面圆圈",
       "region": "floor",
       "pose": [[3.6678665402691366,-4.729959285268784,0.13799999999999998],[0.0,0.0,0.0016672519174947401,0.9999986101345559]],
@@ -579,9 +582,7 @@
       1,
       2
     ],
-    "empty_confirmations": 2,
-    "round_wait_s": 3,
-    "max_visits_per_point": 0
+    "round_wait_s": 3
   },
   "perception": {
     "min_hits": 2,

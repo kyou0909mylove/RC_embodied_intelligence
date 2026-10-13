@@ -29,6 +29,21 @@ import time
 from pathlib import Path
 from typing import Union
 
+
+_MODEL_CACHE = {}
+
+
+def get_cached_model(weights, device=None):
+    """同一权重和设备只加载一次；图像、深度、坐标及相机管道不缓存。"""
+    device = device or ('cuda' if torch.cuda.is_available() else 'cpu')
+    key = (str(Path(weights).expanduser().resolve()), device)
+    if key not in _MODEL_CACHE:
+        started = time.monotonic()
+        model = YOLO(key[0]).to(device)
+        _MODEL_CACHE[key] = model
+        print('[腕部模型] 已加载 {}，耗时 {:.3f}s'.format(key[0],time.monotonic()-started))
+    return _MODEL_CACHE[key]
+
 import numpy as np
 import cv2
 import torch
@@ -70,7 +85,7 @@ class RealSenseYolo11Detector:
     def __init__(self, weights: Path = Path("weights"),
                  imgsz: int = 640, conf_thres: float = 0.2, iou_thres: float = 0.45):
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        self.model = YOLO(str(weights)).to(self.device)
+        self.model = get_cached_model(weights,self.device)
 
         # 调试：打印模型类别
         print("=== 调试:model.names 信息 ===")

@@ -64,7 +64,28 @@ class Actions:
         self.wrist = WristVision(self.session.config,self.session.evidence)
         # 原抓取文件自行使用 RealSense，按需启动旧观测接口，避免占用同一相机。
         self.wrist_restart_needed = True
+        self._prepare_vision_models()
         self.session.checkpoint()
+
+    def _prepare_vision_models(self):
+        """任务计时前只预加载已启用点位的腕部模型，不打开 RealSense。"""
+        from .driver import load_original
+        if self.session.clock()>=self.session.work_deadline:
+            return  # 恢复已进入离场窗口时不再预加载抓取模型。
+        values = self.session.config.values
+        loaded = set()
+        for point in values['detection_points']:
+            if (not point.get('enabled',True) or point.get('object_count',1)==0
+                    or point['difficulty'] not in values['strategy']['enabled_levels']):
+                continue
+            profile = point['grasp_profile']
+            name = 'realsense_yolo11' if profile=='ground' else 'realsense_yolo11_ref'
+            weights = self.cfg['profiles'][profile]['model']['weights']
+            key = (name,weights)
+            if key not in loaded:
+                self.session.check()
+                load_original(name).get_cached_model(weights)
+                loaded.add(key)
 
     def require_travel_ready(self):
         if (not self.travel_ready or

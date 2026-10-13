@@ -20,6 +20,21 @@ from ultralytics.utils import ops
 from typing import Union
 
 
+_MODEL_CACHE = {}
+
+
+def get_cached_model(weights, device=None):
+    """地面腕部模型按权重/设备复用；每次识别仍重新获取图像和深度。"""
+    device = device or ('cuda' if torch.cuda.is_available() else 'cpu')
+    key = (str(Path(weights).expanduser().resolve()), device)
+    if key not in _MODEL_CACHE:
+        started = time.monotonic()
+        model = YOLO(key[0]).to(device)
+        _MODEL_CACHE[key] = model
+        print('[腕部模型] 已加载 {}，耗时 {:.3f}s'.format(key[0],time.monotonic()-started))
+    return _MODEL_CACHE[key]
+
+
 class YoloResult:
     """仅保留核心参数：物品名、相机坐标系坐标、角度"""
     def __init__(self, name: str, x: float, y: float, z: float, angle: float, box=None, conf=None, image_wh=None):
@@ -41,7 +56,7 @@ class RealSenseYolo11Detector:
                  imgsz: int = 640, conf_thres: float = 0.2, iou_thres: float = 0.45):
         # 初始化YOLOv11模型
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        self.model = YOLO(str(weights)).to(self.device)
+        self.model = get_cached_model(weights,self.device)
 
         # 调试代码：查看模型类别信息
         print("=== 调试:model.names 信息 ===")

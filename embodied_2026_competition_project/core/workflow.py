@@ -192,7 +192,8 @@ class Workflow:
             s.evidence.record['confirmed_object_ids'].append(oid)
             s.evidence.record['physical_grasps'] += 1
         if s.scheduler and point and point['id'] in s.scheduler.states:
-            self._schedule_call('register_pick',point,oid,held.get('label','unknown'))
+            self._schedule_call('register_pick',point,oid,held.get('label','unknown'),
+                                bool(held.get('grasp_confirmed',True)))
         s.checkpoint()
 
     def _register_delivery(self, receipt):
@@ -328,35 +329,22 @@ class Workflow:
             self._navigate('己方得分区停靠点',self.cfg['locations']['drop'])
             actions.put(candidates[0],self.cfg['locations']['drop'])
             return 'print',False
-        attempt = 0
         s.actions.observation_reporter = self._report_wrist
         try:
-            while attempt < 2:
-                s.check()
-                attempt += 1
-                self._stage('WRIST_AND_GRASP',point_id=point['id'],attempt=attempt)
-                # 每次采图/每个ROS动作各有限时；搜索耗时不侵占后续闭爪时间。
-                # 受统一离场截止、比赛总截止与急停约束；普通点位不添加聚合抓取门禁。
-                result = s.actions.grasp(candidates[0] if candidates else {},point)
-                s.evidence.record['grasp_interface_calls'] += 1
-                s.evidence.event('grasp_result',**dict(result,point_id=point['id']))
-                if s.actions.load_state=='holding':
-                    return 'grasped',bool(s.actions.holding.get('grasp_confirmed',True))
-                if s.actions.load_state=='unknown':
-                    self.recovery.arm('抓取后未知负载按失败恢复')
-                    if s.actions.holding:
-                        return 'grasped',bool(s.actions.holding.get('grasp_confirmed'))
-                outcome = result['status']
-                if outcome=='no_target':
-                    if not candidates and not observation.get('detections'):
-                        return 'no_target',False
-                    outcome = 'blocked'  # 头部看到但腕部没定位，不能判空。
-                if outcome in ('time_insufficient','unsupported','storage_uncertain'):
-                    return outcome,False
-                if attempt >= 2:
-                    return outcome,False
-                self._stage('RETRY_POINT',point_id=point['id'],reason=result.get('reason',outcome))
-                self._wait(self.cfg['recovery']['retry_delay_s'])
+            s.check()
+            self._stage('WRIST_AND_GRASP',point_id=point['id'],attempt=1)
+            # 每点每轮执行一次完整抓取；腕部仍按原脚本搜索层/视角和采图重试。
+            # 头部候选仅作提示，失败交回顺序遍历，下轮重新导航到该点。
+            result = s.actions.grasp(candidates[0] if candidates else {},point)
+            s.evidence.record['grasp_interface_calls'] += 1
+            s.evidence.event('grasp_result',**dict(result,point_id=point['id']))
+            if s.actions.load_state=='holding':
+                return 'grasped',bool(s.actions.holding.get('grasp_confirmed',True))
+            if s.actions.load_state=='unknown':
+                self.recovery.arm('抓取后未知负载按失败恢复')
+                if s.actions.holding:
+                    return 'grasped',bool(s.actions.holding.get('grasp_confirmed'))
+            return result['status'],False
         finally:
             s.actions.observation_reporter = None
 
@@ -465,19 +453,19 @@ class Workflow:
             try:
                 with s.operation(self.cfg['timing']['state_timeout_s']),interruptible(s.gate):
                     s.scheduler = PointScheduler(self.cfg['detection_points'],self.cfg['strategy'],s.clock,
-                        s.evidence.event,copy.deepcopy((s.restored or {}).get('scheduler')))
+                        s.evidence.event,copy.deepcopy((s.restored or {}).get('scheduler')),
+                        confirmed_object_ids=s.evidence.record['confirmed_object_ids'])
             except (ExitRequested,DeviceUnavailable,ParameterFault):
                 raise
             except Exception as exc:
                 s.check()
                 software_error(s.evidence,'RESTORE_SCHEDULER',exc)
                 # 物理抓放去重保存在record，不依赖可重建的访问顺序快照。
+                saved = copy.deepcopy((s.restored or {}).get('scheduler') or {})
+                saved['scheduler_version'] = 2
                 s.scheduler = PointScheduler(self.cfg['detection_points'],self.cfg['strategy'],
-                                             s.clock,s.evidence.event)
-            confirmed = set(getattr(s,'opened_storage',[]))
-            for p in s.scheduler.points:
-                if p['difficulty']==3 and p['furniture_id'] in confirmed:
-                    s.scheduler.states[p['id']].update(disabled=False,empty_streak=0,blocked_until=0)
+                    s.clock,s.evidence.event,saved,
+                    confirmed_object_ids=s.evidence.record['confirmed_object_ids'])
         if s.last_put_receipt:
             self._register_delivery(s.last_put_receipt)
         if s.actions and (s.actions.holding or s.actions.load_state=='unknown'):
@@ -511,14 +499,19 @@ class Workflow:
         except Exception as exc:
             s.check()
             software_error(s.evidence,'SCHEDULER.'+method,exc)
-            # 真实抓放计数在Evidence按object_id去重，重建调度不会重复计数。
+            # 重建也保留剩余数量；不能把已完成点位重新恢复为默认1件。
+            try:
+                saved = s.scheduler.snapshot()
+            except Exception:
+                saved = (s.restored or {}).get('scheduler')
             s.scheduler = PointScheduler(self.cfg['detection_points'],self.cfg['strategy'],
-                                         s.clock,s.evidence.event)
+                s.clock,s.evidence.event,copy.deepcopy(saved),
+                confirmed_object_ids=s.evidence.record['confirmed_object_ids'])
             s.evidence.event('scheduler_rebuilt',reason=str(exc))
             if method=='next_point':
-                return s.scheduler.points[0] if s.scheduler.points else None
+                return s.scheduler.next_point()
             if method in ('start_next_round','pending'):
-                return bool(s.scheduler.points)
+                return bool(s.scheduler.pending())
             return None
 
     def _search(self):
@@ -535,12 +528,12 @@ class Workflow:
             point = self._schedule_call('next_point') if s.scheduler else next(sequential,None)
             if point is None:
                 if not s.scheduler or not self._schedule_call('pending'):
-                    return '所有待查点已完成配置次数的完整判空'
+                    return '所有点位的计划抓取数量已完成'
                 self._stage('NEXT_ROUND',round_number=s.scheduler.round_number+1)
                 self._wait(self.cfg['strategy']['round_wait_s'])
                 pending = self._schedule_call('start_next_round')
                 if not pending:
-                    return '全部待查点已完成'
+                    return '全部点位的计划抓取数量已完成'
                 self._refresh_navigation('第{}轮开始'.format(s.scheduler.round_number))
                 s.checkpoint()
                 continue

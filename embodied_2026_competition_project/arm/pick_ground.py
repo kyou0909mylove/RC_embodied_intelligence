@@ -12,7 +12,11 @@ def catch_ground(controller, target, point, label):
     original = module.KinovaRobotGroud
     model = controller.cfg['profiles']['ground']['model']
     labels = model['labels']
-    requested = [label] if label in labels else list(labels)
+    # 头部类别仅记录为提示；腕部独立识别原地面接口支持的全部物品。
+    excluded = set(controller.session.config.values.get('excluded_labels',[]))
+    requested = [name for name in labels if name not in excluded]
+    if not requested:
+        return {'status':'no_target','physical_action':False,'grasp_confirmed':False}
     source_detector = module.RealSenseYolo11Detector
 
     class ObjectDetector(source_detector):

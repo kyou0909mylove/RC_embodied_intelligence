@@ -69,6 +69,22 @@ def read_checkpoint(path, values, strict=True):
                 'speech_requests','speech_done_requests'):
             if type(value) is not int or value<0:
                 invalid('record.'+key)
+    scheduler = data.get('scheduler') or {}
+    if scheduler.get('scheduler_version')==3:
+        states = scheduler.get('states')
+        if not isinstance(states,dict):
+            invalid('scheduler.states')
+        for pid,state in states.items():
+            if not isinstance(state,dict):
+                invalid('scheduler.states.'+pid)
+            remaining = state.get('remaining_count')
+            if type(remaining) is not int or remaining<0:
+                invalid('scheduler.states.'+pid+'.remaining_count')
+            counted = state.get('counted_object_ids',[])
+            if (not isinstance(counted,list)
+                    or any(not isinstance(oid,str) or not oid for oid in counted)
+                    or len(set(counted))!=len(counted)):
+                invalid('scheduler.states.'+pid+'.counted_object_ids')
     saved = data.get('actions') or {}
     if saved.get('load_state','empty') not in ('empty','holding','unknown'):
         invalid('actions.load_state')

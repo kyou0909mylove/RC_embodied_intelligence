@@ -101,8 +101,7 @@ def _flow_defaults(cfg):
     """新流程参数集中补默认值；保留现场已填写的坐标、标定和机械臂姿态。"""
     for group, defaults in {
         'localization': {'navigate_to_initial_pose': True},
-        'strategy': {'empty_confirmations': 2, 'round_wait_s': 3,
-                     'max_visits_per_point': 0},
+        'strategy': {'round_wait_s': 3},
         'recovery': {'point_wait_timeout_s': 120, 'reset_timeout_s': 30,
                      'drop_retry_wait_s': 5, 'drop_retry_timeout_s': 120,
                      'costmap_timeout_s': 3, 'costmap_settle_s': 1},
@@ -117,7 +116,8 @@ def _flow_defaults(cfg):
     if isinstance(ground, dict):
         ground.setdefault('angle_fallback_deg', 0.0)
     # 旧冷却/次数/预算字段不再参与顺序逐轮调度，删除避免现场误调。
-    for key in ('empty_rechecks_per_point','empty_recheck_delay_s','blocked_cooldown_s','level_timeout_s'):
+    for key in ('empty_rechecks_per_point','empty_recheck_delay_s','blocked_cooldown_s',
+                'level_timeout_s','empty_confirmations','max_visits_per_point'):
         if isinstance(cfg.get('strategy'),dict):
             cfg['strategy'].pop(key,None)
     for key in ('nav_estimate_s','scan_estimate_s','grasp_estimate_s','place_estimate_s'):
@@ -163,6 +163,7 @@ def load_runtime_configuration(path, root):
         point.setdefault('furniture_id', point['id'])
         point.setdefault('difficulty', 1)
         point.setdefault('enabled', True)
+        point.setdefault('object_count', 1)
         level = point['difficulty']
         if old_version < 7 and level == 3:
             point['enabled'], point['grasp_profile'] = False, 'shelf'
@@ -258,6 +259,9 @@ def load_configuration(path, root, require_poses=True):
         point.setdefault('furniture_id', pid)
         point.setdefault('difficulty', 1)
         point.setdefault('enabled',True)
+        point.setdefault('object_count',1)
+        if type(point['object_count']) is not int or point['object_count']<0:
+            errors.append(pid+'.object_count 须为非负整数；默认1，0表示不再搜索该点')
         point.setdefault('reposition_points',[])
         if type(point['enabled']) is not bool:
             errors.append(pid+'.enabled 须为布尔值')
@@ -433,7 +437,7 @@ def load_configuration(path, root, require_poses=True):
     for point in points:
         if point['enabled'] and 'grasp_timeout_s' in point and (not _number(point['grasp_timeout_s']) or point['grasp_timeout_s']<=0):
             errors.append(point['id']+'.grasp_timeout_s 须为有限正秒数')
-    for group, keys in [(policy,['empty_confirmations']), (actions['wrist'],['frames','min_hits','settle_frames','max_fresh_retries','width','height']), (actions['gripper_feedback'],['stable_samples','min_blocked_fingers']), (cfg['recovery'],['camera_restarts','nav_retries','speech_retries'])]:
+    for group, keys in [(actions['wrist'],['frames','min_hits','settle_frames','max_fresh_retries','width','height']), (actions['gripper_feedback'],['stable_samples','min_blocked_fingers']), (cfg['recovery'],['camera_restarts','nav_retries','speech_retries'])]:
         for key in keys:
             if type(group.get(key)) is not int or group[key]<0 or (key not in ('camera_restarts','nav_retries','speech_retries','max_fresh_retries') and group[key]<1):
                 errors.append(key+' 须为范围内整数')
@@ -456,8 +460,6 @@ def load_configuration(path, root, require_poses=True):
         for key in keys:
             if not _number(group.get(key)) or group[key]<=0:
                 errors.append(key+' 须为有限正数')
-    if type(policy.get('max_visits_per_point')) is not int or policy['max_visits_per_point'] < 0:
-        errors.append('max_visits_per_point 须为非负整数；0表示不按次数结束')
     fallback = actions['profiles']['ground'].get('angle_fallback_deg')
     if fallback is not None and (not _number(fallback) or not -90 <= fallback <= 90):
         errors.append('angle_fallback_deg 须为[-90,90]度或null')
