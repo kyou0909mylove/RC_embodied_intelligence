@@ -12,7 +12,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from core.safety import DeadlineGate, ExitRequested, OperationStopped, GuardedClient, interruptible
+from core.safety import DeadlineGate, ExitRequested, OperationStopped, ActionFailed, GuardedClient, interruptible
 from core.session import RobotSession
 from core.workflow import Workflow
 from core.evidence import Evidence
@@ -246,12 +246,24 @@ class Verification(unittest.TestCase):
         stage = next(e for e in s.evidence.record['events'] if e.get('name') == 'EXIT_PREPARE')
         self.assertEqual(stage['timeout_s'], 10)
 
-    def test_exit_home_timeout_does_not_drive_extended_arm(self):
+    def test_exit_home_failure_retries_until_deadline_without_driving(self):
         s = SimSession(570)
-        a = arm(s, home_seconds=11)
-        with self.assertRaises(OperationStopped): Workflow(s)._exit('time')
+        a = arm(s)
+        def fail_home(*args, **kwargs):
+            s.now += 1
+            raise ActionFailed('home',4,'模拟收臂失败')
+        a.driver.move = fail_home
+        w = Workflow(s)
+        w._initialize_route = s.check
+        def wait(seconds):
+            s.now += seconds
+            s.check()
+        w._wait = wait
+        w.run()
+        self.assertEqual(s.status,'TIME_UP')
         self.assertFalse(a.travel_ready)
-        self.assertFalse(any(t[0] == 'navigate' for t in s.trace))
+        self.assertFalse(any(t[0]=='navigate' for t in s.trace))
+        self.assertGreater(sum(t[0]=='cancel_arm' for t in s.trace),1)
 
     def test_hard_timeout_has_no_new_exit_goal(self):
         s = SimSession(569)

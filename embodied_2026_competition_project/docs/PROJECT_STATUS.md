@@ -1,12 +1,13 @@
 # 当前项目状态
 
-更新：2026-10-13。修改详情见 [UPDATE_20261013](UPDATE_20261013.md)。
+更新：2026-10-13。修改详情见 [效率修改](UPDATE_20261013.md) 和 [运行故障处理修改](UPDATE_20261013_RUNTIME.md)。
 
 | 项目 | 当前实现 |
 | --- | --- |
 | 点位调度 | 按配置顺序循环；`object_count`默认1，确认抓取减1，剩余为0不再搜索 |
-| 失败处理 | 数量不变，继续下一点，下轮重新到位；每点每轮一次完整抓取，保留原采图重试和柜层搜索 |
-| Kinect | 识别播报和记录提示；错误类别、无候选不限制腕部目标 |
+| 失败处理 | 入场后普通故障恢复/跳过/降级；取消/收臂失败保持运行并等待重试；数量不变 |
+| 保留入口 | 设备初始化及初始/入场导航失败仍允许退出并手动resume；对应函数保持原代码 |
+| Kinect | 识别播报和记录提示；运行故障重启失败后明确降级，仍进入腕部识别 |
 | 家具表面 | 原 `xg_table_pick.pick_once` 和18类目标，腕部自行选物 |
 | 柜层 | 原 `task2_pick_v4.pick_on_shelf`；原层搜索和选物动作保留 |
 | 地面 | 原 `catch_ty`，腕部按配置21类识别，显式排除列表生效 |
@@ -19,7 +20,7 @@
 | 必要保护 | 急停、ROS关闭、总截止、严重初始化故障及收臂条件继续生效 |
 | 文件与参数 | 原抓取文件保持独立；导航点位、观察位姿、标定、夹爪和补偿不变 |
 
-运行 `python3 -B main.py --check-config` 检查配置；运行 `python3 -B -m unittest discover -s testing -p 'test_*.py' -v` 做离线回归。本次43项回归通过，SDK、模型推理和action传输使用替身，包含真实Linux SIGALRM计时器检查。
+运行 `python3 -B main.py --check-config` 检查配置；运行 `python3 -B -m unittest discover -s testing -p 'test_*.py' -v` 做离线回归。本次69项回归通过，SDK、模型推理和action传输使用替身，包含真实Linux SIGALRM计时器检查。
 
 未连接实体机器人，实机成功率和加载耗时未测量。运行仍依赖现场ROS、Kinova、Kinect/RealSense及SummerTTS环境。
 

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """有限阶段恢复：取消旧动作、回撤及收臂，再判断负载。
 
-不规划新抓取路径；复用抓取记录里已有的回程。设备故障、主动停止、
-比赛截止均向上传递，不能作为普通点位失败吞掉。
+不规划新抓取路径；复用抓取记录里已有的回程。设备故障向上传递，由入场后的Workflow等待重试，不能伪造复位成功。
+初始化调用仍严格；主动停止和比赛截止仍向上传递。
 """
 import time
 from .faults import DeviceUnavailable, ParameterFault
@@ -87,6 +87,7 @@ class Recovery:
             s.check()
             # 已经尝试真实的取消及home动作；没有完成这些动作就不能驾驶底盘。
             # 这是执行接口持续不完成，而不是单独一个到位容差报警。
+            # 运行中的Workflow会保留session等待后再次恢复，底盘仍保持停止。
             raise DeviceUnavailable('机械臂执行',
                 '常规及最小复位均未完成，未确认收臂；最后错误：'+str(exc)) from exc
 

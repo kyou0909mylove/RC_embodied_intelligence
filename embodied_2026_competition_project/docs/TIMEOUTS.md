@@ -6,7 +6,7 @@
 
 `timing.match_s=600`，新场次设备准备完成后开始计时；同场恢复保留原开始时间。`exit_reserve_s=30`，第570秒由统一 `DeadlineGate.check()` 和阻塞计时器优先触发 `ExitRequested`，中断普通导航、识别、抓取或投放并进入离场。
 
-离场先取消旧任务，根据实际姿态做必要回撤和收臂，保留持物，不再张爪或去投放点。离场准备上限为剩余整场时间减去 `exit_estimate_s`，当前参数在570秒触发时通常余10秒用于准备。离场阶段暂时屏蔽软离场触发，整场硬截止、急停、ROS关闭和导航前收臂条件继续生效；无法满足收臂条件时不会发送底盘离场目标。
+离场先取消旧任务，根据实际姿态做必要回撤和收臂，保留持物，不再张爪或去投放点。第一次离场准备预算为剩余整场时间减去 `exit_estimate_s`，当前参数在570秒触发时通常余10秒用于准备。准备失败仍在剩余总时间内重试；不足预计导航时间时利用剩余总时间继续收臂。离场阶段暂时屏蔽软离场触发，整场硬截止、急停、ROS关闭和导航前收臂条件继续生效；无法满足收臂条件时不会发送底盘离场目标。
 
 `DeadlineGate.limit` 保留实际阶段硬截止，取外层截止、整场截止和当前时间加阶段上限中的最早值；`check()` 同时返回至软离场时刻的最短剩余时间。阶段超时后的处理由调用处决定，不按剩余软预算预测抓取是否成功。
 
@@ -16,7 +16,7 @@
 | --- | --- | --- |
 | `actions.arm_action_timeout_s` | 20秒 | 普通机械臂单动作等待；超时取消本次目标并返回空结果，原函数继续下一动作 |
 | `actions.finger_action_timeout_s` | 10秒 | 普通夹爪单动作等待；超时记录后继续原顺序 |
-| `actions.home_timeout_s` | 25秒 | 配置收臂总上限；真实失败交给有限恢复，持续不能收臂停止 |
+| `actions.home_timeout_s` | 20秒 | 一次配置收臂上限；运行中失败交回恢复，持续失败等待重试，底盘保持停止 |
 | `actions.startup_open_timeout_s` | 10秒 | 初始化张爪保持真实成功检查 |
 | `actions.startup_home_timeout_s` | 20秒 | 初始化收臂保持真实成功检查 |
 | `actions.place_timeout_s` | 60秒 | 一次完整投放阶段硬上限；释放位普通失败状态不单独阻止张爪 |
@@ -39,10 +39,10 @@
 | 原识别器预热 | 30帧预热不计入识别次数；采图/推理耗时另计 | `catch_ground/src/realsense_yolo11.py` |
 | 头部扫描 | `timing.scan_timeout_s=12`秒 | `core/workflow.py`、`camera/vision.py` |
 | 初始化/相机重启 | `timing.prepare_timeout_s=60`秒每模块 | `core/session.py`、`core/recovery.py` |
-| 普通机械臂恢复 | 每次30秒，首次失败可额外重试1次；间隔2秒，另有最小恢复路径 | `recovery.reset_timeout_s/reset_retries/reset_retry_wait_s` |
+| 普通机械臂恢复 | 每次30秒，首次失败可额外重试1次，另有最小恢复路径；仍失败主流程等待2秒再次恢复 | `recovery.reset_timeout_s/reset_retries/reset_retry_wait_s` |
 | 导航 | 每次35秒，普通检测点首次失败可额外重试1次，耗尽跳过本轮 | `timing.nav_timeout_s`、`recovery.nav_retries` |
 | 投放点受阻 | 最多3次，总窗口120秒；间隔5秒并清图 | `recovery.drop_max_attempts/drop_retry_timeout_s/drop_retry_wait_s` |
-| 离场点受阻 | 失败间隔5秒重试，仍受600秒截止 | `recovery.exit_retry_wait_s` |
+| 离场点受阻 | 取消、收臂或导航失败间隔5秒重试，仍受600秒截止 | `recovery.exit_retry_wait_s` |
 | 地面抓取播报 | 有效腕部识别后发送，不等待播放、节点重连或重试 | `arm/pick_ground.py`、`core/workflow.py` |
 
 上述等待均受实际外层硬截止约束。`camera/wrist.py` 仍用于资源关闭和异常恢复，但当前三个原抓取函数直接使用上传的RealSense识别器，旧腕部稳定采样参数不替代原识别逻辑。
@@ -51,4 +51,6 @@
 
 主流程识别播报排队后立即继续抓取；后台按 `/summer_tts_done` 顺序发送，确认超时只停止后续语音派发，不中断抓取。离场清除尚未发送的播报，当前播放不因机械臂取消动作而停止。
 
-本次43项离线回归通过，包括真实Linux SIGALRM阻塞中断、播报和离场检查；SDK推理与action传输使用替身，未连接真实机器人。启动与模型位置见[README](../README.md)。
+本次69项离线回归通过，包括真实Linux SIGALRM阻塞中断、播报和离场检查；SDK推理与action传输使用替身，未连接真实机器人。启动与模型位置见[README](../README.md)。
+
+设备初始化和初始/入场导航失败处理保持原样；入场后的阶段超时和设备/参数异常由运行恢复边界接管，不退出资源生命周期。具体变更见[运行故障处理修改](UPDATE_20261013_RUNTIME.md)。

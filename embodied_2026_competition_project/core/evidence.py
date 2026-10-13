@@ -2,6 +2,7 @@
 """记录接口调用，不把模拟动作算作真实抓取、交付；支持不落盘。"""
 import json
 from datetime import datetime, timezone
+from .safety import OperationStopped
 
 
 class Evidence:
@@ -54,8 +55,10 @@ class Evidence:
                 else:
                     with self.event_path.open('a',encoding='utf-8') as stream:
                         stream.write(text)
-            except OSError as exc:
-                self.record['recording_warnings'].append(str(exc))
+            except OperationStopped:
+                raise
+            except Exception as exc:
+                self.record['recording_warnings'].append('{}: {}'.format(type(exc).__name__,exc))
 
     def finish(self, status, exit_code):
         self.record["status"], self.record["exit_code"] = status, exit_code

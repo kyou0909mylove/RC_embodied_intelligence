@@ -2,7 +2,8 @@
 """按配置顺序逐轮搜索：有限恢复、一次一件、受阻先释放、时间不足持物离场。
 
 策略在这里；设备连接在session，抓取路径在arm各模块，阈值在local.json。
-普通点位/软件错误只影响本轮。设备持续不可达、错误参数及主动停止向上传递。
+运行中的设备/参数/软件故障自动恢复、跳过或降级；初始化/入场失败仍向上传递。
+主动停止、ROS关闭及比赛总截止继续生效，不重置本场计时或成功记录。
 """
 import copy
 import time
@@ -23,6 +24,7 @@ class Workflow:
         self.recovery = Recovery(session,self._stage)
         self.active_stage = 'START'
         self.camera_timeouts = {'Vision':0,'WristVision':0}
+        self.current_point = None
 
     def _stage(self, name, **details):
         self.active_stage = name
@@ -107,40 +109,46 @@ class Workflow:
                     s.evidence.event('speech_completion',text=text,
                                      backend_done_confirmed=True,queued=False)
                     return True
-            except (ExitRequested,DeviceUnavailable,ParameterFault) as exc:
-                if blocking or isinstance(exc,ExitRequested):
-                    raise
-                s.check()
-                s.evidence.event('speech_retry_or_skip',kind=kind,error=str(exc),attempt=attempt+1)
-                return False
+            except ExitRequested:
+                raise
             except Exception as exc:
+                # 包括阶段播报：发送/回执失败只影响语音，不能退出搜索或抓取。
                 s.check()
                 s.evidence.event('speech_retry_or_skip',kind=kind,error=str(exc),attempt=attempt+1)
-                if not blocking:
-                    print('[语音未发送] '+str(exc)+'；继续当前抓取',flush=True)
-                    return False
-                if attempt+1<attempts:
-                    self._wait(self.cfg['recovery']['retry_delay_s'])
-        raise DeviceUnavailable('语音', '播报未确认完成，暂停后续抓取；检查 /summer_tts_done')
+                print('[语音未完成] '+str(exc)+'；继续任务',flush=True)
+                return False
+        return False
 
     def _head_scan(self, point):
+        """头部故障有限重启；仍失败就记录降级，由腕部采新图选物。"""
         s = self.session
-        if getattr(s,'head_restart_needed',False):
-            self.recovery.camera(s.vision,'头部相机','上一扫描已过期')
-            s.head_restart_needed = False
-        limit = self.cfg['recovery']['camera_restarts']
-        for attempt in range(limit+1):
+        last = None
+        for attempt in range(self.cfg['recovery']['camera_restarts']+1):
             try:
+                if getattr(s,'head_restart_needed',False):
+                    self.recovery.camera(s.vision,'头部相机','上一扫描未完成')
+                    s.head_restart_needed = False
                 with s.operation(self.cfg['timing']['scan_timeout_s']),interruptible(s.gate):
                     return s.vision.scan(point,s.gate)
-            except (ExitRequested,DeviceUnavailable,ParameterFault):
+            except ExitRequested:
                 raise
-            except CameraFailed as exc:
-                if not exc.device_related:
-                    raise  # 推理/回包代码问题由本点恢复，不能被当成家具为空。
-                if attempt==limit:
-                    raise  # 当前点位失败，交回外层跳过。
-                self.recovery.camera(s.vision,'头部相机',exc)
+            except Exception as exc:
+                s.check()
+                last = exc
+                s.head_restart_needed = True
+                self._runtime_error('HEAD_DETECT',exc)
+                try:
+                    with s.operation(self.cfg['timing']['cleanup_timeout_s']),interruptible(s.gate):
+                        s.vision.close()
+                except ExitRequested:
+                    raise
+                except Exception as cleanup_error:
+                    s.check()
+                    self._runtime_error('HEAD_CLOSE',cleanup_error)
+        s.evidence.event('head_vision_degraded',point_id=point['id'],error=str(last),
+                         wrist_detection_required=True,empty_confirmed=False)
+        return {'point_id':point['id'],'target':None,'candidates':[],
+                'valid_frames':0,'vision_unavailable':True,'error':str(last)}
 
     def _announce_all(self, point, candidates, source='head'):
         """全部稳定实例合为一句排队播报，发送后立即进入机械臂流程。"""
@@ -362,7 +370,7 @@ class Workflow:
         self._stage('DETECT_NAV',point_id=point['id'],furniture_id=point['furniture_id'])
         try:
             self._navigate(point['name'],point['pose'])
-        except (ExitRequested,DeviceUnavailable,ParameterFault):
+        except ExitRequested:
             raise
         except Exception as exc:
             s.check()
@@ -381,7 +389,7 @@ class Workflow:
                 outcome,confirmed = self._inspect_point(point)
                 self.camera_timeouts = {'Vision':0,'WristVision':0}
                 break
-            except (ExitRequested,ParameterFault):
+            except ExitRequested:
                 raise
             except DeviceUnavailable as exc:
                 # 短暂反馈缺失先复核机械臂；持续不可达仍直接向上传递。
@@ -494,7 +502,7 @@ class Workflow:
         try:
             with s.operation(self.cfg['timing']['state_timeout_s']),interruptible(s.gate):
                 return getattr(s.scheduler,method)(*args)
-        except (ExitRequested,DeviceUnavailable,ParameterFault):
+        except ExitRequested:
             raise
         except Exception as exc:
             s.check()
@@ -503,16 +511,22 @@ class Workflow:
             try:
                 saved = s.scheduler.snapshot()
             except Exception:
-                saved = (s.restored or {}).get('scheduler')
+                # snapshot函数出错时直接保留当前内存计数，不能退回旧快照重置数量。
+                current = s.scheduler
+                ids = [p['id'] for p in current.points]
+                saved = {'scheduler_version':3,'states':copy.deepcopy(current.states),
+                         'furniture':copy.deepcopy(current.furniture),
+                         'round_number':current.round_number,
+                         'visited_this_round':list(current.visited_this_round),
+                         'active_point_id':current.active_point_id,
+                         'next_point_id':ids[current.next_index] if ids else None}
             s.scheduler = PointScheduler(self.cfg['detection_points'],self.cfg['strategy'],
                 s.clock,s.evidence.event,copy.deepcopy(saved),
                 confirmed_object_ids=s.evidence.record['confirmed_object_ids'])
             s.evidence.event('scheduler_rebuilt',reason=str(exc))
-            if method=='next_point':
-                return s.scheduler.next_point()
-            if method in ('start_next_round','pending'):
-                return bool(s.scheduler.pending())
-            return None
+            # register_pick/register_delivery按物品ID去重，重放不会重复扣数。
+            # observe可能先改状态后记录失败，也可以再次应用同一结果。
+            return getattr(s.scheduler,method)(*args)
 
     def _search(self):
         s = self.session
@@ -522,6 +536,11 @@ class Workflow:
             # 运行中的动作由 gate 中断；这里保留点位切换时的显式检查。
             if s.clock() >= s.work_deadline:
                 return '已到离场预留时间'
+            if s.last_put_receipt:
+                self._register_delivery(s.last_put_receipt)
+            if s.actions and not s.actions.travel_ready:
+                # 未收臂时保持主程序运行，外层等待后重试恢复，不直接导航。
+                self.recovery.arm('运行中等待恢复收臂')
             if s.actions and s.actions.load_state!='empty':
                 self._deliver_pending()
                 continue
@@ -537,21 +556,23 @@ class Workflow:
                 self._refresh_navigation('第{}轮开始'.format(s.scheduler.round_number))
                 s.checkpoint()
                 continue
+            self.current_point = point
             s.checkpoint()
             try:
                 outcome,confirmed = self._one_point(point)
-            except (ExitRequested,DeviceUnavailable,ParameterFault):
+            except ExitRequested:
                 raise
             except Exception as exc:
                 s.check()
-                software_error(s.evidence,'POINT',exc)
-                if s.actions:
+                self._runtime_error('POINT',exc)
+                if s.actions and (not s.actions.travel_ready or s.actions.load_state=='unknown'):
                     self._reset_point_attempt(point,'点位遗漏异常恢复')
                     if s.actions.holding:
                         self._deliver_pending()
                 outcome,confirmed = 'software_error',False
             if s.scheduler:
                 self._schedule_call('observe',point,outcome,confirmed)
+            self.current_point = None
             s.checkpoint()
 
     def _prepare_exit(self):
@@ -560,12 +581,11 @@ class Workflow:
         if s.actions is None:
             return
         remaining = s.match_deadline-s.clock()
+        preferred = remaining-self.cfg['timing']['exit_estimate_s']
         budget = min(self.cfg['recovery']['reset_timeout_s'],
-                     remaining-self.cfg['timing']['exit_estimate_s'])
+                     preferred if preferred>0 else remaining)
         if budget<=0:
-            # 仍允许取消当前目标；不能为了离场让未收臂的机器人行驶。
-            s.actions.driver.cancel_motion()
-            s.actions.require_travel_ready()
+            s.check()
             return
         self._stage('EXIT_PREPARE',timeout_s=round(budget,3))
         with s.operation(budget),interruptible(s.gate):
@@ -584,45 +604,43 @@ class Workflow:
             s.actions.require_travel_ready()
 
     def _exit(self, reason):
-        """立即放弃普通任务，预留导航时间；允许持物，仍服从总截止和急停。"""
+        """离场取消/收臂/导航失败均等待重试；保留持物，总截止及急停仍生效。"""
         s = self.session
         with s.gate.suspend_exit():
             s.begin_exit(reason)
-            self._prepare_exit()
-            # 释放已成功但收臂期间触发软截止：先补登记已保存回执，不能漏计或重放。
             if s.last_put_receipt:
                 self._register_delivery(s.last_put_receipt)
             s.evidence.record['has_confirmed_delivery'] = bool(s.evidence.record['delivery_actions_completed']>=1)
             s.evidence.record['exit_motion_completed'] = False
-            attempt = 0
+            prepared,attempt = False,0
             while True:
                 try:
                     s.check()
                     attempt += 1
+                    if not prepared:
+                        self._prepare_exit()
+                        prepared = True
                     self._stage('EXIT',attempt=attempt)
                     self._navigate('离场点',self.cfg['locations']['exit'],retries=0)
                     s.evidence.record['exit_motion_completed'] = True
                     s.status,s.exit_code = 'FLOW_COMPLETED',0
                     break
-                except (DeviceUnavailable,ParameterFault):
-                    raise
                 except Exception as exc:
-                    if s.gate.stopped or s.rospy.is_shutdown():
-                        s.check()
-                    if s.clock()>=s.match_deadline:
-                        s.status,s.exit_code = 'TIME_UP',0
-                        s.evidence.event('exit_not_completed',reason='比赛截止',last_error=str(exc))
-                        break
-                    s.evidence.event('exit_navigation_retry',attempt=attempt,error=str(exc))
+                    # 阶段超时可重试；急停、ROS关闭和600秒总截止仍立即停止。
+                    s.check()
+                    s.stop_navigation()
+                    if isinstance(exc,StateMismatch):
+                        prepared = False
+                    self._runtime_error('EXIT',exc)
+                    s.evidence.event('exit_retry',attempt=attempt,error=str(exc),
+                                     arm_prepared=prepared)
                     self._stage('WAIT_EXIT_RETRY',seconds=self.cfg['recovery']['exit_retry_wait_s'])
+                    self._wait(self.cfg['recovery']['exit_retry_wait_s'])
                     try:
-                        self._wait(self.cfg['recovery']['exit_retry_wait_s'])
                         self._refresh_navigation('离场重试')
-                    except OperationStopped:
-                        if s.clock()>=s.match_deadline and not s.gate.stopped:
-                            s.status,s.exit_code = 'TIME_UP',0
-                            break
-                        raise
+                    except Exception as refresh_error:
+                        s.check()
+                        self._runtime_error('EXIT_COSTMAP',refresh_error)
             s.checkpoint()
             print('[结束] 状态={}；确认抓取={}，投放动作完成={}，离场到达={}'.format(
                 s.status,s.evidence.record['physical_grasps'],s.evidence.record['delivery_actions_completed'],
@@ -642,23 +660,63 @@ class Workflow:
         s.evidence.record['exit_motion_completed'] = False
         s.checkpoint()
 
+    def _runtime_error(self, stage, exc):
+        """诊断失败也不结束任务；停止/离场检查不能被日志容错吞掉。"""
+        s = self.session
+        s.check()
+        try:
+            software_error(s.evidence,stage,exc)
+        except ExitRequested:
+            raise
+        except Exception as record_error:
+            s.check()
+            print('[记录提醒] {}；原故障={}: {}'.format(record_error,type(exc).__name__,exc),flush=True)
+
+    def _pause_after_fault(self, exc):
+        """同一session中等待重试，不关闭设备、不重置时钟或成功ID。"""
+        s = self.session
+        s.check()
+        s.stop_navigation()
+        self._runtime_error(self.active_stage,exc)
+        point,self.current_point = self.current_point,None
+        if point and s.scheduler:
+            try:
+                # 只推进本轮访问；数量仅由确认抓取扣减，异常不减少物品数。
+                self._schedule_call('observe',point,'runtime_error',False)
+            except ExitRequested:
+                raise
+            except Exception as scheduling_error:
+                s.check()
+                self._runtime_error('SKIP_FAILED_POINT',scheduling_error)
+        s.checkpoint()
+        self._stage('WAIT_RUNTIME_RETRY',seconds=self.cfg['recovery']['reset_retry_wait_s'])
+        self._wait(max(.2,self.cfg['recovery']['reset_retry_wait_s']))
+
     def run(self):
         s = self.session
+        reason = None
         try:
-            self._initialize_route()  # 初始/入场导航失败允许中止，搜索开始后改为本轮跳过。
-            reason = self._search()
-        except ExitRequested as exc:
-            reason = str(exc)
-            s.evidence.event('priority_exit_requested',reason=reason,stage=self.active_stage)
+            try:
+                # 用户保留的入口：初始化/初始点/入场点失败仍允许退出并手动resume。
+                self._initialize_route()
+            except ExitRequested as exc:
+                reason = str(exc)
+            while True:
+                try:
+                    if reason is None:
+                        reason = self._search()
+                    self._exit(reason)
+                    return
+                except ExitRequested as exc:
+                    reason = str(exc)
+                    s.evidence.event('priority_exit_requested',reason=reason,stage=self.active_stage)
+                except Exception as exc:
+                    # 故障在资源生命周期内部处理，不能传到main触发close。
+                    try:
+                        self._pause_after_fault(exc)
+                    except ExitRequested as exit_request:
+                        reason = str(exit_request)
         except OperationStopped:
-            if s.clock()>=s.match_deadline and not s.gate.stopped:
-                self._time_up()
-                return
-            raise
-        try:
-            self._exit(reason)
-        except OperationStopped:
-            # 离场收臂、通信复核或等待中恰好到总截止，也按时间到结束，不要求resume。
             if s.clock()>=s.match_deadline and not s.gate.stopped:
                 self._time_up()
                 return

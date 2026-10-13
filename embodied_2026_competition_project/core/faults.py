@@ -3,7 +3,7 @@
 
 
 class DeviceUnavailable(RuntimeError):
-    """连续复核后设备/通信仍不可用，允许停止本场并保留恢复记录。"""
+    """设备/通信不可用；初始化仍报告失败，运行中由主流程重试或跳过。"""
     def __init__(self, module, detail):
         self.module = module
         super().__init__('设备不可用【{}】：{}'.format(module, detail))
