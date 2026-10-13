@@ -1,0 +1,234 @@
+{
+  "base_project": "embodied_2026_competition_project(5).zip",
+  "updated_at": "2026-10-12",
+  "active_shelf_entry": "main.pick_shelf_original -> arm.task2_pick_v4.pick_on_shelf",
+  "original_files": {
+    "arm/task2_pick_v4.py": {
+      "source": "用户最新上传 task2_pick_v4(2).py；本次仅修改集中模型路径和对应说明，保持工程入口文件名",
+      "sha256": "928f5d3594b0eec92d3ab95e254c6dd451fa15daeb14cb2caf11ae0e6b0eabf5",
+      "byte_identical": false,
+      "source_sha256": "b963d334a26c9c8cd7581ea4e9348e2e0888f5055bccc7f9fbba618f6b724c0f",
+      "motion_parameters_unchanged": true
+    },
+    "arm/xg_table_pick.py": {
+      "source": "桌面抓取(1).zip/桌面抓取/xg_table_pick.py",
+      "sha256": "077bf0e38ac50cd32c44b73cf75dae29ee4fbc752397550a1db620e9b4e897c0",
+      "byte_identical": true
+    },
+    "arm/catch_ty.py": {
+      "source": "hangzhou2026(1).zip/hangzhou2026/tongyong_25/catch_ty.py",
+      "sha256": "fc3d398382f4ddb06cacf014240347434f093279c659821ee42f39be34037ea4",
+      "byte_identical": true
+    },
+    "catch_ground/src/catch.py": {
+      "source": "kinova_wn.zip/kinova_wn/catch_ground/src/catch.py",
+      "sha256": "61d1b66c11fe73ceb98b29453f1660471f5a5627981da7e265cf4b0ea6e80b17",
+      "byte_identical": true
+    },
+    "catch_ground/src/realsense_yolo11.py": {
+      "source": "kinova_wn.zip/kinova_wn/catch_ground/src/realsense_yolo11.py",
+      "sha256": "8b3af2bc46e77f4f32b9f02f6a416cac5c700ed16250efe255a6e1c8e3644eae",
+      "byte_identical": true
+    },
+    "catch_ground/src/realsense_yolo11_desk.py": {
+      "source": "kinova_wn.zip/kinova_wn/catch_ground/src/realsense_yolo11_desk.py",
+      "sha256": "e53c5029c8673e216ad54e80df2d661111b0ee6d85d778324623759969107fe7",
+      "byte_identical": true
+    },
+    "models/best.pt": {
+      "source": "桌面抓取(1).zip/桌面抓取/best.pt",
+      "sha256": "0dddb4ca7266a74ec3a182d0980b0bb81e83998289967e54f7d74e150e61006a",
+      "byte_identical": true
+    },
+    "models/best(1).pt": {
+      "source": "本次输入 models/best(1).pt，与原 models/best(3).pt 字节完全相同",
+      "sha256": "0506e8f50156b6d57e0a0f39148664d02c61c8b32b98a4b2c257f2dad79c4bb5",
+      "byte_identical": true
+    }
+  },
+  "adapters": [
+    "arm/driver.py",
+    "arm/grasp.py",
+    "arm/pick_surface.py",
+    "arm/pick_shelf.py",
+    "arm/pick_ground.py",
+    "catch_ground/__init__.py",
+    "catch_ground/src/__init__.py"
+  ],
+  "source_parameters_overridden": "ground detector model/classes as requested; shelf DETECT_TRIES temporarily exactly 5 during main call; ground/surface detector defaults and legacy wrist scan frames are 5; original motions unchanged; shelf source model default and shelf/surface driver bindings use models/best(1).pt; head/ground use models/best.pt",
+  "hardware_verified": false,
+  "validation": {
+    "static_compilation": true,
+    "offline_regression": "73 checks passed with mocked SDK/detection/action transport using latest uploaded shelf source",
+    "original_file_hashes": "Historical 2026-10-09 baseline: 8/8 byte identical; shelf model path/comment changed on 2026-10-12",
+    "python38_syntax": true,
+    "python_files_checked": 50,
+    "main_interface_cases_passed": 13,
+    "original_call_cases_passed": 73,
+    "linux_sigalrm_verified": false,
+    "hardware_verified": false,
+    "test_artifacts_in_deliverable": false,
+    "main_cli_matches_baseline": true,
+    "put_failure_recovery_and_shelf_retry_checked": true,
+    "jujia_order_normal_failure_and_timeout_checked": true,
+    "stop_home_startup_navigation_protection_checked": true,
+    "indentation_checked": true,
+    "central_model_paths_and_duplicate_removal_checked": true,
+    "local_import_audit": "50 modules; zero missing local imports; dynamic source dependencies retained",
+    "config_and_labels_unchanged_except_model_paths": false,
+    "latest_shelf_layer_class_cases": "all 3 layers x 18 original classes reached close/tighten/lift/home/final feedback",
+    "latest_shelf_waypoint_and_box_checked": true,
+    "scope": "2026-10-09 baseline regression records retained as history; current model-update checks are recorded under model_configuration_update.validation"
+  },
+  "ground_object_detection": {
+    "adapter": "arm/pick_ground.py",
+    "model": "actions.profiles.ground.model (current models/best.pt, 21 classes)",
+    "targets": "mapped head label if supported, otherwise configured model classes",
+    "original_motion_file_unchanged": true,
+    "trash_model_required": false
+  },
+  "ground_grasp_speech": {
+    "trigger": "valid ground wrist detection, before original opening and approach",
+    "text": "地面发现{实际物品中文名}，开始抓取",
+    "uses_actual_wrist_class": true,
+    "suppressed_by_prior_head_announcement": false,
+    "waits_for_playback_or_speech_recovery": false,
+    "ordinary_speech_failure_blocks_grasp": false,
+    "emergency_stop_and_hard_deadline_retained": true,
+    "original_motion_file_unchanged": true,
+    "offline_regression_verified": true
+  },
+  "action_wait_correction": {
+    "arm_wait_s": 20,
+    "finger_wait_s": 10,
+    "place_total_timeout_s": 60,
+    "home_total_timeout_s": 25,
+    "goal_success": "ordinary arm/finger follows jujia26: wait return then continue without SUCCEEDED gate; original home/startup/navigation require new-goal success",
+    "release_reason_logs": [
+      "put",
+      "recovery",
+      "fallback_recovery",
+      "abandon_load"
+    ],
+    "original_motion_and_finger_values_unchanged": true,
+    "real_failure_detection_retained": true,
+    "ordinary_failure_interrupts_sequence": false,
+    "stop_ros_shutdown_and_hard_deadlines_retained": true,
+    "strict_actions": [
+      "original source home",
+      "configured home",
+      "startup opening/home",
+      "navigation"
+    ],
+    "ordinary_timeout_result": "cancel current goal; return False to original source; source returns None and continues next instruction",
+    "duplicate_per_action_gate_limits_removed": true,
+    "original_source_home_tagged_explicitly": true
+  },
+  "navigation_position_z": {
+    "source_behavior": "jujia26 map goals may keep recorded position z=0.138",
+    "zero_only_configuration_gate_removed": true,
+    "navigator_transmits_recorded_xyz_unchanged": true,
+    "finite_number_and_quaternion_checks_retained": true,
+    "initialpose_planar_z_zero_unchanged": true,
+    "main_cli_and_waypoint_values_unchanged": true
+  },
+  "shelf_layer_search": {
+    "caller": "arm/pick_shelf.py",
+    "scope": "one next starting layer per furniture_id",
+    "first_start": "configured layer_hint or original DEFAULT_LAYER",
+    "subsequent_start": "cyclic original LAYER_ORDER; current mid/high/low",
+    "empty_layer": "original v4 continues to each remaining unsearched layer within the same call",
+    "no_target_return": "only after all three source layers searched without usable target",
+    "resume_state": "Actions.snapshot shelf_next_layers",
+    "original_file_and_motion_unchanged": false,
+    "offline_workflow_actions_and_original_search_verified": true,
+    "original_motion_unchanged": true
+  },
+  "shelf_detection_retry": {
+    "caller": "arm/pick_shelf.py",
+    "original": 2,
+    "main_call": "maximum 5 per layer",
+    "early_success": "original detector returns immediately when found",
+    "constant_restored_after_call": true,
+    "original_file_unchanged": false,
+    "original_motion_unchanged": true
+  },
+  "project_cleanup": {
+    "removed_python_files": [
+      "arm/original_kinova.py",
+      "arm/catch.py",
+      "arm/task2_pick.py",
+      "arm/ground_coordinates.py",
+      "arm/shelf_coordinates.py",
+      "arm/observe.py"
+    ],
+    "removed_model_duplicate": "models/table.pt (same bytes as uploaded best.pt)",
+    "models_directory": "models/",
+    "models": {
+      "best.pt": "21 classes: head and ground",
+      "best(1).pt": "18 classes: surface and original shelf v4"
+    },
+    "original_function_file_bytes_unchanged": false,
+    "main_bytes_unchanged_from_previous_deliverable": true,
+    "main_sha256": "437e6bae42465ea6858c2af90a18bd6a10ec506d97def4d01364596e42779ecc",
+    "removed_model_duplicates": [
+      "models/table.pt (historical duplicate of best.pt)",
+      "models/best(3).pt (same bytes as retained best(1).pt)"
+    ],
+    "original_motion_parameters_unchanged": true
+  },
+  "latest_shelf_update": {
+    "source_filename": "task2_pick_v4(2).py",
+    "destination": "arm/task2_pick_v4.py",
+    "original_bytes_unchanged": true,
+    "main_and_adapters_changed": false,
+    "layer_compensation_and_lift": "原文件每层独立grasp_delta/lift_dz",
+    "object_profiles": "原文件cylinder/bowl/ball/cup/small/cube及类名映射",
+    "left_waypoint": "原文件中/高层目标偏左的中间点及有限等待保留",
+    "side_box": "原文件药盒侧面Z补偿保留",
+    "offline_cases_passed": 73,
+    "waypoint_wait": "Original source: >3cm waits at most3x0.5s, ignores False and continues; missing Cartesian command feedback still raises bounded DeviceUnavailable",
+    "waypoint_feedback_basis": "cartesian_command command feedback, not measured tool_pose",
+    "recorded_at": "2026-10-09 (historical source update)"
+  },
+  "model_configuration_update": {
+    "updated_at": "2026-10-12",
+    "kept_models": {
+      "models/best.pt": "0dddb4ca7266a74ec3a182d0980b0bb81e83998289967e54f7d74e150e61006a",
+      "models/best(1).pt": "0506e8f50156b6d57e0a0f39148664d02c61c8b32b98a4b2c257f2dad79c4bb5"
+    },
+    "removed_models": [
+      "models/best(3).pt"
+    ],
+    "duplicate_byte_comparison": true,
+    "head_and_ground_model_unchanged": true,
+    "surface_and_shelf_model": "models/best(1).pt",
+    "surface_and_shelf_metadata": "models/DESK_MODEL_INFO.json",
+    "surface_and_shelf_label_map": {
+      "biscuit": "oreo_box",
+      "sprite": "sprite_bottle",
+      "shampoo": "green_shampoo_bottle",
+      "water": "water_bottle",
+      "bowl": "blue_bowl",
+      "cup": "white_cup"
+    },
+    "head_to_surface_supported_class_count": 6,
+    "navigation_and_grasp_parameters_unchanged": true,
+    "original_shelf_changes": "model path and matching comment only",
+    "hardware_verified": false,
+    "validation": {
+      "status": "passed",
+      "local_main_check_config": true,
+      "example_main_list_labels": true,
+      "python_files_compiled": 51,
+      "python38_syntax": true,
+      "actual_weight_hashes_and_embedded_labels": true,
+      "driver_bindings_mocked_without_sdk": true,
+      "standalone_shelf_default_path": true,
+      "only_expected_files_modified": true,
+      "navigation_and_grasp_parameters_unchanged": true,
+      "historical_73_checks_rerun": false,
+      "hardware_verified": false
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "filename": "best(1).pt",
+  "sha256": "0506e8f50156b6d57e0a0f39148664d02c61c8b32b98a4b2c257f2dad79c4bb5",
+  "names": {
+    "0": "oreo_box",
+    "1": "sprite_bottle",
+    "2": "green_shampoo_bottle",
+    "3": "white_pump_bottle",
+    "4": "franzzi_box",
+    "5": "mirinda_bottle",
+    "6": "blue_bowl",
+    "7": "water_bottle",
+    "8": "blue_cube",
+    "9": "pink_cube",
+    "10": "blue_ball",
+    "11": "power_adapter",
+    "12": "white_cup",
+    "13": "nasal_spray_box",
+    "14": "iodine_swabs_box",
+    "15": "yellow_toy",
+    "16": "lays_chip_tube",
+    "17": "whitecat_detergent"
+  },
+  "class_count": 18
+}
